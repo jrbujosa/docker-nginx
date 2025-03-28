@@ -1,4 +1,4 @@
-# Ignorar las claves de Google IA Studio API
+# Ignorar la clave de Google IA Studio API 
 .env
 
 # Ignorar el directorio node_modules dentro de la carpeta api/
