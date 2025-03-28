@@ -1,0 +1,23 @@
+services:
+  web:
+    image: nginx:alpine
+    container_name: nginx_server
+    ports:
+      - "8080:80"
+    volumes:
+      - ./html:/var/www/html
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - php
+    restart: always
+
+  php:
+    image: php:8.2-fpm-alpine
+    container_name: php_server
+    volumes:
+      - ./html:/var/www/html
+      - ./data:/data  #  Añade esta línea
+      - ./logs:/var/log/myapp  # Montamos el directorio 'logs' en '/var/log/myapp'
+    environment:
+      - GEMMA_API_KEY=${GEMMA_API_KEY} # Lee la variable del entorno del host      
+    restart: always

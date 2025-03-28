@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Acceso a la API de Gemma 3</title>
+<style>
+body {
+font-family: sans-serif;
+}
+h1 {
+color: #333;
+}
+label {
+display: block;
+margin-bottom: 5px;
+font-weight: bold;
+}
+input#prompt {
+width: 70%;
+padding: 10px;
+margin-bottom: 15px;
+border: 1px solid #ccc;
+border-radius: 4px;
+box-sizing: border-box;
+}
+button {
+padding: 10px 20px;
+background-color: #007bff;
+color: white;
+border: none;
+border-radius: 4px;
+cursor: pointer;
+margin-bottom: 20px;
+}
+button:hover {
+background-color: #0056b3;
+}
+#respuesta {
+margin-top: 20px;
+padding: 15px;
+border: 1px solid #ddd;
+border-radius: 4px;
+background-color: #f9f9f9;
+white-space: pre-wrap; /* Conserva los saltos de línea originales */
+}
+</style>
+</head>
+<body>
+<h1>Interactuando con la API de Gemma 3</h1>
+<label for="prompt">Introduce tu consulta:</label><br>
+<input type="text" id="prompt" name="prompt"><br><br>
+<button onclick="enviarConsulta()">Enviar Consulta</button>
+<div id="respuesta"></div>
+<script>
+async function enviarConsulta() {
+const prompt = document.getElementById("prompt").value;
+const respuestaDiv = document.getElementById("respuesta");
+respuestaDiv.innerText = "Cargando...";
+try {
+            const response = await fetch('api.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    prompt: prompt
+                })
+            });
+
+            if (!response.ok) {
+                const error = await response.json();
+                respuestaDiv.innerText = `Error del Backend (PHP): ${response.status} - ${error.error || 'Detalles no disponibles'}`;
+                return;
+            }
+
+            const data = await response.json();
+
+            if (data.candidates && data.candidates.length > 0 && data.candidates [0].content && data.candidates [0].content.parts && data.candidates [0].content.parts.length > 0) {
+                const respuestaTexto = data.candidates [0].content.parts [0].text;
+                const formattedText = respuestaTexto.replace(/\n/g, '<br>');
+                respuestaDiv.innerHTML = formattedText; // Usamos innerHTML para renderizar las etiquetas <br>
+            } else {
+                respuestaDiv.innerText = "No se encontró una respuesta de texto válida.";
+            }
+
+        } catch (error) {
+            respuestaDiv.innerText = `Error de conexión: ${error.message}`;
+        }
+    }
+</script>
+</body>
+</html>

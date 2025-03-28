@@ -1,0 +1,51 @@
+[
+  {
+    "id": 1,
+    "nombre": "Ana Rodríguez",
+    "email": "ana.rodriguez@example.com",
+    "telefono": "555-123-4567",
+    "direccion": "Calle Principal 123, Ciudad A"
+  },
+  {
+    "id": 2,
+    "nombre": "Carlos Pérez",
+    "email": "carlos.perez@example.com",
+    "telefono": "555-987-6543",
+    "direccion": "Avenida Central 456, Ciudad B"
+  },
+  {
+    "id": 3,
+    "nombre": "Sofía Gómez",
+    "email": "sofia.gomez@example.com",
+    "telefono": "555-246-8013",
+    "direccion": "Plaza Mayor 789, Ciudad C"
+  },
+  {
+    "id": 4,
+    "nombre": "Diego López",
+    "email": "diego.lopez@example.com",
+    "telefono": "555-135-7924",
+    "direccion": "Calle del Sol 101, Ciudad D"
+  },
+  {
+    "id": 5,
+    "nombre": "Isabela Torres",
+    "email": "isabela.torres@example.com",
+    "telefono": "555-864-2097",
+    "direccion": "Avenida de la Luna 202, Ciudad E"
+  },
+  {
+    "id": 6,
+    "nombre": "Javier Sánchez",
+    "email": "javier.sanchez@example.com",
+    "telefono": "555-369-1470",
+    "direccion": "Calle del Río 303, Ciudad F"
+  },
+  {
+    "id": 7,
+    "nombre": "Valentina Vargas",
+    "email": "valentina.vargas@example.com",
+    "telefono": "555-741-8529",
+    "direccion": "Avenida de las Flores 404, Ciudad G"
+  }
+]

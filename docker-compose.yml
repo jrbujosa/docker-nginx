@@ -1,0 +1,48 @@
+services:
+  web:
+    image: nginx:alpine
+    container_name: nginx_server
+    ports:
+      - "8080:80"
+    volumes:
+      - ./html:/var/www/html # Archivos estáticos y quizás la base del frontend JS
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf # Configuración Nginx
+    depends_on:
+      - php
+      - api # Nginx ahora también depende del servicio API de Node.js
+    restart: always
+
+  php:
+    image: php:8.2-fpm-alpine
+    container_name: php_server
+    volumes:
+      - ./html:/var/www/html # Código PHP (si lo usas)
+      - ./data:/data  #  Añade esta línea
+      - ./logs:/var/log/myapp  # Montamos el directorio 'logs' en '/var/log/myapp'
+    environment:
+      - GEMMA_API_KEY=${GEMMA_API_KEY} # Lee la variable del entorno del host      
+    restart: always
+
+  # ---- NUEVO SERVICIO NODE.JS ----
+  api:
+    image: node:18-alpine # Imagen ligera de Node.js
+    container_name: node_api_server
+    working_dir: /app # Directorio de trabajo dentro del contenedor
+    volumes:
+      - ./api:/app # Monta tu código Node.js desde una carpeta local ./api
+    # Expone el puerto INTERNO del contenedor (no necesita mapeo al host si Nginx actúa como proxy)
+    expose:
+      - "3000"
+    # Comando para iniciar tu aplicación Node.js (ajusta 'server.js' si tu archivo principal es otro)
+    # Si usas nodemon para desarrollo: command: npm run dev
+    # Si es producción simple: command: node server.js
+    command: node server.js
+    restart: always
+    environment:
+      # Puedes añadir variables de entorno aquí si tu app Node las necesita
+      - NODE_ENV=development
+    # user: "node" # Buena práctica usar usuario no-root si la imagen lo soporta
+    # Considera user: "1000:1000" si necesitas escribir en el volumen montado y evitar problemas de permisos
+
+networks: # Definir redes explícitas es una buena práctica, aunque Docker Compose crea una por defecto
+  default:

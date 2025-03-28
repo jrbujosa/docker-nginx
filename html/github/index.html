@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Repositorios de GitHub</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 20px;
+        }
+        table {
+            width: 90%;
+            margin: auto;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 10px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+        th {
+            background-color: #f4f4f4;
+            cursor: pointer;
+        }
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        select, input {
+            padding: 8px;
+            margin: 10px;
+            font-size: 16px;
+        }
+        button {
+            padding: 8px 12px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <h1>Repositorios de GitHub</h1>
+    <select id="usuarioSeleccionado" onchange="actualizarInput()">
+        <option value="jrbujosa">jrbujosa</option>
+        <option value="tiernogalvan">tiernogalvan</option>
+    </select>
+    <input type="text" id="usuario" placeholder="Ingrese un usuario de GitHub" value="jrbujosa">
+    <button onclick="cambiarUsuario()">Buscar</button>
+    <table id="reposTable">
+        <thead>
+            <tr>
+                <th onclick="ordenarTabla(0)">Nombre</th>
+                <th onclick="ordenarTabla(1)">Descripción</th>
+                <th onclick="ordenarTabla(2)">Lenguaje</th>
+                <th onclick="ordenarTabla(3)">Fecha de Creación</th>
+                <th onclick="ordenarTabla(4)">Estrellas</th>
+                <th onclick="ordenarTabla(5)">Forks</th>
+            </tr>
+        </thead>
+        <tbody id="repos"></tbody>
+    </table>
+    
+    <script>
+        async function obtenerRepositorios(usuario = "jrbujosa") {
+            const url = `https://api.github.com/users/${usuario}/repos`;
+            
+            try {
+                const respuesta = await fetch(url);
+                if (!respuesta.ok) {
+                    throw new Error("Error al obtener los datos");
+                }
+                const repos = await respuesta.json();
+                
+                const tablaRepos = document.getElementById("repos");
+                tablaRepos.innerHTML = "";
+                
+                repos.forEach(repo => {
+                    const fila = document.createElement("tr");
+                    fila.innerHTML = `
+                        <td><a href="${repo.html_url}" target="_blank">${repo.name}</a></td>
+                        <td>${repo.description || "Sin descripción"}</td>
+                        <td>${repo.language || "Desconocido"}</td>
+                        <td>${new Date(repo.created_at).toLocaleDateString()}</td>
+                        <td>${repo.stargazers_count}</td>
+                        <td>${repo.forks_count}</td>
+                    `;
+                    tablaRepos.appendChild(fila);
+                });
+            } catch (error) {
+                console.error("Hubo un problema con la solicitud:", error);
+            }
+        }
+        
+        function ordenarTabla(columna) {
+            const tabla = document.getElementById("reposTable");
+            const filas = Array.from(tabla.rows).slice(1);
+            const esNumerico = !isNaN(filas[0].cells[columna].innerText);
+            
+            filas.sort((a, b) => {
+                const valorA = esNumerico ? parseFloat(a.cells[columna].innerText) : a.cells[columna].innerText.toLowerCase();
+                const valorB = esNumerico ? parseFloat(b.cells[columna].innerText) : b.cells[columna].innerText.toLowerCase();
+                
+                return valorA > valorB ? 1 : -1;
+            });
+            
+            filas.forEach(fila => tabla.appendChild(fila));
+        }
+        
+        function cambiarUsuario() {
+            const usuario = document.getElementById("usuario").value.trim();
+            if (usuario) {
+                obtenerRepositorios(usuario);
+            }
+        }
+        
+        function actualizarInput() {
+            const seleccion = document.getElementById("usuarioSeleccionado").value;
+            document.getElementById("usuario").value = seleccion;
+        }
+        
+        obtenerRepositorios();
+    </script>
+</body>
+</html>

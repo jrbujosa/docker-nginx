@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Acceso a la API de Gemma 3</title>
+    <style>
+        body {
+            font-family: sans-serif;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        input#prompt {
+            width: 70%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        button {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-bottom: 20px;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        #respuesta {
+            margin-top: 20px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background-color: #f9f9f9;
+            font-family: monospace;
+            /* Fuente monoespaciada para mejor legibilidad del JSON */
+            white-space: pre-wrap;
+            /* Respeta saltos de línea y espacios */
+            word-break: break-word;
+            /* Evita que las líneas largas se salgan del contenedor */
+            font-size: 0.9em;
+            line-height: 1.4;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Interactuando con la API de Gemma 3</h1>
+    <label for="prompt">Introduce tu consulta:</label><br>
+    <input type="text" id="prompt" name="prompt"><br><br>
+    <button onclick="enviarConsulta()">Enviar Consulta</button>
+    <div id="respuesta"></div>
+    <script>
+        async function enviarConsulta() {
+            const prompt = document.getElementById("prompt").value;
+            const respuestaDiv = document.getElementById("respuesta");
+            respuestaDiv.innerText = "Cargando...";
+            try {
+                const response = await fetch('api.php', { // Llamada a tu script PHP
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        prompt: prompt
+                    })
+                });
+
+                if (!response.ok) {
+                    const error = await response.json();
+                    respuestaDiv.innerText = `Error del Backend (PHP): ${response.status} - ${error.error || 'Detalles no disponibles'}`;
+                    return;
+                }
+
+                const data = await response.json();
+                respuestaDiv.innerText = JSON.stringify(data, null, 2); // Mostrar JSON con indentación
+
+            } catch (error) {
+                respuestaDiv.innerText = `Error de conexión: ${error.message}`;
+            }
+        }
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,95 @@
+<!-- ./html/node/index.html -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista de Tareas con Node API</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            margin: 20px;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+        .container {
+            max-width: 600px;
+            margin: auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #0056b3;
+        }
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+        li {
+            background: #e9ecef;
+            margin-bottom: 8px;
+            padding: 10px 15px;
+            border-radius: 4px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        li.completed {
+            text-decoration: line-through;
+            color: #6c757d;
+            background: #d6d8db;
+        }
+        .task-input {
+            display: flex;
+            margin-top: 20px;
+        }
+        #new-task-input {
+            flex-grow: 1;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px 0 0 4px;
+        }
+        #add-task-button {
+            padding: 10px 15px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 0 4px 4px 0;
+            transition: background-color 0.2s;
+        }
+        #add-task-button:hover {
+            background-color: #0056b3;
+        }
+        .error-message {
+             color: red;
+             text-align: center;
+             margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Mi Lista de Tareas</h1>
+
+        <ul id="task-list">
+            <!-- Las tareas se cargarán aquí dinámicamente -->
+            <li>Cargando tareas...</li>
+        </ul>
+
+        <div id="error-display" class="error-message" style="display: none;"></div>
+
+        <div class="task-input">
+            <input type="text" id="new-task-input" placeholder="Añadir nueva tarea...">
+            <button id="add-task-button">Añadir</button>
+        </div>
+    </div>
+
+    <!-- El script se carga al final -->
+    <script src="script.js"></script>
+</body>
+</html>
