@@ -1,123 +1,153 @@
-document.addEventListener('DOMContentLoaded', () => {
-    // Referencias a elementos del DOM
-    const taskList = document.getElementById('task-list');
-    const newTaskInput = document.getElementById('new-task-input');
-    const addTaskButton = document.getElementById('add-task-button');
-    const errorDisplay = document.getElementById('error-display');
+// ./html/node/script.js
 
-    // URL base de la API (relativa al dominio/puerto de Nginx)
-    // El navegador enviará la petición a Nginx (ej: http://localhost:8080/api/tasks)
-    // Nginx la reenviará internamente a http://api:3000/tasks
-    const apiUrl = '/api/tasks';
+// --- Selectores DOM ---
+const fetchTasksBtn = document.getElementById('fetchTasksBtn');
+const taskListUl = document.getElementById('taskList');
+const fetchProductsBtn = document.getElementById('fetchProductsBtn');
+const productListUl = document.getElementById('productList');
+const addTaskForm = document.getElementById('addTaskForm');
+const newTaskInput = document.getElementById('newTaskInput');
+const errorMessageDiv = document.getElementById('error-message');
 
-    // --- Funciones Auxiliares ---
+// --- Constantes ---
+const API_BASE_URL = 'http://localhost:8080/api'; // URL base para Nginx
 
-    /** Muestra un mensaje de error en el UI */
-    function displayError(message) {
-        errorDisplay.textContent = message;
-        errorDisplay.style.display = 'block';
-        // Limpia el error después de 5 segundos
-        setTimeout(() => {
-             errorDisplay.textContent = '';
-             errorDisplay.style.display = 'none';
-        }, 5000);
+// --- Funciones Auxiliares ---
+
+// Limpia el mensaje de error
+function clearError() {
+    errorMessageDiv.textContent = '';
+}
+
+// Muestra un mensaje de error
+function displayError(message) {
+    console.error('Error:', message); // También loguea en consola
+    errorMessageDiv.textContent = `Error: ${message}`;
+}
+
+// Añade un elemento de tarea a la lista UL
+function appendTaskToList(task) {
+    const li = document.createElement('li');
+    const span = document.createElement('span'); // Para aplicar estilo si está completada
+    span.textContent = task.text; // Usa 'text' como en server.js
+    if (task.completed) {
+        li.classList.add('completed');
+    }
+    li.appendChild(span);
+    // Podrías añadir botones de completar/eliminar aquí en el futuro
+    taskListUl.appendChild(li);
+}
+
+// Añade un elemento de producto a la lista UL
+function appendProductToList(product) {
+    const li = document.createElement('li');
+    li.textContent = `${product.name} - $${product.price.toFixed(2)}`;
+    productListUl.appendChild(li);
+}
+
+// --- Lógica para TAREAS (GET) ---
+async function fetchAndDisplayTasks() {
+    clearError();
+    taskListUl.innerHTML = '<li>Cargando tareas...</li>';
+    try {
+        const response = await fetch(`${API_BASE_URL}/tasks`);
+        if (!response.ok) {
+            throw new Error(`Error HTTP al obtener tareas: ${response.status} ${response.statusText}`);
+        }
+        const tasks = await response.json();
+        console.log('Tareas recibidas:', tasks);
+        taskListUl.innerHTML = ''; // Limpia antes de añadir
+
+        if (tasks.length === 0) {
+            taskListUl.innerHTML = '<li>No hay tareas pendientes. ¡Añade una!</li>';
+        } else {
+            tasks.forEach(appendTaskToList); // Usa la función auxiliar
+        }
+    } catch (error) {
+        displayError(error.message);
+        taskListUl.innerHTML = '<li>Error al cargar tareas.</li>';
+    }
+}
+
+// --- Lógica para TAREAS (POST) ---
+async function addNewTask(event) {
+    event.preventDefault(); // Evita que el formulario recargue la página
+    clearError();
+
+    const taskText = newTaskInput.value.trim();
+
+    if (!taskText) {
+        displayError('La descripción de la tarea no puede estar vacía.');
+        return; // No envíes nada si está vacío
     }
 
-    /** Limpia la lista de tareas y las vuelve a dibujar desde un array */
-    function renderTasks(tasks) {
-        // Limpiar lista actual
-        taskList.innerHTML = '';
-        errorDisplay.style.display = 'none'; // Oculta errores previos
+    console.log('Enviando nueva tarea:', taskText);
 
-        if (!tasks || tasks.length === 0) {
-            taskList.innerHTML = '<li>No hay tareas pendientes. ¡Añade una!</li>';
-            return;
-        }
-
-        tasks.forEach(task => {
-            const li = document.createElement('li');
-            li.textContent = task.text;
-            li.dataset.id = task.id; // Guardar ID por si se implementa borrar/editar
-            if (task.completed) {
-                li.classList.add('completed');
-            }
-            // Podrías añadir botones de completar/borrar aquí
-            taskList.appendChild(li);
+    try {
+        const response = await fetch(`${API_BASE_URL}/tasks`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json', // Indica que enviamos JSON
+            },
+            // Convierte el objeto JS a una cadena JSON para el body
+            body: JSON.stringify({ text: taskText }) // Asegúrate que la clave 'text' coincida con server.js
         });
-    }
 
-    // --- Funciones API ---
-
-    /** Obtiene las tareas de la API y las renderiza */
-    async function fetchTasks() {
-        try {
-            const response = await fetch(apiUrl);
-            if (!response.ok) {
-                // Si la respuesta no es OK (ej: 404, 500), lanza un error
-                throw new Error(`Error ${response.status}: ${response.statusText || 'No se pudo conectar a la API'}`);
+        if (!response.ok) {
+            // Intenta obtener un mensaje de error del cuerpo de la respuesta si es posible
+            let errorMsg = `Error HTTP al añadir tarea: ${response.status} ${response.statusText}`;
+            try {
+                const errorData = await response.json();
+                if (errorData && errorData.error) {
+                    errorMsg = errorData.error; // Usa el mensaje del servidor si existe
+                }
+            } catch (jsonError) {
+                // No hacer nada si el cuerpo del error no es JSON válido
             }
-            const tasks = await response.json();
-            renderTasks(tasks);
-        } catch (error) {
-            console.error("Error al obtener tareas:", error);
-            taskList.innerHTML = ''; // Limpia la lista en caso de error
-            displayError(`Error al cargar tareas: ${error.message}. ¿Está la API funcionando?`);
+            throw new Error(errorMsg);
         }
+
+        const newTask = await response.json(); // El servidor devuelve la tarea creada
+        console.log('Tarea añadida con éxito:', newTask);
+
+        appendTaskToList(newTask); // Añade la nueva tarea directamente a la lista (más eficiente que recargar todo)
+        newTaskInput.value = ''; // Limpia el input
+
+    } catch (error) {
+        displayError(error.message);
     }
+}
 
-    /** Envía una nueva tarea a la API y actualiza la lista */
-    async function addTask() {
-        const taskText = newTaskInput.value.trim();
-
-        if (!taskText) {
-            displayError("Por favor, introduce el texto de la tarea.");
-            newTaskInput.focus();
-            return;
+// --- Lógica para PRODUCTOS (GET) ---
+async function fetchAndDisplayProducts() {
+    clearError();
+    productListUl.innerHTML = '<li>Cargando productos...</li>';
+    try {
+        const response = await fetch(`${API_BASE_URL}/products`);
+        if (!response.ok) {
+            throw new Error(`Error HTTP al obtener productos: ${response.status} ${response.statusText}`);
         }
+        const products = await response.json();
+        console.log('Productos recibidos:', products);
+        productListUl.innerHTML = '';
 
-        try {
-            const response = await fetch(apiUrl, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ text: taskText }), // Envía el texto en el body JSON
-            });
-
-            if (!response.ok) {
-                 // Intenta leer el error del body si es JSON
-                 let errorMsg = `Error ${response.status}: ${response.statusText || 'Fallo al añadir tarea'}`;
-                 try {
-                      const errorData = await response.json();
-                      if (errorData.error) errorMsg += ` - ${errorData.error}`;
-                 } catch (e) { /* Ignora si el body no es JSON */ }
-                 throw new Error(errorMsg);
-            }
-
-            // Si la tarea se añadió correctamente:
-            newTaskInput.value = ''; // Limpiar el campo de entrada
-            await fetchTasks();     // Recargar la lista de tareas para mostrar la nueva
-            newTaskInput.focus();   // Poner foco de nuevo en el input
-
-        } catch (error) {
-            console.error("Error al añadir tarea:", error);
-            displayError(`Error al añadir tarea: ${error.message}`);
+        if (products.length === 0) {
+            productListUl.innerHTML = '<li>No hay productos disponibles.</li>';
+        } else {
+            products.forEach(appendProductToList);
         }
+    } catch (error) {
+        displayError(error.message);
+        productListUl.innerHTML = '<li>Error al cargar productos.</li>';
     }
+}
 
-    // --- Event Listeners ---
 
-    // Añadir tarea al hacer clic en el botón
-    addTaskButton.addEventListener('click', addTask);
+// --- Event Listeners ---
+fetchTasksBtn.addEventListener('click', fetchAndDisplayTasks);
+addTaskForm.addEventListener('submit', addNewTask); // Escucha el 'submit' del formulario
+fetchProductsBtn.addEventListener('click', fetchAndDisplayProducts);
 
-    // Añadir tarea al presionar Enter en el input
-    newTaskInput.addEventListener('keypress', (event) => {
-        if (event.key === 'Enter') {
-            addTask();
-        }
-    });
-
-    // --- Carga Inicial ---
-    // Obtener y mostrar las tareas cuando la página cargue
-    fetchTasks();
-});
+// --- Carga Inicial (Opcional) ---
+// Puedes descomentar la siguiente línea si quieres que las tareas se carguen al abrir la página:
+// document.addEventListener('DOMContentLoaded', fetchAndDisplayTasks);

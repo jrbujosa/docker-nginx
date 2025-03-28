@@ -1,95 +1,53 @@
-<!-- ./html/node/index.html -->
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lista de Tareas con Node API</title>
+    <title>Tareas y Productos</title>
     <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            line-height: 1.6;
-            margin: 20px;
-            background-color: #f4f4f4;
-            color: #333;
-        }
-        .container {
-            max-width: 600px;
-            margin: auto;
-            background: #fff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        }
-        h1 {
-            text-align: center;
-            color: #0056b3;
-        }
-        ul {
-            list-style: none;
-            padding: 0;
-        }
-        li {
-            background: #e9ecef;
-            margin-bottom: 8px;
-            padding: 10px 15px;
-            border-radius: 4px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        li.completed {
-            text-decoration: line-through;
-            color: #6c757d;
-            background: #d6d8db;
-        }
-        .task-input {
-            display: flex;
-            margin-top: 20px;
-        }
-        #new-task-input {
-            flex-grow: 1;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 4px 0 0 4px;
-        }
-        #add-task-button {
-            padding: 10px 15px;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            cursor: pointer;
-            border-radius: 0 4px 4px 0;
-            transition: background-color 0.2s;
-        }
-        #add-task-button:hover {
-            background-color: #0056b3;
-        }
-        .error-message {
-             color: red;
-             text-align: center;
-             margin-top: 10px;
-        }
+        body { font-family: sans-serif; max-width: 800px; margin: 20px auto; padding: 0 15px; }
+        ul { list-style: none; padding: 0; }
+        li { margin-bottom: 8px; border-bottom: 1px solid #eee; padding-bottom: 5px; display: flex; justify-content: space-between; align-items: center; }
+        li.completed span { text-decoration: line-through; color: grey; } /* Estilo para tareas completadas */
+        h1, h2 { border-bottom: 2px solid black; padding-bottom: 5px; margin-top: 30px;}
+        button { margin: 5px; padding: 8px 15px; cursor: pointer; border: 1px solid #ccc; background-color: #f0f0f0; border-radius: 4px; }
+        button:hover { background-color: #e0e0e0; }
+        input[type="text"] { padding: 8px; margin-right: 5px; border: 1px solid #ccc; border-radius: 4px; min-width: 250px;}
+        form { margin-top: 15px; margin-bottom: 15px; display: flex; align-items: center; }
+        hr { margin-top: 30px; margin-bottom: 30px; border: 0; border-top: 1px solid #ccc; }
+        #error-message { color: red; margin-top: 10px; font-weight: bold; }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Mi Lista de Tareas</h1>
+    <h1>Mi Aplicación Completa</h1>
 
-        <ul id="task-list">
-            <!-- Las tareas se cargarán aquí dinámicamente -->
-            <li>Cargando tareas...</li>
-        </ul>
+    <div id="error-message"></div> <!-- Área para mostrar errores -->
 
-        <div id="error-display" class="error-message" style="display: none;"></div>
+    <!-- Sección de Tareas -->
+    <h2>Tareas</h2>
 
-        <div class="task-input">
-            <input type="text" id="new-task-input" placeholder="Añadir nueva tarea...">
-            <button id="add-task-button">Añadir</button>
-        </div>
-    </div>
+    <!-- Formulario para añadir nuevas tareas -->
+    <form id="addTaskForm">
+        <input type="text" id="newTaskInput" placeholder="Descripción de la nueva tarea" required>
+        <button type="submit">Añadir Tarea</button>
+    </form>
 
-    <!-- El script se carga al final -->
-    <script src="script.js"></script>
+    <button id="fetchTasksBtn">Recargar Lista de Tareas</button>
+    <ul id="taskList">
+        <!-- Las tareas se cargarán aquí -->
+        <li>Haz clic en "Recargar Lista de Tareas" para empezar.</li>
+    </ul>
+
+    <hr>
+
+    <!-- Sección de Productos -->
+    <h2>Productos</h2>
+    <button id="fetchProductsBtn">Cargar Productos</button>
+    <ul id="productList">
+        <!-- Los productos se cargarán aquí -->
+        <li>Haz clic en "Cargar Productos".</li>
+    </ul>
+
+    <script src="script.js" defer></script>
 </body>
 </html>
