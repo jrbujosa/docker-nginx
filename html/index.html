@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plataforma de Ejemplos Interactiva v2</title>
+    <!-- Enlace a la hoja de estilos externa -->
+    <link rel="stylesheet" href="style.css">
+    <!-- Para producción, los archivos CSS y JS serían minificados -->
+    <!-- Favicon (opcional pero recomendado) -->
+    <!-- <link rel="icon" href="favicon.ico" type="image/x-icon"> -->
+</head>
+<body>
+
+    <header>
+        <!-- Considerar añadir un logo aquí -->
+        <h1>Plataforma de Ejemplos</h1>
+    </header>
+
+    <aside class="sidebar-nav">
+         <h2>Navegación</h2>
+         <nav>
+             <ul>
+                 <!-- Añadida clase 'nav-link-shows-grid' y data-target -->
+                 <li><a href="#" class="nav-link-shows-grid active" data-target="dashboard">Dashboard</a></li>
+                 <li><a href="#" class="nav-link-shows-grid" data-target="html">Ejemplos HTML</a></li>
+                 <li><a href="#" class="nav-link-shows-grid" data-target="css">Ejemplos CSS</a></li>
+                 <li><a href="#" class="nav-link-shows-grid" data-target="js">Ejemplos JS</a></li>
+                 <li><a href="#">Configuración</a></li>
+                 <li><a href="#">Salir</a></li>
+             </ul>
+         </nav>
+    </aside>
+
+    <main id="main-content">
+        <h2 id="main-title">Catálogo de Ejercicios</h2>
+
+        <!-- Contenedor para la cuadrícula de tarjetas -->
+        <div id="grid-container">
+             <!-- Las tarjetas se insertarán aquí o estarán definidas estáticamente -->
+             <!-- Ejemplo de una tarjeta (reemplaza/genera según tus necesidades) -->
+             <div class="ejemplo-card">
+                <h3>Ejercicio HTML 01</h3>
+                <p>Estructura básica de un documento HTML5.</p>
+                <a data-url=".\form1\datos_form.html" data-title="MDN: Introducción a HTML">Ver Fuente</a>
+            </div>
+             <div class="ejemplo-card">
+                <h3>Ejercicio CSS 01</h3>
+                <p>Aplicando selectores básicos.</p>
+                <a data-url="https://developer.mozilla.org/es/docs/Learn/CSS/Building_blocks/Selectors/Type_Class_and_ID_Selectors" data-title="MDN: Selectores CSS">Ver Fuente</a>
+            </div>
+            <div class="ejemplo-card">
+                <h3>Ejercicio Grid 01</h3>
+                <p>Creación de un layout simple con CSS Grid.</p>
+                <a data-url="https://css-tricks.com/snippets/css/complete-guide-grid/" data-title="CSS-Tricks: Guía Grid">Ver Fuente</a>
+            </div>
+             <!-- Añade más tarjetas aquí -->
+
+        </div> <!-- Fin de #grid-container -->
+
+        <!-- Contenedor que mostrará el botón volver y el iframe -->
+        <div id="iframe-container">
+            <!-- Contenido dinámico generado por JS -->
+        </div>
+
+    </main>
+
+    <footer>
+        <p>Plataforma de Ejemplos Lenguajes de Marcas © 2024</p>
+    </footer>
+
+    <!-- Enlace al archivo JavaScript externo -->
+    <!-- 'defer' asegura que se ejecute después de parsear el HTML -->
+    <script src="script.js" defer></script>
+
+</body>
+</html>
