@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flexbox y Grid: Diseños Responsivos</title>
+    <style>
+        /* Estilos Generales */
+        body {
+            font-family: sans-serif;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* Estilos Flexbox - Barra de Navegación */
+        .navbar {
+            background-color: #333;
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .nav-links li {
+            margin-left: 20px;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+        }
+
+        /* Estilos Grid - Layout Principal */
+        .container {
+            display: grid;
+            grid-template-columns: 250px 1fr; /* Sidebar y Contenido Principal */
+            grid-template-rows: auto 1fr auto; /* Header, Contenido, Footer */
+            grid-template-areas:
+                "header header"
+                "sidebar main"
+                "footer footer";
+            min-height: 100vh;
+        }
+
+        header {
+            grid-area: header;
+            background-color: #4CAF50;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+
+        aside {
+            grid-area: sidebar;
+            background-color: #f0f0f0;
+            padding: 20px;
+        }
+
+        main {
+            grid-area: main;
+            padding: 20px;
+        }
+
+        footer {
+            grid-area: footer;
+            background-color: #333;
+            color: white;
+            text-align: center;
+            padding: 10px;
+        }
+
+        /* Estilos Flexbox - Galería dentro del Main */
+        .gallery {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+            gap: 20px;
+        }
+
+        .gallery img {
+            width: 200px;
+            height: 150px;
+            object-fit: cover;
+            border: 1px solid #ccc;
+        }
+
+
+        /* Media Queries para hacerlo Responsivo */
+        @media (max-width: 768px) {
+            .container {
+                grid-template-columns: 1fr;
+                grid-template-areas:
+                    "header"
+                    "sidebar"
+                    "main"
+                    "footer";
+            }
+
+            .navbar {
+                flex-direction: column;
+                align-items: flex-start; /* Alinear los links a la izquierda */
+            }
+
+            .nav-links {
+                flex-direction: column;
+                width: 100%;
+                margin-top: 10px;
+            }
+
+            .nav-links li {
+                margin-left: 0;
+                margin-bottom: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Barra de Navegación (Flexbox) -->
+    <nav class="navbar">
+        <h1>Mi Sitio Web</h1>
+        <ul class="nav-links">
+            <li><a href="#">Inicio</a></li>
+            <li><a href="#">Acerca de</a></li>
+            <li><a href="#">Servicios</a></li>
+            <li><a href="#">Contacto</a></li>
+        </ul>
+    </nav>
+
+    <!-- Layout Principal (Grid) -->
+    <div class="container">
+        <header>
+            <h2>Bienvenido a mi sitio web</h2>
+        </header>
+
+        <aside>
+            <h3>Categorías</h3>
+            <ul>
+                <li><a href="#">Noticias</a></li>
+                <li><a href="#">Artículos</a></li>
+                <li><a href="#">Tutoriales</a></li>
+                <li><a href="#">Eventos</a></li>
+            </ul>
+        </aside>
+
+        <main>
+            <h2>Contenido Principal</h2>
+            <p>Este es el contenido principal de la página.  Aquí puedes poner artículos, noticias, etc.</p>
+
+            <h3>Galería de Imágenes (Flexbox)</h3>
+            <div class="gallery">
+                <img src="https://via.placeholder.com/200x150" alt="Imagen 1">
+                <img src="https://via.placeholder.com/200x150" alt="Imagen 2">
+                <img src="https://via.placeholder.com/200x150" alt="Imagen 3">
+                <img src="https://via.placeholder.com/200x150" alt="Imagen 4">
+                <img src="https://via.placeholder.com/200x150" alt="Imagen 5">
+                <img src="https://via.placeholder.com/200x150" alt="Imagen 6">
+            </div>
+        </main>
+
+        <footer>
+            <p>© 2023 Mi Sitio Web</p>
+        </footer>
+    </div>
+
+</body>
+</html>

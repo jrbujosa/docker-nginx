@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Consumo de API REST</title>
+</head>
+<body>
+  <h1>Lista de Usuarios</h1>
+  <ul id="lista-usuarios">
+    <!-- Aquí se insertarán los usuarios -->
+  </ul>
+
+  <script>
+    // URL de la API (reemplaza con la URL correcta)
+    const apiUrl = '/api/usuarios';
+
+    // Función para obtener los usuarios de la API
+    async function obtenerUsuarios() {
+      try {
+        const response = await fetch(apiUrl);
+
+        if (!response.ok) {
+          throw new Error(`Error en la petición: ${response.status}`);
+        }
+
+        const usuarios = await response.json();
+
+        // Mostrar los usuarios en la página
+        mostrarUsuarios(usuarios);
+
+      } catch (error) {
+        console.error('Error al obtener los usuarios:', error);
+        document.getElementById('lista-usuarios').innerHTML = '<li>Error al cargar los usuarios</li>';
+      }
+    }
+
+    // Función para mostrar los usuarios en la página
+    function mostrarUsuarios(usuarios) {
+      const listaUsuarios = document.getElementById('lista-usuarios');
+
+      usuarios.forEach(usuario => {
+        const li = document.createElement('li');
+        li.textContent = `${usuario.nombre} (${usuario.email})`;
+        listaUsuarios.appendChild(li);
+      });
+    }
+
+    // Llamar a la función para obtener los usuarios cuando la página se cargue
+    obtenerUsuarios();
+  </script>
+</body>
+</html>

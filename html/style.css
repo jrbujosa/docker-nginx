@@ -1,0 +1,342 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html, body {
+    height: 100%;
+}
+
+body {
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    display: grid;
+    grid-template-columns: 240px 1fr; /* Sidebar fija, contenido flexible */
+    grid-template-rows: 60px 1fr auto; /* Header fijo, contenido flexible, footer auto */
+    grid-template-areas:
+        "header header"
+        "sidebar main"
+        "sidebar footer";
+    min-height: 100vh; /* Asegura altura mínima incluso con poco contenido */
+    color: #333;
+    background-color: #f4f6f9;
+}
+
+/* --- Layout Principal --- */
+header {
+    grid-area: header;
+    background-color: #ffffff;
+    padding: 0 1.5rem;
+    display: flex;
+    align-items: center;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
+    z-index: 10; /* Encima del sidebar si hay solapamiento */
+    border-bottom: 1px solid #e0e0e0;
+}
+
+header h1 {
+    font-size: 1.4rem;
+    font-weight: 600;
+}
+
+.sidebar-nav {
+    grid-area: sidebar;
+    background-color: #2c3a47; /* Un azul oscuro/gris */
+    color: #f1f2f6;
+    padding: 1.5rem 1rem;
+    overflow-y: auto; /* Scroll si los botones exceden la altura */
+    display: flex;
+    flex-direction: column; /* Asegura que h2 y nav se apilen */
+}
+
+.sidebar-nav h2 {
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #a4b0be; /* Gris claro azulado */
+    margin-bottom: 1.5rem;
+    padding-left: 0.5rem;
+    flex-shrink: 0; /* Evita que el título se encoja */
+}
+
+.sidebar-nav nav {
+    flex-grow: 1; /* Permite que la lista de botones ocupe espacio */
+}
+
+.sidebar-nav nav ul {
+    list-style: none;
+}
+
+.sidebar-nav nav ul li {
+    margin-bottom: 0.5rem;
+}
+
+.sidebar-button {
+    /* Reset básico */
+    background: none;
+    border: none;
+    font: inherit;
+    cursor: pointer;
+    outline: none; /* Quitar outline por defecto, manejar foco si es necesario */
+    /* Estilos */
+    color: #dadedf; /* Texto gris claro */
+    display: block;
+    width: 100%;
+    text-align: left;
+    padding: 0.75rem 0.5rem; /* Padding generoso */
+    border-radius: 4px;
+    transition: color 0.2s ease, background-color 0.2s ease;
+}
+
+.sidebar-button:hover,
+.sidebar-button:focus { /* Añadido :focus para accesibilidad */
+    color: #ffffff;
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.sidebar-button.active {
+     color: #ffffff;
+     font-weight: 600;
+     background-color: #54a0ff; /* Azul brillante para el activo */
+}
+
+
+/* --- Área Principal de Contenido --- */
+main#main-content {
+    grid-area: main;
+    padding: 2rem;
+    overflow-y: auto; /* Permite scroll si el contenido cargado es largo */
+    position: relative; /* Para posicionar elementos internos si es necesario */
+}
+
+/* Ocultamos CONTENEDORES específicos por defecto, JS los mostrará */
+#main-content > #iframe-view-container,
+#main-content > #grid-container,
+#main-content > h2#main-title {
+    display: none; /* Ocultos hasta que JS cambie el estilo inline */
+}
+
+/* Estilo para el título H2 (cuando es visible, JS le da display: block) */
+#main-content h2#main-title {
+    margin-bottom: 1.5rem;
+    color: #2c3a47;
+    font-size: 1.8rem;
+    font-weight: 600;
+    border-bottom: 1px solid #dee2e6; /* Línea sutil debajo */
+    padding-bottom: 0.5rem;
+}
+
+/* --- Estilos específicos para Fragmentos --- */
+
+/* Estilo para el GRID (BASE: 3 columnas por defecto para pantallas grandes) */
+#main-content #grid-container {
+    display: grid; /* Definimos grid como layout base */
+    /* Por defecto (escritorios > ~992px), mostramos 3 columnas */
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+    width: 100%;
+    /* NOTA: La visibilidad inicial (display: none) se controla arriba y con JS */
+}
+
+/* Estilo para las TARJETAS DENTRO DEL GRID */
+#main-content .ejemplo-card {
+    background-color: #ffffff;
+    padding: 1.5rem;
+    border-radius: 6px;
+    box-shadow: 0 2px 4px rgba(44, 62, 80, 0.1);
+    min-height: 150px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; /* Empuja el enlace hacia abajo */
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+    border-left: 5px solid transparent; /* Borde inicial transparente */
+}
+
+#main-content .ejemplo-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 4px 8px rgba(44, 62, 80, 0.12);
+}
+
+#main-content .ejemplo-card h3 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #343a40;
+    margin-bottom: 0.75rem;
+}
+
+#main-content .ejemplo-card p {
+    font-size: 0.95rem;
+    color: #495057;
+    line-height: 1.5;
+    flex-grow: 1; /* Ocupa espacio disponible */
+    margin-bottom: 1rem;
+}
+
+#main-content .ejemplo-card a[data-url] {
+    color: #0d6efd; /* Azul típico de enlace */
+    text-decoration: none;
+    font-weight: 500;
+    align-self: flex-start; /* Para que no ocupe todo el ancho */
+    padding: 0.2rem 0; /* Área de clic ligeramente mayor */
+    cursor: pointer;
+}
+
+#main-content .ejemplo-card a[data-url]:hover {
+    text-decoration: underline;
+    color: #0a58ca; /* Azul más oscuro */
+}
+
+/* Colores para los bordes izquierdos de las tarjetas */
+#main-content .ejemplo-card:nth-child(4n+1) { border-left-color: #1abc9c; /* Verde */ }
+#main-content .ejemplo-card:nth-child(4n+2) { border-left-color: #3498db; /* Azul */ }
+#main-content .ejemplo-card:nth-child(4n+3) { border-left-color: #e74c3c; /* Rojo */ }
+#main-content .ejemplo-card:nth-child(4n+4) { border-left-color: #f39c12; /* Naranja */ }
+
+
+/* --- Estilos para la vista de IFRAME (cuando es visible, JS le da display: flex) --- */
+#main-content #iframe-view-container {
+    /* display: flex; Se activa con JS */
+    flex-direction: column; /* Botón arriba, iframe abajo */
+    position: absolute;
+    top: 2rem;
+    left: 2rem;
+    right: 2rem;
+    bottom: 0;
+    height: calc(100% - 2rem);
+    width: calc(100% - 4rem);
+}
+
+#main-content #iframe-view-container iframe {
+    display: block;
+    width: 100%;
+    flex-grow: 1;
+    border: 1px solid #ccc;
+    background-color: #ffffff;
+}
+
+#main-content #back-to-list-btn {
+    background-color: #6c757d;
+    color: white;
+    border: none;
+    padding: 0.6rem 1.2rem;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: 500;
+    margin-bottom: 1rem;
+    align-self: flex-start;
+    transition: background-color 0.2s ease;
+    flex-shrink: 0;
+}
+
+#main-content #back-to-list-btn:hover {
+    background-color: #5a6268;
+}
+
+
+/* --- Estilos para mensajes de Carga y Error --- */
+#main-content .loading-message,
+#main-content .error-message {
+     display: block;
+     padding: 3rem 2rem;
+     text-align: center;
+     font-size: 1.1rem;
+     color: #6c757d;
+     width: 100%;
+ }
+#main-content .loading-message::before {
+    content: "⏳ ";
+    margin-right: 0.5em;
+}
+
+#main-content .error-message {
+    color: #dc3545;
+    font-weight: bold;
+    border: 1px solid #f5c6cb;
+    background-color: #f8d7da;
+    border-radius: 4px;
+}
+#main-content .error-message::before {
+    content: "❌ ";
+    margin-right: 0.5em;
+}
+
+
+/* --- Footer --- */
+footer {
+    grid-area: footer;
+    background-color: #ffffff;
+    color: #6c757d;
+    text-align: center;
+    padding: 1rem;
+    border-top: 1px solid #e0e0e0;
+    font-size: 0.85rem;
+}
+
+/* --- Estilos Específicos para el Fragmento de Arquitectura --- */
+#main-content .arquitectura-view {
+    margin-top: 1rem;
+}
+
+#main-content .arquitectura-view p {
+    font-size: 1rem;
+    color: #495057;
+    margin-bottom: 1rem;
+    line-height: 1.6;
+}
+
+#main-content .arquitectura-view pre {
+    background-color: #f8f9fa;
+    color: #343a40;
+    border: 1px solid #dee2e6;
+    border-left: 5px solid #0d6efd;
+    padding: 1.5rem;
+    border-radius: 5px;
+    font-family: Consolas, 'Courier New', Courier, monospace;
+    font-size: 0.9em;
+    line-height: 1.5;
+    overflow-x: auto;
+    white-space: pre;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+
+#main-content .arquitectura-view p.nota {
+    font-size: 0.9rem;
+    font-style: italic;
+    color: #6c757d;
+    margin-top: 1.5rem;
+    text-align: center;
+    border-top: 1px dashed #ced4da;
+    padding-top: 1rem;
+}
+
+/* --- Media Queries para Responsividad del Grid --- */
+
+/* Estilos para Tablets (ej: < 992px) */
+@media (max-width: 991.98px) {
+    #main-content #grid-container {
+        grid-template-columns: repeat(2, 1fr); /* 2 columnas */
+    }
+}
+
+/* Estilos para Móviles (ej: < 768px) */
+@media (max-width: 767.98px) {
+    #main-content #grid-container {
+        grid-template-columns: 1fr; /* 1 columna */
+    }
+
+    /* Opcional: Reducir padding en pantallas muy pequeñas si es necesario */
+    main#main-content {
+        padding: 1rem;
+    }
+    #main-content #iframe-view-container {
+        top: 1rem;
+        left: 1rem;
+        right: 1rem;
+        height: calc(100% - 1rem);
+        width: calc(100% - 2rem);
+    }
+    #main-content h2#main-title {
+        font-size: 1.5rem;
+    }
+}

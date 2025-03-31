@@ -1,0 +1,15 @@
+# Ignorar la clave de Google IA Studio API 
+.env
+
+./temp/*
+
+# Ignorar el directorio node_modules dentro de la carpeta api/
+/api/node_modules/
+
+# Ignorar todo el CONTENIDO dentro de la carpeta logs/
+# El * coincide con cualquier archivo o subdirectorio dentro de logs/
+/logs/*
+
+# ¡PERO NO ignores el archivo .gitkeep dentro de logs!
+# Esto nos permite mantener la carpeta logs/ versionada aunque esté "vacía".
+!/logs/.gitkeep

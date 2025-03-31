@@ -1,0 +1,34 @@
+[
+  {
+    "id": 1,
+    "nombre": "Laptop Ultrabook Pro 14",
+    "marca": "TechCorp",
+    "precio": 1299.99,
+    "descripcion": "Una laptop ultraligera y potente para profesionales en movimiento.",
+    "stock": 25
+  },
+  {
+    "id": 2,
+    "nombre": "Monitor Curvo 34 Pulgadas",
+    "marca": "VisionTech",
+    "precio": 449.50,
+    "descripcion": "Un monitor curvo de alta resolución para una experiencia inmersiva.",
+    "stock": 15
+  },
+  {
+    "id": 3,
+    "nombre": "Teclado Mecánico Gaming RGB",
+    "marca": "GameMaster",
+    "precio": 89.00,
+    "descripcion": "Un teclado mecánico con iluminación RGB personalizable para gamers.",
+    "stock": 50
+  },
+  {
+    "id": 4,
+    "nombre": "Mouse Inalámbrico Ergonómico",
+    "marca": "ErgoSoft",
+    "precio": 39.75,
+    "descripcion": "Un mouse inalámbrico diseñado para la comodidad y la productividad.",
+    "stock": 30
+  }
+]

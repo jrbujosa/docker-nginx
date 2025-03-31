@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plataforma de Ejemplos Lenguaje de Marcas</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- <link rel="icon" href="favicon.ico" type="image/x-icon"> -->
+</head>
+<body>
+
+    <header>
+        <h1>IES Tierno Galván - Lenguaje de Marcas - ASIR1 & DAW1 - Plataforma de Ejemplos</h1>
+    </header>
+
+    <aside class="sidebar-nav">
+         <h2>Navegación</h2>
+         <nav>
+             <ul>
+                 <!-- Botones con data-fragment para cargar contenido dinámico -->
+                 <li><button class="sidebar-button active" data-fragment="ejemplos-js.html">Ejemplos JS</button></li>
+                 <li><button class="sidebar-button" data-fragment="ejemplos-html.html">Ejemplos HTML</button></li>
+                 <li><button class="sidebar-button" data-fragment="ejemplos-css.html">Ejemplos CSS</button></li>
+                 <li><button class="sidebar-button" data-fragment="arquitectura.html">Arquitectura</button></li>
+                 <!-- El botón salir necesitaría JS adicional si es una acción -->
+                 <li><button class="sidebar-button" data-action="logout">Salir</button></li>
+             </ul>
+         </nav>
+    </aside>
+
+    <!-- El contenedor principal ahora se llenará dinámicamente -->
+    <!-- Se inicia vacío, el JS gestionará el estado 'Cargando...' -->
+    <main id="main-content"></main>
+
+    <footer>
+        <p>Plataforma de Ejemplos Lenguajes de Marcas © 2024</p>
+    </footer>
+
+    <script src="script.js" defer></script>
+
+</body>
+</html>

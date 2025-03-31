@@ -1,0 +1,121 @@
+
+
+html/
+├── index.html
+├── style.css
+├── script.js
+└── fragments/
+    ├── dashboard.html
+    ├── ejemplos-html.html
+    ├── ejemplos-css.html
+    ├── ejemplos-js.html
+    └── configuracion.html
+    └── (otros fragmentos que necesites)
+
+Implementación de navegación dinámica con carga de fragmentos HTML.
+
+Esta arquitectura te proporciona una base mucho más sólida y organizada para tu aplicación.
+
+Flujo de Control para Cargar dashboard.html (al iniciar la página):
+
+Carga Inicial de index.html: El navegador solicita y recibe index.html.
+
+Parseo del HTML: El navegador empieza a interpretar el HTML.
+
+Encuentra <link rel="stylesheet" href="style.css">: Descarga y aplica las reglas CSS. Importante: En este punto, style.css define la estructura general (grid del body), los estilos de los elementos visibles (header, aside, footer), y muy crucialmente, establece que los contenedores dinámicos dentro de <main> como #grid-container, #iframe-view-container y el título #main-title deben estar ocultos por defecto (display: none;). El <p>Cargando...</p> inicial dentro de <main> es visible brevemente.
+
+Encuentra <script src="script.js" defer></script>: Descarga el archivo script.js, pero gracias a defer, espera a que el HTML esté completamente parseado para ejecutarlo.
+
+Ejecución del Script (script.js): Una vez que el DOM está listo (DOMContentLoaded event), el script se ejecuta:
+
+Listener DOMContentLoaded: Todo el código principal está dentro de este listener, asegurando que el HTML existe antes de intentar manipularlo.
+
+Selección de Elementos: Se obtienen referencias al <main id="main-content"> y a los botones del sidebar.
+
+Definición de Funciones: Se definen las funciones clave: showMainContentElement, loadMainContent, showExerciseInIframe, updateActiveButton.
+
+Bloque de Inicialización (al final del script):
+
+Se busca el botón del sidebar que tenga la clase active en el HTML (.sidebar-button.active). En tu index.html, es el botón "Dashboard".
+
+Se obtiene el valor de data-fragment de ese botón activo (dashboard.html). Se almacena en initialFragment.
+
+Se llama a updateActiveButton para asegurar visualmente que ese botón (Dashboard) tiene el estilo activo (aunque ya lo tenía por la clase en el HTML, esto es robusto).
+
+¡Llamada Clave! Se ejecuta loadMainContent(initialFragment), pasándole "dashboard.html".
+
+Ejecución de loadMainContent('dashboard.html'):
+
+Guarda 'dashboard.html' en currentFragment.
+
+Construye la ruta: filePath = './fragments/dashboard.html'.
+
+Muestra "Cargando...":
+
+Crea un elemento <p class="loading-message">Cargando...</p>.
+
+Lo añade al final del contenido actual de mainContent.
+
+Llama a showMainContentElement(loadingMsg).
+
+Ejecución de showMainContentElement(loadingMsg):
+
+Oculta todos los hijos directos de mainContent (incluyendo el <p>Cargando...</p> inicial del HTML si aún estuviera, y cualquier otro como #grid-container si existiera previamente) estableciendo element.style.display = 'none'.
+
+Muestra específicamente el loadingMsg que se acaba de crear estableciendo loadingMsg.style.display = 'block'.
+
+Fetch Asíncrono:
+
+Usa fetch(filePath) para solicitar el contenido de ./fragments/dashboard.html. La ejecución del script espera (await) a que el servidor responda.
+
+Procesamiento de Respuesta:
+
+Si la respuesta es exitosa (response.ok), lee el contenido HTML del fragmento (response.text()).
+
+Inyección de Contenido:
+
+¡Paso Crítico! mainContent.innerHTML = htmlContent;. Esto reemplaza todo el contenido actual de <main> (incluido el mensaje "Cargando..." que se mostró temporalmente) con el HTML recibido de dashboard.html. Ahora <main> contiene la estructura definida en dashboard.html (que asumimos incluye un h2#main-title y un div#grid-container con las tarjetas).
+
+Manejo Post-Inyección:
+
+Busca #grid-container dentro del nuevo contenido de mainContent.
+
+Como lo encuentra, llama a showMainContentElement(gridContainer).
+
+Ejecución de showMainContentElement(gridContainer):
+
+Oculta todos los hijos directos de mainContent (que ahora son los elementos de dashboard.html, como #main-title, #grid-container, etc.) con element.style.display = 'none'.
+
+Detecta que el id del elemento a mostrar es 'grid-container'.
+
+Muestra el #grid-container estableciendo gridContainer.style.display = 'grid'.
+
+Busca el #main-title.
+
+Muestra el #main-title estableciendo mainTitle.style.display = 'block'.
+
+Finalización: Imprime un mensaje en consola y resetea el scroll de mainContent.
+
+Interacción JS y CSS en este caso (dashboard.html):
+
+CSS (Estado Inicial y Estilos Base):
+
+Define la maquetación general (body grid).
+
+Oculta por Defecto: Lo más importante aquí es que style.css tiene reglas como #main-content > #grid-container { display: none; } y #main-content > h2#main-title { display: none; }. Esto asegura que incluso si el HTML del fragmento se carga, no se verá hasta que el JS lo permita explícitamente.
+
+Define la Apariencia: CSS también define cómo se verá #grid-container cuando sea visible (display: grid, grid-template-columns, gap), cómo se verán las tarjetas (.ejemplo-card con sus colores, sombras, bordes) y el título (#main-title con su tamaño, color, etc.).
+
+JavaScript (Orquestación y Control de Visibilidad):
+
+Disparador: Inicia la carga del fragmento dashboard.html al final de la carga inicial de la página.
+
+Manejo de Estados: Muestra un mensaje temporal ("Cargando...") mientras espera la respuesta del fetch. Esto lo hace creando el elemento y usando showMainContentElement para asegurar que solo ese mensaje sea visible momentáneamente (estableciendo display: block en él y display: none en otros).
+
+Inyección Dinámica: Reemplaza el contenido de <main> con el HTML del fragmento (innerHTML).
+
+Activación de Visibilidad: Usa la función showMainContentElement para anular las reglas display: none; del CSS. Lo hace estableciendo estilos inline (element.style.display = 'grid' para #grid-container y element.style.display = 'block' para #main-title). Los estilos inline tienen mayor especificidad que las reglas en el archivo CSS, por lo que los elementos ahora se muestran.
+
+Confianza en CSS: Una vez que JS hace visibles los elementos (#grid-container, #main-title, y sus hijos como .ejemplo-card), ya no necesita preocuparse por cómo se ven. Todas las reglas de apariencia definidas en style.css (colores, espaciado, sombras, fuentes, etc.) se aplican automáticamente a los elementos ahora visibles.
+
+En resumen: CSS define el "qué" (la apariencia y el estado oculto inicial) y JS controla el "cuándo" y el "cómo" se carga y se hace visible el contenido dinámico, utilizando estilos inline para gestionar la visibilidad de los contenedores principales (#grid-container, #main-title) dentro de <main>.

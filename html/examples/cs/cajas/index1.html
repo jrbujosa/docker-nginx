@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ejercicio Modelo de Caja</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .box {
+            width: 200px;
+            height: 100px;
+            padding: 20px;
+            border: 5px solid blue;
+            margin: 20px;
+            background-color: lightgray;
+        }
+        .content-box {
+            box-sizing: content-box;
+        }
+        .border-box {
+            box-sizing: border-box;
+        }
+        .margin-collapse {
+            background-color: lightcoral;
+            margin-bottom: 20px;
+        }
+        .margin-collapse + .margin-collapse {
+            margin-top: 20px; /* Demostración del colapso de márgenes */
+        }
+    </style>
+</head>
+<body>
+    <h2>Ejercicio: Modelo de Caja en CSS</h2>
+    <p>Observa cómo afectan `box-sizing`, padding y margen a los elementos.</p>
+
+    <div class="box content-box">box-sizing: content-box</div>
+    <div class="box border-box">box-sizing: border-box</div>
+
+    <h3>Colapso de márgenes</h3>
+    <div class="margin-collapse">Div 1</div>
+    <div class="margin-collapse">Div 2</div>
+
+    <p>Abre el inspector del navegador y usa la pestaña "Computed" para analizar el modelo de caja.</p>
+</body>
+</html>
