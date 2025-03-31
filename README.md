@@ -4,7 +4,33 @@
 - Debe estar instalado Docker
 - Debe estar instalado Docker Compose
 
-## Instalación
+0.- Detener y borrar contenedores existentes (si aplica)
+Si has ejecutado este proyecto antes, debes elimina los contenedores asociados:
+
+- nginx_server
+- php_server
+- node_api_server
+
+0.1 Pasos para detener y borrar contenedores:
+
+Para ver los contenedores en ejecución:
+
+docker ps
+
+Detén los contenedores necesarios (reemplaza los nombres):
+
+docker stop nginx_server php_server node_api_server
+
+Elimina los contenedores necesarios (reemplaza los nombres):
+
+docker rm nginx_server php_server node_api_server
+0.2.- Comprobar disponibilidad del puerto 8080
+
+Verifica qué contenedores están usando puertos con:
+
+docker ps
+
+Si algún otro contenedor (no relacionado con este proyecto) está usando el puerto 8080, necesitarás detener ese contenedor o cambiar el puerto en el archivo docker-compose.yml de este proyecto.
 
 1.- Clonar este repositorio
 ```bash 

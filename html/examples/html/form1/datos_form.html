@@ -3,28 +3,236 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Formulario de Prueba</title>
+    <title>Formulario de Datos - Moderno</title>
+    <style>
+        /* --- Estilos Generales --- */
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+            background: linear-gradient(to bottom right, #f0f4f8, #d9e2ec); /* Gradiente sutil azul-gris */
+            color: #333;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column; /* Alinear contenido verticalmente */
+            align-items: center; /* Centrar horizontalmente */
+            min-height: 100vh;
+        }
+
+        .page-header {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #2c3e50; /* Azul oscuro grisáceo */
+        }
+
+        .page-header h2 {
+            margin-bottom: 5px;
+            font-size: 1.8em;
+        }
+
+        .page-header h3 {
+            margin-top: 0;
+            font-weight: 400;
+            color: #555;
+            font-size: 1.1em;
+        }
+
+        hr {
+            border: 0;
+            height: 1px;
+            background-image: linear-gradient(to right, rgba(0, 0, 0, 0), rgba(44, 62, 80, 0.75), rgba(0, 0, 0, 0));
+            width: 80%;
+            margin-bottom: 40px;
+        }
+
+        /* --- Contenedor del Formulario --- */
+        .form-container {
+            background-color: #ffffff;
+            padding: 35px 45px;
+            border-radius: 10px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+            max-width: 500px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .form-container h3 {
+             text-align: center;
+             color: #1a5f7a; /* Azul verdoso */
+             margin-top: 0;
+             margin-bottom: 25px;
+             font-weight: 600;
+        }
+
+        /* --- Grupos de Formulario --- */
+        .form-group {
+            margin-bottom: 22px;
+            position: relative;
+        }
+
+        /* Estilo específico para el grupo de selección de método */
+        .method-selector {
+            border: 1px solid #e0e0e0;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 25px;
+            background-color: #f8f9fa;
+        }
+        .method-selector p {
+            margin: 0 0 10px 0;
+            font-weight: 500;
+             color: #495057;
+             font-size: 0.95rem;
+        }
+        .method-selector label {
+            display: inline-block; /* Para ponerlos en línea */
+            margin-right: 20px; /* Espacio entre opciones */
+            font-weight: normal; /* Peso normal para etiquetas de radio */
+            cursor: pointer;
+        }
+        .method-selector input[type="radio"] {
+            margin-right: 5px;
+            cursor: pointer;
+            accent-color: #1a5f7a; /* Color del radio */
+        }
+
+
+        /* --- Etiquetas --- */
+        label:not(.method-selector label) { /* Aplicar a etiquetas excepto las de radio */
+            display: block;
+            margin-bottom: 7px;
+            font-weight: 500;
+            color: #495057;
+            font-size: 0.95rem;
+        }
+
+        /* --- Inputs --- */
+        input[type="text"],
+        input[type="number"],
+        input[type="email"] {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1px solid #ced4da;
+            border-radius: 5px;
+            box-sizing: border-box;
+            font-size: 1rem;
+            color: #495057;
+            background-color: #f8f9fa;
+            transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+        }
+
+        input[type="text"]:focus,
+        input[type="number"]:focus,
+        input[type="email"]:focus {
+            border-color: #80bdff;
+            box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+            outline: none;
+            background-color: #fff;
+        }
+
+        /* --- Botón --- */
+        button[type="submit"] {
+            display: block;
+            width: 100%;
+            background: linear-gradient(to right, #1a5f7a, #1d7f8a);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 5px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s ease, transform 0.1s ease;
+            margin-top: 15px;
+            letter-spacing: 0.5px;
+        }
+
+        button[type="submit"]:hover {
+            background: linear-gradient(to right, #1d7f8a, #21a1af);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        button[type="submit"]:active {
+             transform: translateY(0px);
+             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        /* --- Pequeños ajustes para input numérico (opcional) --- */
+        input[type=number]::-webkit-inner-spin-button,
+        input[type=number]::-webkit-outer-spin-button {
+          -webkit-appearance: none;
+          margin: 0;
+        }
+        input[type=number] {
+          -moz-appearance: textfield; /* Firefox */
+        }
+
+    </style>
 </head>
 <body>
-    <h2>IES Tierno Galván-27/3/25</h2>
-    <h3>Trabajo: Lenguajes de marcas - HTML</h3>
-    <hr>
-    <h3>Enviando datos al servidor</h3>
-    
-    <form action="datos_form.php" method="get">
-        <label for="nombre">Nombre:</label>
-        <input type="text" id="nombre" name="nombre" required>
-        <br>
-        <label for="apellido">Apellido:</label>
-        <input type="text" id="apellido" name="apellido" required>
-        <br>
-        <label for="edad">Edad:</label>
-        <input type="number" id="edad" name="edad" required>
-        <br>
-        <label for="correo">Correo Electrónico:</label>
-        <input type="email" id="correo" name="correo" required>
-        <br>
-        <button type="submit">Enviar</button>
-    </form>
+   <hr>
+
+    <div class="form-container">
+        <h3>Enviando datos al servidor</h3>
+
+        <!-- Se añade ID al formulario para referenciarlo con JS -->
+        <form id="dataForm" action="datos_form.php" method="get"> <!-- Empieza con GET por defecto -->
+
+            <!-- *** NUEVO CAMPO PARA SELECCIONAR MÉTODO *** -->
+            <div class="form-group method-selector">
+                <p>Selecciona el método de envío:</p>
+                <label for="method_get">
+                    <input type="radio" id="method_get" name="http_method" value="get" checked> GET
+                </label>
+                <label for="method_post">
+                    <input type="radio" id="method_post" name="http_method" value="post"> POST
+                </label>
+            </div>
+            <!-- ******************************************* -->
+
+            <div class="form-group">
+                <label for="nombre">Nombre:</label>
+                <input type="text" id="nombre" name="nombre" required placeholder="Escribe tu nombre">
+            </div>
+
+            <div class="form-group">
+                <label for="apellido">Apellido:</label>
+                <input type="text" id="apellido" name="apellido" required placeholder="Escribe tu apellido">
+            </div>
+
+            <div class="form-group">
+                <label for="edad">Edad:</label>
+                <input type="number" id="edad" name="edad" required min="1" placeholder="Tu edad">
+            </div>
+
+            <div class="form-group">
+                <label for="correo">Correo Electrónico:</label>
+                <input type="email" id="correo" name="correo" required placeholder="tu.email@ejemplo.com">
+            </div>
+
+            <button type="submit">Enviar Datos</button>
+        </form>
+    </div>
+
+    <!-- *** SCRIPT PARA CAMBIAR EL MÉTODO DEL FORMULARIO *** -->
+    <script>
+        // Seleccionar el formulario y los botones de radio
+        const dataForm = document.getElementById('dataForm');
+        const methodRadios = document.querySelectorAll('input[name="http_method"]');
+
+        // Añadir un listener a cada botón de radio
+        methodRadios.forEach(radio => {
+            radio.addEventListener('change', function() {
+                // Cuando un radio cambia, actualizar el atributo 'method' del formulario
+                // con el valor ('get' o 'post') del radio seleccionado
+                dataForm.method = this.value;
+                // Opcional: Mostrar en consola para verificar
+                // console.log(`Método del formulario cambiado a: ${dataForm.method}`);
+            });
+        });
+    </script>
+    <!-- **************************************************** -->
+
 </body>
 </html>

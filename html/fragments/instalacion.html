@@ -1,0 +1,100 @@
+<style>
+  /* Añadir margen superior e inferior a las cabeceras H2 dentro de la sección de instalación */
+  .arquitectura-view h2 {
+    margin-top: 2em; /* Espacio por encima (ajusta si es necesario) */
+    margin-bottom: 1em; /* Espacio por debajo (ajusta este valor: 0.5em, 1.5em, 15px) */
+  }
+
+  /* Indentar las listas (ajusta el padding según necesites) */
+  .arquitectura-view ul {
+     padding-left: 40px; /* Ajusta este valor para mover toda la lista (bullets incluidos) */
+  }
+  
+  /* Estilos para los items de la lista */
+  .arquitectura-view ul li {
+    /* padding-left: 1.5em; */ /* Probablemente ya no necesitas esto si indentas el UL */
+    margin-bottom: 0.5em; /* Espacio vertical entre items */
+  }
+
+  /* Quitar el margen inferior del último item de cada lista */
+   .arquitectura-view ul li:last-child {
+     margin-bottom: 0;
+   }
+
+  /* Opcional: Si no quieres margen extra en la PRIMERA cabecera H2 dentro del div */
+  /*
+  .arquitectura-view h2:first-of-type {
+     margin-top: 0;
+  }
+  */
+</style>
+
+<!-- Resto del HTML sin cambios -->
+<h2 id="main-title">Instalación</h2>
+
+<div class="arquitectura-view">
+  <h3>Pasos para la instalación de este sitio web en local</h3>
+
+  <h2>0.- Prerrequisitos</h2>
+  <ul>
+    <li>Debe estar instalado Docker.</li>
+    <li>Debe estar instalado Docker Compose.</li>
+  </ul>
+
+  <h2>1.- Borrar la carpeta "docker-nginx" si existe previamente</h2>
+  <p>Asegúrate de que no exista un directorio llamado <code>docker-nginx</code> en la ubicación donde clonarás el repositorio, o elimínalo si existe.</p>
+
+  <h2>2.- Detener y borrar contenedores existentes (si aplica)</h2>
+  <p>Si has ejecutado este proyecto antes, debes elimina los contenedores asociados:</p>
+  <ul>
+    <li><code>nginx_server</code></li>
+    <li><code>php_server</code></li>
+    <li><code>node_api_server</code></li>
+  </ul>
+  <p>Pasos para detener y borrar contenedores:</p>
+  <ul>
+    <li>Para ver los contenedores en ejecución:
+      <pre><code>docker ps</code></pre>
+    </li>
+    <li>Detén los contenedores necesarios (reemplaza los nombres):
+      <pre><code>docker stop nginx_server php_server node_api_server</code></pre>
+    </li>
+    <li>Elimina los contenedores necesarios (reemplaza los nombres):
+      <pre><code>docker rm nginx_server php_server node_api_server</code></pre>
+    </li>
+  </ul>
+
+  <h2>3.- Comprobar disponibilidad del puerto 8080</h2>
+  <ul>
+    <li>Verifica qué contenedores están usando puertos con:
+      <pre><code>docker ps</code></pre>
+    </li>
+    <li>Si algún otro contenedor (no relacionado con este proyecto) está usando el puerto <code>8080</code>, necesitarás detener ese contenedor o cambiar el puerto en el archivo <code>docker-compose.yml</code> de este proyecto.</li>
+  </ul>
+
+  <h2>4.- Clonar el repositorio</h2>
+  <p>Abre tu terminal y ejecuta el siguiente comando:</p>
+  <pre><code>git clone https://github.com/jrbujosa/docker-nginx.git</code></pre>
+
+  <h2>5.- Navega al directorio del proyecto</h2>
+  <p>Cambia al directorio recién clonado:</p>
+  <pre><code>cd docker-nginx</code></pre>
+
+  <h2>6.- Inicia los contenedores</h2>
+  <p>Dentro del directorio <code>docker-nginx</code>, ejecuta:</p>
+  <pre><code>docker-compose up -d</code></pre>
+  <p>Este comando construirá las imágenes (si es necesario) y creará e iniciará los contenedores en segundo plano (<code>-d</code>).</p>
+  <p>Puedes verificar el estado de los contenedores con:</p>
+  <pre><code>docker ps</code></pre>
+  <p>Puedes ver los logs de un contenedor específico (por ejemplo, <code>nginx_server</code>) con:</p>
+  <pre><code>docker logs nginx_server</code></pre>
+
+  <h2>7.- Acceder al servidor web</h2>
+  <p>Abre tu navegador web y visita:</p>
+  <p><a href="http://localhost:8080/index.html">http://localhost:8080/index.html</a></p>
+
+  <h2>8.- Acceder a un contenedor (Opcional)</h2>
+  <p>Si necesitas ejecutar comandos dentro de un contenedor específico, por ejemplo, en <code>nginx_server</code>:</p>
+  <pre><code>docker exec -it nginx_server sh</code></pre>
+
+</div>

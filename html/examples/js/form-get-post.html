@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulario de Datos - Moderno</title>
+    <style>
+        /* --- Estilos Generales (sin cambios) --- */
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+            background: linear-gradient(to bottom right, #f0f4f8, #d9e2ec);
+            color: #333;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .page-header { text-align: center; margin-bottom: 30px; color: #2c3e50; }
+        .page-header h2 { margin-bottom: 5px; font-size: 1.8em; }
+        .page-header h3 { margin-top: 0; font-weight: 400; color: #555; font-size: 1.1em; }
+        hr { border: 0; height: 1px; background-image: linear-gradient(to right, rgba(0, 0, 0, 0), rgba(44, 62, 80, 0.75), rgba(0, 0, 0, 0)); width: 80%; margin-bottom: 40px; }
+
+        /* --- Contenedor del Formulario (sin cambios) --- */
+        .form-container {
+            background-color: #ffffff;
+            padding: 35px 45px;
+            border-radius: 10px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+            max-width: 500px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        .form-container h3 { text-align: center; color: #1a5f7a; margin-top: 0; margin-bottom: 25px; font-weight: 600; }
+
+        /* --- Grupos de Formulario (sin cambios) --- */
+        .form-group { margin-bottom: 22px; position: relative; }
+
+        /* --- Etiquetas (sin cambios significativos) --- */
+        label { display: block; margin-bottom: 7px; font-weight: 500; color: #495057; font-size: 0.95rem; }
+
+        /* --- Inputs (sin cambios) --- */
+        input[type="text"], input[type="number"], input[type="email"] {
+            width: 100%; padding: 10px 14px; border: 1px solid #ced4da; border-radius: 5px;
+            box-sizing: border-box; font-size: 1rem; color: #495057; background-color: #f8f9fa;
+            transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+        }
+        input[type="text"]:focus, input[type="number"]:focus, input[type="email"]:focus {
+            border-color: #80bdff; box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+            outline: none; background-color: #fff;
+        }
+        input[type=number]::-webkit-inner-spin-button, input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+        input[type=number] { -moz-appearance: textfield; }
+
+        /* --- *** ESTILOS PARA EL GRUPO DE BOTONES *** --- */
+        .button-group {
+            display: flex; /* Colocar botones en línea */
+            justify-content: space-between; /* Espacio entre botones */
+            gap: 15px; /* Espacio (hueco) entre botones */
+            margin-top: 25px; /* Espacio sobre los botones */
+        }
+
+        /* Estilo común para ambos botones */
+        .button-group button {
+            flex-grow: 1; /* Hacer que ambos botones intenten ocupar el espacio */
+            flex-basis: 0; /* Base flexible 0 para que crezcan igual */
+            color: white;
+            border: none;
+            padding: 12px 15px; /* Ajustar padding si es necesario */
+            border-radius: 5px;
+            font-size: 1rem; /* Ajustar tamaño de fuente */
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s ease, transform 0.1s ease, box-shadow 0.1s ease;
+            letter-spacing: 0.5px;
+            text-align: center;
+        }
+
+        /* Estilo específico para el botón GET */
+        #submitGetButton {
+            background: linear-gradient(to right, #1a5f7a, #1d7f8a); /* Azul verdoso */
+        }
+        #submitGetButton:hover {
+            background: linear-gradient(to right, #1d7f8a, #21a1af);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+         /* Estilo específico para el botón POST */
+        #submitPostButton {
+             background: linear-gradient(to right, #6c757d, #5a6268); /* Gris */
+        }
+         #submitPostButton:hover {
+             background: linear-gradient(to right, #5a6268, #4e555a);
+             transform: translateY(-2px);
+             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .button-group button:active {
+             transform: translateY(0px);
+             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+             filter: brightness(95%); /* Oscurecer ligeramente al presionar */
+        }
+        /* --- ***************************************** --- */
+
+    </style>
+</head>
+<body>
+
+    <div class="form-container">
+        <h3>Enviando datos al servidor</h3>
+
+        <!-- Importante: El form ahora NO necesita el atributo method inicial,
+             lo asignaremos con JS. Opcionalmente puedes dejar method="get" por si JS falla. -->
+        <form id="dataForm" action="datos_form.php">
+
+            <!-- Eliminamos la sección de selección de método -->
+
+            <div class="form-group">
+                <label for="nombre">Nombre:</label>
+                <input type="text" id="nombre" name="nombre" required placeholder="Escribe tu nombre">
+            </div>
+
+            <div class="form-group">
+                <label for="apellido">Apellido:</label>
+                <input type="text" id="apellido" name="apellido" required placeholder="Escribe tu apellido">
+            </div>
+
+            <div class="form-group">
+                <label for="edad">Edad:</label>
+                <input type="number" id="edad" name="edad" required min="1" placeholder="Tu edad">
+            </div>
+
+            <div class="form-group">
+                <label for="correo">Correo Electrónico:</label>
+                <input type="email" id="correo" name="correo" required placeholder="tu.email@ejemplo.com">
+            </div>
+
+            <!-- *** NUEVO GRUPO DE BOTONES *** -->
+            <div class="button-group">
+                <!-- Usamos type="button" para evitar el envío por defecto y controlar con JS -->
+                <button type="button" id="submitGetButton">Enviar con GET</button>
+                <button type="button" id="submitPostButton">Enviar con POST</button>
+            </div>
+            <!-- **************************** -->
+
+        </form>
+    </div>
+
+    <!-- *** SCRIPT PARA MANEJAR LOS BOTONES DE ENVÍO *** -->
+    <script>
+        // Obtener referencias al formulario y a los botones
+        const dataForm = document.getElementById('dataForm');
+        const submitGetBtn = document.getElementById('submitGetButton');
+        const submitPostBtn = document.getElementById('submitPostButton');
+
+        // Añadir listener al botón GET
+        submitGetBtn.addEventListener('click', function() {
+            // 1. Establecer el método del formulario a 'get'
+            dataForm.method = 'get';
+            // 2. Enviar el formulario
+            console.log('Enviando formulario con método:', dataForm.method); // Para depuración
+            dataForm.submit();
+        });
+
+        // Añadir listener al botón POST
+        submitPostBtn.addEventListener('click', function() {
+            // 1. Establecer el método del formulario a 'post'
+            dataForm.method = 'post';
+            // 2. Enviar el formulario
+            console.log('Enviando formulario con método:', dataForm.method); // Para depuración
+            dataForm.submit();
+        });
+    </script>
+    <!-- *********************************************** -->
+
+</body>
+</html>

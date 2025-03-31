@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulario de Registro Moderno</title>
+    <style>
+        /* --- Estilos Generales --- */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #ece9e6, #ffffff); /* Fondo suave con gradiente */
+            color: #333;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px; /* Añadir padding al body */
+            display: flex; /* Centrar el formulario */
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh; /* Asegurar que ocupa toda la altura */
+        }
+
+        .form-container {
+            background-color: #ffffff;
+            padding: 30px 40px;
+            border-radius: 12px; /* Bordes redondeados */
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1); /* Sombra suave */
+            max-width: 600px; /* Ancho máximo del formulario */
+            width: 100%;
+            box-sizing: border-box; /* Incluir padding y borde en el ancho */
+        }
+
+        h1 {
+            text-align: center;
+            color: #0056b3; /* Azul oscuro */
+            margin-bottom: 30px;
+            font-weight: 600;
+        }
+
+        /* --- Estilos de Grupos de Formulario --- */
+        .form-group {
+            margin-bottom: 20px; /* Espacio entre grupos */
+        }
+
+        /* --- Estilos de Etiquetas --- */
+        label {
+            display: block; /* Cada etiqueta en su línea */
+            margin-bottom: 8px;
+            font-weight: 600; /* Texto en negrita */
+            color: #555;
+        }
+
+        /* --- Estilos de Inputs, Select y Textarea --- */
+        input[type="text"],
+        input[type="email"],
+        select,
+        textarea {
+            width: 100%; /* Ocupar todo el ancho disponible */
+            padding: 12px 15px; /* Padding interno */
+            border: 1px solid #ccc;
+            border-radius: 6px; /* Bordes redondeados */
+            box-sizing: border-box; /* Incluir padding y borde en el ancho */
+            font-size: 1rem;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease; /* Transiciones suaves */
+        }
+
+        input[type="text"]:focus,
+        input[type="email"]:focus,
+        select:focus,
+        textarea:focus {
+            border-color: #007bff; /* Color de borde al enfocar */
+            box-shadow: 0 0 8px rgba(0, 123, 255, 0.2); /* Sombra suave al enfocar */
+            outline: none; /* Quitar el outline por defecto */
+        }
+
+        textarea {
+            resize: vertical; /* Permitir redimensionar verticalmente */
+            min-height: 80px; /* Altura mínima */
+        }
+
+        /* --- Estilos para Checkbox y Radio --- */
+        fieldset {
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+
+        legend {
+            font-weight: 600;
+            color: #0056b3;
+            padding: 0 10px; /* Espacio alrededor de la leyenda */
+            margin-left: 10px; /* Alinear un poco */
+        }
+
+        .choice-group {
+            display: flex; /* Alinear items horizontalmente si se quiere */
+            align-items: center; /* Centrar verticalmente */
+            margin-bottom: 10px;
+        }
+
+        .choice-group input[type="checkbox"],
+        .choice-group input[type="radio"] {
+            margin-right: 10px; /* Espacio entre el input y la etiqueta */
+            cursor: pointer;
+            accent-color: #007bff; /* Color del check/radio (navegadores modernos) */
+        }
+
+        .choice-group label {
+            margin-bottom: 0; /* Quitar margen inferior de las etiquetas de choice */
+            font-weight: normal; /* Quitar negrita para estas etiquetas */
+            color: #333;
+            cursor: pointer;
+        }
+
+        /* --- Estilos de Botones --- */
+        .button-group {
+            text-align: center; /* Centrar botones */
+            margin-top: 30px;
+        }
+
+        input[type="submit"],
+        input[type="reset"] {
+            background-color: #007bff; /* Azul primario */
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            margin: 0 10px; /* Espacio entre botones */
+        }
+
+        input[type="submit"]:hover {
+            background-color: #0056b3; /* Azul más oscuro al pasar el ratón */
+            transform: translateY(-2px); /* Efecto ligero de elevación */
+        }
+
+        input[type="reset"] {
+            background-color: #6c757d; /* Gris secundario */
+        }
+
+        input[type="reset"]:hover {
+            background-color: #5a6268; /* Gris más oscuro */
+            transform: translateY(-2px);
+        }
+
+        /* --- Placeholder personalizado (opcional) --- */
+        ::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
+          color: #aaa;
+          opacity: 1; /* Firefox */
+        }
+
+        :-ms-input-placeholder { /* Internet Explorer 10-11 */
+          color: #aaa;
+        }
+
+        ::-ms-input-placeholder { /* Microsoft Edge */
+          color: #aaa;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="form-container">
+        <h1>Formulario de Registro</h1>
+
+        <form>
+            <div class="form-group">
+                <label for="nombre">Nombre:</label>
+                <input type="text" id="nombre" name="nombre" placeholder="Aquí su nombre" required>
+            </div>
+
+            <div class="form-group">
+                <label for="apellidos">Apellidos:</label>
+                <input type="text" id="apellidos" name="apellidos" placeholder="Aquí sus apellidos" required>
+            </div>
+
+            <div class="form-group">
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" placeholder="ejemplo@servidor.com" required>
+            </div>
+
+            <div class="form-group">
+                <label for="poblacion">Población:</label>
+                <input type="text" id="poblacion" name="poblacion">
+            </div>
+
+            <div class="form-group">
+                <label for="provincia">Provincia:</label>
+                <input type="text" id="provincia" name="provincia">
+            </div>
+
+            <fieldset>
+                <legend>Información a recibir:</legend>
+                <div class="choice-group">
+                    <input type="checkbox" id="html_manual" name="info[]" value="Manual de Html">
+                    <label for="html_manual">Manual de Html</label>
+                </div>
+                <div class="choice-group">
+                    <input type="checkbox" id="programa_editor" name="info[]" value="Programa Editor">
+                    <label for="programa_editor">Programa Editor</label>
+                </div>
+                <div class="choice-group">
+                    <input type="checkbox" id="archivo_ejemplos" name="info[]" value="Archivo de Ejemplos">
+                    <label for="archivo_ejemplos">Archivo de Ejemplos</label>
+                </div>
+            </fieldset>
+
+            <fieldset>
+                <legend>Tu Edad:</legend>
+                 <div class="choice-group">
+                    <input type="radio" id="edad_menor_20" name="edad" value="Menos de 20 años">
+                    <label for="edad_menor_20">Menos de 20 años</label>
+                </div>
+                 <div class="choice-group">
+                    <input type="radio" id="edad_entre_20_40" name="edad" value="Entre 20 y 40 años">
+                    <label for="edad_entre_20_40">Entre 20 y 40 años</label>
+                </div>
+                <div class="choice-group">
+                    <input type="radio" id="edad_mayor_40" name="edad" value="Más de 40 años">
+                    <label for="edad_mayor_40">Más de 40 años</label>
+                </div>
+            </fieldset>
+
+            <div class="form-group">
+                <label for="como_encontraste">Cómo encontraste mi página:</label>
+                <select id="como_encontraste" name="como_encontraste">
+                    <option value="" disabled selected>-- Selecciona una opción --</option> <!-- Placeholder para select -->
+                    <option value="De casualidad">De casualidad</option>
+                    <option value="Buscador">Buscador</option>
+                    <option value="Recomendación">Recomendación</option>
+                    <option value="Otro">Otro</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="comentarios">Tus Comentarios:</label>
+                <textarea id="comentarios" name="comentarios" rows="4" placeholder="Escribe aquí tus comentarios..."></textarea>
+            </div>
+
+            <div class="button-group">
+                <input type="submit" value="Enviar Registro">
+                <input type="reset" value="Borrar Datos">
+            </div>
+        </form>
+    </div>
+
+</body>
+</html>

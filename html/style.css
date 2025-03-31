@@ -1,3 +1,4 @@
+/* --- Reset y Configuración Base --- */
 * {
     margin: 0;
     padding: 0;
@@ -128,33 +129,44 @@ main#main-content {
 
 /* --- Estilos específicos para Fragmentos --- */
 
-/* Estilo para el GRID (BASE: 3 columnas por defecto para pantallas grandes) */
+/* Estilo para el GRID (MEJORADO) */
 #main-content #grid-container {
     display: grid; /* Definimos grid como layout base */
-    /* Por defecto (escritorios > ~992px), mostramos 3 columnas */
-    grid-template-columns: repeat(3, 1fr);
-    gap: 1.5rem;
+    /* Columnas flexibles, mínimo 280px, se ajustan automáticamente */
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 2rem; /* Espacio entre tarjetas aumentado */
     width: 100%;
+    padding: 1rem 0; /* Padding vertical al contenedor grid */
     /* NOTA: La visibilidad inicial (display: none) se controla arriba y con JS */
 }
 
-/* Estilo para las TARJETAS DENTRO DEL GRID */
+/* Estilo para las TARJETAS DENTRO DEL GRID (MEJORADO) */
 #main-content .ejemplo-card {
     background-color: #ffffff;
     padding: 1.5rem;
-    border-radius: 6px;
-    box-shadow: 0 2px 4px rgba(44, 62, 80, 0.1);
+    border-radius: 8px; /* Bordes más redondeados */
+    /* Sombra base más definida */
+    box-shadow: 0 4px 6px rgba(50, 50, 93, 0.11), 0 1px 3px rgba(0, 0, 0, 0.08);
     min-height: 150px;
     display: flex;
     flex-direction: column;
-    justify-content: space-between; /* Empuja el enlace hacia abajo */
-    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
-    border-left: 5px solid transparent; /* Borde inicial transparente */
+    justify-content: space-between;
+    /* Transición más dinámica y notable */
+    transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1),
+                box-shadow 0.3s cubic-bezier(0.25, 0.8, 0.25, 1),
+                border-left-color 0.3s ease;
+    border-left: 6px solid transparent; /* Borde inicial más grueso */
+    overflow: hidden; /* Evita que contenido se salga en transformaciones */
+    position: relative; /* Necesario para z-index en hover */
 }
 
+/* Efecto Hover Mejorado para las TARJETAS */
 #main-content .ejemplo-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 4px 8px rgba(44, 62, 80, 0.12);
+    /* Levantar y escalar la tarjeta */
+    transform: translateY(-10px) scale(1.03);
+    /* Sombra mucho más pronunciada para efecto "elevado" */
+    box-shadow: 0 14px 28px rgba(50, 50, 93, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
+    z-index: 5; /* Asegura que la tarjeta hover esté por encima */
 }
 
 #main-content .ejemplo-card h3 {
@@ -179,6 +191,7 @@ main#main-content {
     align-self: flex-start; /* Para que no ocupe todo el ancho */
     padding: 0.2rem 0; /* Área de clic ligeramente mayor */
     cursor: pointer;
+    transition: color 0.2s ease; /* Transición para el color del enlace */
 }
 
 #main-content .ejemplo-card a[data-url]:hover {
@@ -186,14 +199,14 @@ main#main-content {
     color: #0a58ca; /* Azul más oscuro */
 }
 
-/* Colores para los bordes izquierdos de las tarjetas */
+/* Colores para los bordes izquierdos de las tarjetas (sin cambios) */
 #main-content .ejemplo-card:nth-child(4n+1) { border-left-color: #1abc9c; /* Verde */ }
 #main-content .ejemplo-card:nth-child(4n+2) { border-left-color: #3498db; /* Azul */ }
 #main-content .ejemplo-card:nth-child(4n+3) { border-left-color: #e74c3c; /* Rojo */ }
 #main-content .ejemplo-card:nth-child(4n+4) { border-left-color: #f39c12; /* Naranja */ }
 
 
-/* --- Estilos para la vista de IFRAME (cuando es visible, JS le da display: flex) --- */
+/* --- Estilos para la vista de IFRAME (sin cambios) --- */
 #main-content #iframe-view-container {
     /* display: flex; Se activa con JS */
     flex-direction: column; /* Botón arriba, iframe abajo */
@@ -234,7 +247,7 @@ main#main-content {
 }
 
 
-/* --- Estilos para mensajes de Carga y Error --- */
+/* --- Estilos para mensajes de Carga y Error (sin cambios) --- */
 #main-content .loading-message,
 #main-content .error-message {
      display: block;
@@ -262,7 +275,7 @@ main#main-content {
 }
 
 
-/* --- Footer --- */
+/* --- Footer (sin cambios) --- */
 footer {
     grid-area: footer;
     background-color: #ffffff;
@@ -273,7 +286,7 @@ footer {
     font-size: 0.85rem;
 }
 
-/* --- Estilos Específicos para el Fragmento de Arquitectura --- */
+/* --- Estilos Específicos para el Fragmento de Arquitectura (sin cambios) --- */
 #main-content .arquitectura-view {
     margin-top: 1rem;
 }
@@ -310,22 +323,19 @@ footer {
     padding-top: 1rem;
 }
 
-/* --- Media Queries para Responsividad del Grid --- */
+/* --- Media Queries para Responsividad (Ajustadas para auto-fit) --- */
 
-/* Estilos para Tablets (ej: < 992px) */
-@media (max-width: 991.98px) {
-    #main-content #grid-container {
-        grid-template-columns: repeat(2, 1fr); /* 2 columnas */
-    }
-}
+/* Estilos para Tablets y Escritorios (cuando caben 2 o más columnas) */
+/* Con auto-fit, no necesitamos un breakpoint específico para 2 columnas. */
+/* El navegador se encarga si hay espacio para múltiplos de ~280px + gap. */
 
-/* Estilos para Móviles (ej: < 768px) */
-@media (max-width: 767.98px) {
+/* Estilos para Móviles (cuando sólo cabe 1 columna) */
+@media (max-width: 619.98px) { /* Aproximadamente < (2 * 280px + 2rem gap) */
     #main-content #grid-container {
-        grid-template-columns: 1fr; /* 1 columna */
+        gap: 1.5rem; /* Reducir espacio entre tarjetas en móvil */
     }
 
-    /* Opcional: Reducir padding en pantallas muy pequeñas si es necesario */
+    /* Opcional: Reducir padding general en pantallas muy pequeñas */
     main#main-content {
         padding: 1rem;
     }
@@ -339,4 +349,19 @@ footer {
     #main-content h2#main-title {
         font-size: 1.5rem;
     }
+}
+
+/* Opcional: Ajuste para pantallas muy muy pequeñas si el sidebar se solapa o el layout se rompe */
+@media (max-width: 480px) {
+     body {
+        /* Podrías cambiar a layout de una sola columna si fuera necesario */
+        /* grid-template-columns: 1fr;
+        grid-template-areas:
+            "header"
+            "main"
+            "footer"; */
+        /* O ajustar el tamaño del sidebar */
+        /* grid-template-columns: 180px 1fr; */
+     }
+     /* Otros ajustes específicos para pantallas muy pequeñas... */
 }
