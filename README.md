@@ -4,73 +4,76 @@
 - Debe estar instalado Docker
 - Debe estar instalado Docker Compose
 
-0.- Detener y borrar contenedores existentes (si aplica)
-Si has ejecutado este proyecto antes, debes elimina los contenedores asociados:
+# Detener y borrar contenedores existentes con el mismo nombre(si aplica)
 
-- nginx_server
-- php_server
-- node_api_server
+Si has ejecutado este clone antes, debes elimina los contenedores asociados:
 
-0.1 Pasos para detener y borrar contenedores:
+* nginx_server
+* php_server
+* node_api_server
+
+## Pasos para detener y borrar contenedores:
 
 Para ver los contenedores en ejecución:
+```bash 
+- docker ps
 
-docker ps
-
-Detén los contenedores necesarios (reemplaza los nombres):
-
+## Detén los contenedores necesarios (reemplaza los nombres):
+```bash 
 docker stop nginx_server php_server node_api_server
 
-Elimina los contenedores necesarios (reemplaza los nombres):
-
+## Elimina los contenedores necesarios (reemplaza los nombres):
+```bash 
 docker rm nginx_server php_server node_api_server
-0.2.- Comprobar disponibilidad del puerto 8080
+
+# Comprobar disponibilidad del puerto 8080
 
 Verifica qué contenedores están usando puertos con:
 
+```bash 
 docker ps
 
 Si algún otro contenedor (no relacionado con este proyecto) está usando el puerto 8080, necesitarás detener ese contenedor o cambiar el puerto en el archivo docker-compose.yml de este proyecto.
 
-1.- Clonar este repositorio
+# Borra el directorio docker-nginx.git de tu equipo
+
+# Clonar este repositorio
 ```bash 
 git clone https://github.com/jrbujosa/docker-nginx.git
 
-2.- Abrir una terminal y navegar hasta la carpeta docker-nginx
+# Abrir una terminal y navegar hasta la carpeta docker-nginx
 ```bash 
-
 cd docker-nginx
 
-3.- (Opcional) Editar la configuración del fichero compose.yml
+# (Opcional) Editar la configuración del fichero compose.yml
 
-4. Crear los contenedores ejecutando
+# Crear los contenedores ejecutando
 ```bash 
 docker compose up -d
 
-5. Después de ejecutar docker-compose up -d
+# Después de ejecutar docker-compose up -d, Puedes verificar el estado de los contenedores utilizando el comando
 ```bash 
-
-- Puedes verificar el estado de los contenedores utilizando el comando
 docker ps
 
 - Puedes ver los logs de un contenedor específico utilizando el comando
+```bash 
 docker logs <nombre_del_servicio>.
 
 - Para detener los contenedores, puedes usar el comando
 docker-compose down
 
-6.- Acceder al servidor web desde tu navegador
+# Acceder al servidor web desde tu navegador
 
- http://localhost:8080
+ [http://localhost:8080]
 
-7.- Entrar en un contenedor en el contenedor nginx_server:
-
+# Entrar en un contenedor en el contenedor nginx_server:
+```bash 
 docker exec -it nginx_server sh
 docker exec -it php_server sh
 
-8.- Si surjen problemas:
+# Para recargar el repositorio nuevamente
 
-- Detener todos los contenedores 
-
-cd docker-nginx
-docker down
+* Debes de estar dentro del directorio del repositorio clonado en su máquina local
+* Idealmente, debería estar en la rama que quiere actualizar (normalmente main). Si no está seguro, puede ejecutar git status para ver la rama actual o git checkout main para cambiarse a ella.
+* Importante: No debe tener cambios locales sin confirmar (commit) que entren en conflicto con los cambios que vienen del remoto. Es buena práctica ejecutar git status antes de git pull para ver el estado local. Si hay cambios locales, debería hacer commit o stash antes de hacer pull.
+* Ejecuta:  git pull
