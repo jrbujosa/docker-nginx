@@ -16,7 +16,7 @@ Si has ejecutado este clone antes, debes elimina los contenedores asociados:
 
 Para ver los contenedores en ejecución:
 ```bash 
-- docker ps
+docker ps
 ```
 
 ## Detén los contenedores necesarios (reemplaza los nombres):
