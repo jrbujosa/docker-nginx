@@ -1,11 +1,9 @@
-<!-- Contenido de fragments/arquitectura.html (o como lo llames) -->
+<!-- Contenido de fragments/arquitectura.html -->
 
-<!-- 1. Título Principal (USA EL ID ESTÁNDAR 'main-title' para que JS lo maneje) -->
 <h2 id="main-title">Arquitectura de la Aplicación</h2>
 
-<!-- 2. Contenedor específico para el contenido de esta vista -->
 <div class="arquitectura-view">
-    <p>Estructura de carpetas y archivos recomendada para el proyecto:</p>
+    <p>Estructura de carpetas y archivos recomendada para este proyecto:</p>
     <pre>
 tu-proyecto/
 ├── index.html             <- Página principal (Contenedor)
@@ -14,11 +12,11 @@ tu-proyecto/
 │
 ├── fragments/             <- Piezas de HTML cargadas en <main>
 │   ├── dashboard.html
-│   ├── arquitectura.html
+│   ├── arquitectura.html  <- Este mismo archivo
 │   ├── ejemplos-css.html
 │   ├── ejemplos-js.html
-│   ├── configuracion.html
-│   └── arquitectura.html  <- Este mismo archivo
+│   ├── ejemplos-html.html
+│   └── ... (otros fragmentos)
 │
 ├── examples/              <- Archivos HTML/CSS/JS de ejemplos individuales
 │   ├── html/
@@ -29,9 +27,137 @@ tu-proyecto/
 │   └── js/
 │       └── ... (ejemplos JS)
 │
-└── assets/                <- Imágenes, iconos, fuentes (opcional)
+└── assets/                <- Recursos: imágenes, iconos, fuentes (opcional)
     └── images/
         └── logo.png
     </pre>
-    <p class="nota">Esta estructura ayuda a mantener el proyecto organizado a medida que crece.</p>
+
+    <p class="nota">Esta estructura facilita la organización y el crecimiento del proyecto a largo plazo.</p>
+
+    <p>Un aspecto clave de esta arquitectura es su **facilidad para añadir nuevo contenido**.  La clara separación en carpetas como `fragments/` y `examples/`, cada una con una semántica bien definida, simplifica enormemente la creación y la incorporación de nuevas secciones y ejemplos.  La construcción de páginas a partir de **fragmentos HTML reutilizables** agiliza el desarrollo y garantiza una mayor consistencia en el diseño.</p>
+
+    <p>Además, el uso de **iframes** para mostrar los ejemplos de HTML, CSS y JavaScript resulta especialmente conveniente para este tipo de repositorio.  Permite aislar cada ejemplo, evitando conflictos entre estilos y scripts, y facilitando su visualización y experimentación de forma independiente.</p>
+
+    <h3>Análisis de Calidad Técnica</h3>
+    <style>
+        /* Estilos en línea para asegurar que la tabla se vea bien en el fragmento */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            background-color: #fff;
+        }
+
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        th {
+            background-color: #f0f0f0;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        tr:hover {
+            background-color: #f9f9f9;
+        }
+
+        .rating-1 { color: #e74c3c; }
+        .rating-2 { color: #f39c12; }
+        .rating-3 { color: #3498db; }
+        .rating-4 { color: #27ae60; }
+        .rating-5 { color: #1abc9c; }
+
+        @media (max-width: 768px) {
+            table {
+                display: block;
+                overflow-x: auto;
+            }
+            th, td {
+                white-space: nowrap;
+            }
+        }
+
+        .justification {
+            font-size: 0.9em;
+            color: #555;
+            line-height: 1.4;
+        }
+
+        .improvement {
+            font-style: italic;
+            color: #777;
+        }
+    </style>
+    <table>
+        <thead>
+            <tr>
+                <th>Criterio</th>
+                <th>Calificación (1-5)</th>
+                <th>Justificación</th>
+                <th>Sugerencias de Mejora</th>
+            </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th>DevOps y Despliegue</th>
+            <td class="rating-4">4</td>
+            <td>Usa Docker y Docker Compose para la contenerización y orquestación. Se utiliza Nginx como proxy inverso, y se añade un servicio Node.js.</td>
+            <td class="improvement">Implementar una canalización CI/CD para despliegues automatizados. Considerar una solución de monitorización y registro más robusta.</td>
+          </tr>
+          <tr>
+            <th>Arquitectura del Frontend</th>
+            <td class="rating-4">4</td>
+            <td>Usa una clara separación de responsabilidades (HTML, CSS, JS). La carga basada en fragmentos promueve la modularidad.</td>
+            <td class="improvement">Considerar un framework de frontend (React, Vue, Angular) para proyectos más grandes.</td>
+          </tr>
+          <tr>
+            <th>Carga Asíncrona de Contenido (AJAX)</th>
+            <td class="rating-4">4</td>
+            <td>La API <code>fetch</code> con <code>async/await</code> proporciona una buena experiencia de usuario. Se incluye manejo de errores.</td>
+            <td class="improvement">Implementar un indicador de carga más robusto. Usar Axios para funciones avanzadas.</td>
+          </tr>
+          <tr>
+            <th>Escalabilidad</th>
+            <td class="rating-3">3</td>
+            <td>La configuración de Nginx ayuda a servir archivos estáticos de forma eficiente. La arquitectura de microservicios Node.js soporta la escalabilidad de la API.</td>
+            <td class="improvement">Implementar estrategias de caché (caché del navegador, CDN) para recursos estáticos. Evaluar la escalabilidad de la base de datos.</td>
+          </tr>
+          <tr>
+            <th>JavaScript Code Quality</th>
+            <td class="rating-3">3</td>
+            <td>Usa <code>DOMContentLoaded</code>, delegación de eventos e incluye manejo básico de errores. El código es legible.</td>
+            <td class="improvement">Añadir más comentarios. Usar un linter (ESLint) y un formateador (Prettier).</td>
+          </tr>
+          <tr>
+            <th>Estructura CSS y Mantenibilidad</th>
+            <td class="rating-3">3</td>
+            <td>CSS bien estructurado con comentarios. Utiliza CSS Grid para el diseño. Media queries para diseño adaptable.</td>
+            <td class="improvement">Considerar un preprocesador CSS (Sass, Less) o una solución CSS-in-JS. Usar una metodología CSS (BEM, OOCSS).</td>
+          </tr>
+          <tr>
+            <th>Accesibilidad</th>
+            <td class="rating-2">2</td>
+            <td>Características básicas de accesibilidad presentes.</td>
+            <td class="improvement">Realizar una auditoría de accesibilidad. Usar atributos ARIA. Asegurar un contraste de color adecuado.</td>
+          </tr>
+          <tr>
+            <th>Seguridad</th>
+            <td class="rating-2">2</td>
+            <td>Carga de contenido desde el mismo origen. No se muestra explícitamente la sanitización de la entrada.</td>
+            <td class="improvement">Implementar validación y sanitización de la entrada. Usar una Política de Seguridad de Contenido (CSP).</td>
+          </tr>
+          <tr>
+            <th>Pruebas</th>
+            <td class="rating-1">1</td>
+            <td>No hay evidencia de pruebas automatizadas.</td>
+            <td class="improvement">Implementar una estrategia de pruebas (pruebas unitarias, pruebas de integración, pruebas de extremo a extremo).</td>
+          </tr>
+        </tbody>
+    </table>
+
 </div>
