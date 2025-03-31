@@ -74,7 +74,7 @@ docker-compose down
 ```
 # Acceder al servidor web desde tu navegador
 
- [http://localhost:8080]
+[http://localhost:8080/index.html](http://localhost:8080/index.html)
 
 # Entrar en un contenedor en el contenedor nginx_server:
 ```bash 
