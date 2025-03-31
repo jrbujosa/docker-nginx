@@ -17,14 +17,17 @@ Si has ejecutado este clone antes, debes elimina los contenedores asociados:
 Para ver los contenedores en ejecución:
 ```bash 
 - docker ps
+```
 
 ## Detén los contenedores necesarios (reemplaza los nombres):
 ```bash 
 docker stop nginx_server php_server node_api_server
+```
 
 ## Elimina los contenedores necesarios (reemplaza los nombres):
 ```bash 
 docker rm nginx_server php_server node_api_server
+```
 
 # Comprobar disponibilidad del puerto 8080
 
@@ -32,6 +35,7 @@ Verifica qué contenedores están usando puertos con:
 
 ```bash 
 docker ps
+```
 
 Si algún otro contenedor (no relacionado con este proyecto) está usando el puerto 8080, necesitarás detener ese contenedor o cambiar el puerto en el archivo docker-compose.yml de este proyecto.
 
@@ -40,28 +44,34 @@ Si algún otro contenedor (no relacionado con este proyecto) está usando el pue
 # Clonar este repositorio
 ```bash 
 git clone https://github.com/jrbujosa/docker-nginx.git
+```
 
 # Abrir una terminal y navegar hasta la carpeta docker-nginx
 ```bash 
 cd docker-nginx
+```
 
 # (Opcional) Editar la configuración del fichero compose.yml
 
 # Crear los contenedores ejecutando
 ```bash 
 docker compose up -d
+```
 
 # Después de ejecutar docker-compose up -d, Puedes verificar el estado de los contenedores utilizando el comando
 ```bash 
 docker ps
+```
 
 - Puedes ver los logs de un contenedor específico utilizando el comando
 ```bash 
-docker logs <nombre_del_servicio>.
+docker logs <nombre_del_servicio>
+```
 
 - Para detener los contenedores, puedes usar el comando
+```bash 
 docker-compose down
-
+```
 # Acceder al servidor web desde tu navegador
 
  [http://localhost:8080]
@@ -70,10 +80,14 @@ docker-compose down
 ```bash 
 docker exec -it nginx_server sh
 docker exec -it php_server sh
+```
 
 # Para recargar el repositorio nuevamente
 
 * Debes de estar dentro del directorio del repositorio clonado en su máquina local
 * Idealmente, debería estar en la rama que quiere actualizar (normalmente main). Si no está seguro, puede ejecutar git status para ver la rama actual o git checkout main para cambiarse a ella.
 * Importante: No debe tener cambios locales sin confirmar (commit) que entren en conflicto con los cambios que vienen del remoto. Es buena práctica ejecutar git status antes de git pull para ver el estado local. Si hay cambios locales, debería hacer commit o stash antes de hacer pull.
-* Ejecuta:  git pull
+* Ejecuta:  
+```bash 
+git pull
+```
