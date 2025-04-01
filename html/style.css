@@ -69,28 +69,44 @@ header h1 {
 }
 
 .sidebar-nav nav ul li {
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.5rem; /* Mantenemos separación base */
 }
 
+/* --- NUEVO ESTILO PARA EL ENCABEZADO DE SECCIÓN --- */
+.sidebar-nav nav ul li.sidebar-heading {
+    color: #bdc3c7; /* Un gris un poco más claro que el h2 */
+    font-size: 0.8rem; /* Más pequeño que los botones */
+    font-weight: 600; /* Semi-bold */
+    text-transform: uppercase; /* Igual que h2 */
+    letter-spacing: 0.4px; /* Similar a h2 */
+    padding: 0.2rem 0.5rem; /* Menos padding vertical que los botones */
+    margin-top: 1.5rem; /* Margen superior para separar del grupo anterior */
+    margin-bottom: 0.8rem; /* Margen inferior para separar del grupo siguiente */
+    border-top: 1px solid rgba(255, 255, 255, 0.1); /* Línea superior sutil */
+    padding-top: 0.8rem; /* Espacio extra arriba por la línea */
+    cursor: default; /* Indicar que no es clickeable */
+}
+
+/* --- ESTILO PARA BOTONES (sin cambios) --- */
 .sidebar-button {
     /* Reset básico */
     background: none;
     border: none;
     font: inherit;
     cursor: pointer;
-    outline: none; /* Quitar outline por defecto, manejar foco si es necesario */
+    outline: none;
     /* Estilos */
-    color: #dadedf; /* Texto gris claro */
+    color: #dadedf;
     display: block;
     width: 100%;
     text-align: left;
-    padding: 0.75rem 0.5rem; /* Padding generoso */
+    padding: 0.75rem 0.5rem;
     border-radius: 4px;
     transition: color 0.2s ease, background-color 0.2s ease;
 }
 
 .sidebar-button:hover,
-.sidebar-button:focus { /* Añadido :focus para accesibilidad */
+.sidebar-button:focus {
     color: #ffffff;
     background-color: rgba(255, 255, 255, 0.1);
 }
@@ -98,9 +114,12 @@ header h1 {
 .sidebar-button.active {
      color: #ffffff;
      font-weight: 600;
-     background-color: #54a0ff; /* Azul brillante para el activo */
+     background-color: #54a0ff;
 }
 
+
+/* --- RESTO DE ESTILOS (sin cambios) --- */
+/* ... (todos los estilos de main, grid, cards, iframe, footer, etc. van aquí sin modificar) ... */
 
 /* --- Área Principal de Contenido --- */
 main#main-content {
