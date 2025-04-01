@@ -1,0 +1,233 @@
+<!-- Contenido para manual-usuario.html (o el nombre que elijas) -->
+<h2 id="main-title">Manual de Actualización del Sitio Web</h2>
+
+<div class="info-view">
+
+    <!-- Estilos CSS específicos para esta página -->
+    <style>
+        .info-view {
+            font-family: sans-serif;
+            /* Fuente limpia y legible */
+            line-height: 1.6;
+            /* Espaciado entre líneas */
+            padding: 20px;
+            background-color: #f9f9f9;
+            /* Fondo suave */
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            /* Sombra sutil */
+            max-width: 800px;
+            /* Limita el ancho para mejor lectura */
+            margin: 20px auto;
+            /* Centra el contenido si hay espacio */
+        }
+
+        .info-view h3 {
+            color: #0056b3;
+            /* Azul oscuro para títulos principales */
+            margin-top: 30px;
+            margin-bottom: 15px;
+            border-bottom: 1px solid #eee;
+            /* Línea separadora sutil */
+            padding-bottom: 5px;
+        }
+
+        .info-view h4 {
+            color: #17a2b8;
+            /* Turquesa para subtítulos */
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+
+        .info-view ol {
+            padding-left: 20px;
+            /* Indentación estándar para listas */
+        }
+
+        .info-view li {
+            margin-bottom: 10px;
+            /* Espacio entre ítems de la lista */
+        }
+
+        .info-view code {
+            background-color: #e9ecef;
+            /* Fondo gris claro para código */
+            padding: 2px 5px;
+            border-radius: 4px;
+            font-family: monospace;
+            /* Fuente monoespaciada */
+            color: #333;
+        }
+
+        .info-view pre {
+            background-color: #333;
+            /* Fondo oscuro para bloques de código */
+            color: #f8f8f2;
+            /* Texto claro */
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            /* Scroll horizontal si el código es largo */
+            font-family: monospace;
+            margin: 15px 0;
+        }
+
+        .info-view pre code {
+            background-color: transparent;
+            /* Anula el fondo gris dentro de pre */
+            padding: 0;
+            color: inherit;
+            /* Hereda el color claro de pre */
+        }
+
+        .info-view strong {
+            color: #d9534f;
+            /* Rojo suave para destacar */
+        }
+
+        .info-view em {
+            font-style: italic;
+            color: #555;
+        }
+
+        .info-view hr {
+            border: 0;
+            height: 1px;
+            background-color: #ccc;
+            margin: 40px 0;
+        }
+    </style>
+
+    <p>Este manual te guiará para realizar dos tipos de actualizaciones en el sitio web del repositorio:</p>
+    <ol>
+        <li><strong>Añadir un nuevo ejemplo de código</strong> (HTML, CSS, JS) que se mostrará en las secciones
+            "Ejemplos...".</li>
+        <li><strong>Añadir o modificar una página de información</strong> (como "Arquitectura", "Instalación" o una
+            nueva sección) accesible desde el menú lateral.</li>
+    </ol>
+
+    <hr>
+
+    <h3>Tipo 1: Añadir un Nuevo Ejemplo de Código (HTML/CSS/JS)</h3>
+    <p>Sigue estos pasos para agregar una nueva página de ejemplo que los usuarios puedan ver.</p>
+
+    <h4>Paso 1: Crear el Archivo del Ejemplo</h4>
+    <ol>
+        <li><strong>Decide qué tipo de ejemplo es:</strong> ¿HTML, CSS o JavaScript?</li>
+        <li><strong>Navega a la carpeta <code>examples</code>:</strong> Dentro de <code>html/</code>.</li>
+        <li><strong>Elige la subcarpeta correcta:</strong>
+            <ul>
+                <li>HTML: <code>examples/html/</code></li>
+                <li>CSS: <code>examples/css/</code> (o <code>cs/</code> según tu estructura)</li>
+                <li>JS: <code>examples/js/</code></li>
+            </ul>
+        </li>
+        <li><em>(Opcional pero recomendado)</em> <strong>Crea una subcarpeta:</strong> Para organizar por tema (ej:
+            <code>examples/html/formularios/</code>).
+        </li>
+        <li><strong>Crea tu archivo <code>.html</code>:</strong> Dentro de la carpeta elegida, con el código del ejemplo
+            y un nombre descriptivo (ej: <code>formulario-contacto.html</code>).</li>
+    </ol>
+
+    <h4>Paso 2: Añadir la Tarjeta de Enlace en la Lista Correspondiente</h4>
+    <ol>
+        <li><strong>Navega a la carpeta <code>fragments</code>:</strong> Dentro de <code>html/</code>.</li>
+        <li><strong>Abre el archivo <code>.html</code> de la lista:</strong>
+            <ul>
+                <li><code>ejemplos-html.html</code></li>
+                <li><code>ejemplos-css.html</code></li>
+                <li><code>ejemplos-js.html</code></li>
+            </ul>
+        </li>
+        <li><strong>Busca el contenedor:</strong> <code><div id="grid-container"></code>.</li>
+
+        <li>
+            <strong>Copia y pega una tarjeta existente:</strong> El bloque de código completo, como este ejemplo:
+            <pre>
+&lt;div class="ejemplo-card"&gt;
+    &lt;h3&gt;Navegación&lt;/h3&gt;
+    &lt;p&gt;Navegación entre páginas en distintas carpetas.&lt;/p&gt;
+    &lt;a data-url="./examples/html/navega/carpeta1/pagina1.html" data-title="CSS-Tricks: Guía Grid"&gt;Ver Ejercicio&lt;/a&gt;
+&lt;/div&gt;
+</pre>
+
+        </li>
+        <li><strong>Modifica la tarjeta copiada:</strong>
+            <ul>
+                <li> Cambia al título de la tarjeta.</li>
+                <li> Escribe una breve descripción.</li>
+                <li> Modifica el atributo <code>data-url</code>
+                    para que apunte a la ruta <strong>relativa y correcta</strong> de tu archivo creado en el Paso 1
+                    (ej: <code>./examples/html/formularios/formulario-contacto.html</code>). Puedes también cambiar el
+                    <code>data-title</code> y el texto del enlace ("Ver Ejercicio").
+                </li>
+            </ul>
+        </li>
+    </ol>
+    <ol start="6">
+        <li><strong>Guarda el archivo</strong> del fragmento (ej: <code>ejemplos-html.html</code>).</li>
+    </ol>
+    <p><em>¡Listo (Tipo 1)! Al recargar y navegar, verás tu nuevo ejemplo.</em></p>
+
+    <hr>
+
+    <h3>Tipo 2: Añadir o Modificar una Página de Información</h3>
+    <p>Sigue estos pasos si quieres añadir una nueva sección informativa o modificar una existente.</p>
+
+    <h4>Opción A: Modificar una Página de Información Existente</h4>
+    <ol>
+        <li><strong>Navega a la carpeta <code>fragments</code>:</strong> Dentro de <code>html/</code>.</li>
+        <li><strong>Busca y abre el archivo <code>.html</code></strong> correspondiente (ej:
+            <code>arquitectura.html</code>, <code>instalacion.html</code>).
+        </li>
+        <li><strong>Edita el contenido HTML</strong> como necesites.</li>
+        <li><strong>Guarda el archivo.</strong> Los cambios se reflejarán al cargar esa sección.</li>
+    </ol>
+
+    <h4>Opción B: Añadir una Nueva Página de Información (Nueva Sección)</h4>
+    <ol>
+        <li><strong>Paso 1: Crear el Archivo del Fragmento de Contenido</strong>
+            <ol type="a">
+                <li>Navega a <code>html/fragments/</code>.</li>
+                <li>Crea un nuevo archivo <code>.html</code> (ej: <code>buenas-practicas.html</code>).</li>
+                <li>Añade el contenido HTML con esta estrctura :
+                    <pre>
+&lt;h2 id="main-title"&gt;Titulo del fragmento&lt;/h2&gt;
+&lt;div class="arquitectura-view"&gt;
+&lt;!-- Aquí va todo el contenido de, por ejemplo "buenas-practicas.html", que aparecerá en la sección main de index.html --&gt;
+&lt;/div&gt;
+                    </pre>
+                </li>
+                <li>Guarda este nuevo archivo.</li>
+            </ol>
+        </li>
+        <li><strong>Paso 2: Añadir un Botón en el Menú Lateral</strong>
+            <ol type="a">
+                <li>Abre el archivo principal: <code>html/index.html</code>.</li>
+                <li>Busca el menú lateral: <code><aside class="sidebar-nav"></code> y dentro la lista <code><ul></code>.
+                </li>
+                <li>Copia una línea <code><li><button ...>...</button></li></code> existente.</li>
+                <li>Modifica el botón copiado:
+                    <ul>
+                        <li>Cambia el <strong>texto del botón</strong> (ej: "Buenas Prácticas").</li>
+                        <li>Cambia el atributo <code>data-fragment</code> para que coincida <strong>exactamente</strong>
+                            con el nombre del archivo creado en el Paso 1 (ej:
+                            <code>data-fragment="buenas-practicas.html"</code>).
+                        </li>
+                    </ul>
+                    <p><strong>Ejemplo de botón a añadir en <code>index.html</code>:</strong></p>
+                    <pre><code><li><button class="sidebar-button" data-fragment="buenas-practicas.html">Buenas Prácticas</button></li></code></pre>
+                </li>
+                <li>Guarda el archivo <code>index.html</code>.</li>
+            </ol>
+        </li>
+    </ol>
+    <p><em>¡Listo (Tipo 2)! Al recargar, verás el nuevo botón y al hacer clic cargará tu nueva sección informativa.</em>
+    </p>
+
+    <hr>
+
+    <p>Con estos pasos, puedes mantener el sitio web actualizado tanto con nuevos ejemplos prácticos como con
+        información relevante para los usuarios.</p>
+
+</div>
