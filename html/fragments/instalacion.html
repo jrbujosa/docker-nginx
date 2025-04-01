@@ -85,6 +85,14 @@
   <pre><code>docker-compose up -d</code></pre>
   <p>Este comando construirá las imágenes (si es necesario) y creará e iniciará los contenedores en segundo plano (<code>-d</code>).</p>
   <p>Puedes verificar el estado de los contenedores con:</p>
+
+  <h2>6.0 Arrancar npm</h2>
+  <p>Ejecutar npm (Node Package Manager), el gestor de paquetes por defecto para Node.js.
+```bash 
+cd docker-nginx\api
+npm install
+</p>
+
   <pre><code>docker ps</code></pre>
   <p>Puedes ver los logs de un contenedor específico (por ejemplo, <code>nginx_server</code>) con:</p>
   <pre><code>docker logs nginx_server</code></pre>

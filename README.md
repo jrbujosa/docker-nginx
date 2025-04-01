@@ -56,7 +56,15 @@ cd docker-nginx
 # Crear los contenedores ejecutando
 ```bash 
 docker compose up -d
+
 ```
+
+# Ejecutar npm (Node Package Manager), el gestor de paquetes por defecto para Node.js.
+```bash 
+cd docker-nginx\api
+npm install
+```
+
 
 # Después de ejecutar docker-compose up -d, Puedes verificar el estado de los contenedores utilizando el comando
 ```bash 
