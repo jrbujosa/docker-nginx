@@ -1,0 +1,147 @@
+<style>
+    /* Añadir margen superior e inferior a las cabeceras H2/H3 dentro de la sección */
+    .arquitectura-view h2, 
+    .arquitectura-view h3 {
+      margin-top: 2em; /* Espacio por encima (ajusta si es necesario) */
+      margin-bottom: 1em; /* Espacio por debajo (ajusta este valor: 0.5em, 1.5em, 15px) */
+    }
+  
+    /* Indentar las listas (ajusta el padding según necesites) */
+    .arquitectura-view ul,
+    .arquitectura-view ol { /* Aplicar también a listas ordenadas si las usas */
+       padding-left: 40px; /* Ajusta este valor para mover toda la lista (bullets incluidos) */
+       margin-bottom: 1em; /* Espacio después de la lista completa */
+    }
+    
+    /* Estilos para los items de la lista */
+    .arquitectura-view ul li,
+    .arquitectura-view ol li {
+      margin-bottom: 0.5em; /* Espacio vertical entre items */
+    }
+  
+    /* Quitar el margen inferior del último item de cada lista */
+     .arquitectura-view ul li:last-child,
+     .arquitectura-view ol li:last-child {
+       margin-bottom: 0;
+     }
+  
+    /* Estilos básicos para la tabla comparativa */
+    .comparison-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 1em;
+      margin-bottom: 2em;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+    .comparison-table th, 
+    .comparison-table td {
+      border: 1px solid #ddd;
+      padding: 10px 12px;
+      text-align: left;
+      vertical-align: top; /* Alinea el contenido arriba en celdas largas */
+    }
+    .comparison-table th {
+      background-color: #f2f2f2;
+      font-weight: bold;
+    }
+    .comparison-table tr:nth-child(even) {
+      background-color: #f9f9f9;
+    }
+     .comparison-table td ul {
+        padding-left: 20px; /* Menor indentación para listas dentro de la tabla */
+        margin-top: 0.3em;
+        margin-bottom: 0;
+     }
+     .comparison-table td ul li {
+         margin-bottom: 0.3em;
+     }
+     .comparison-table td ul li:last-child {
+         margin-bottom: 0;
+     }
+  
+    /* Opcional: Si no quieres margen extra en la PRIMERA cabecera H3 dentro del div */
+    .arquitectura-view h3:first-of-type {
+       margin-top: 0.5em; /* Un margen menor para la primera cabecera */
+    }
+  </style>
+  
+  <!-- Resto del HTML sin cambios -->
+  <h2 id="main-title">Instalación</h2> <!-- ASUMO QUE ESTE TÍTULO ES EL GENERAL DE LA SECCIÓN -->
+  
+  <div class="arquitectura-view">
+  
+      <h3>¿Qué es Prompt-Driven Development (PDD)?</h3>
+      <p>
+          El <strong>Prompt-Driven Development (PDD)</strong>, o Desarrollo Impulsado por Prompts, es un enfoque emergente para la creación de software y contenido que se basa en la interacción conversacional con modelos de Inteligencia Artificial (IA), como los Grandes Modelos de Lenguaje (LLM). En lugar de escribir cada línea de código manualmente, el desarrollador guía a la IA mediante instrucciones en lenguaje natural (prompts) para generar, refinar y depurar el código o contenido deseado.
+      </p>
+      <p>Las características clave de este enfoque incluyen:</p>
+      <ul>
+          <li><strong>Enfoque en el 'Qué' sobre el 'Cómo':</strong> Permite concentrarse más en describir la funcionalidad deseada ('el qué') en lenguaje natural, en lugar de enfocarse exclusivamente en la sintaxis exacta y los algoritmos detallados ('el cómo').</li>
+          <li><strong>Velocidad de Prototipado e Iteración:</strong> Facilita la generación rápida de borradores, la prueba de ideas y el refinamiento de soluciones a través de ciclos de feedback mucho más cortos con la IA.</li>
+          <li><strong>Rol Evolucionado del Desarrollador:</strong> El desarrollador pasa de ser únicamente un 'escritor de código' a adoptar roles adicionales como <strong>'director'</strong> (definiendo la visión), <strong>'validador'</strong> (asegurando la calidad y corrección), <strong>'integrador'</strong> (conectando las piezas generadas) y, crucialmente, <strong>'ingeniero de prompts'</strong> (formulando instrucciones efectivas para la IA). La habilidad reside tanto en saber qué pedir como en evaluar críticamente la respuesta.</li>
+          <li><strong>Curva de Aprendizaje Modificada:</strong> Aunque puede reducir la barrera de entrada para ciertas tareas al abstraer parte de la sintaxis compleja, sigue siendo fundamental poseer conocimientos sólidos para guiar eficazmente a la IA, depurar el código resultante y validar su idoneidad y seguridad.</li>
+      </ul>
+  
+      <h3>Comparativa: Programación Tradicional vs. PDD</h3>
+      <p>A continuación se muestra una tabla comparativa que resume algunas diferencias clave, ventajas y desventajas entre ambos enfoques:</p>
+      <table class="comparison-table">
+        <thead>
+          <tr>
+            <th>Factor</th>
+            <th>Programación Tradicional</th>
+            <th>Prompt-Driven Development (PDD)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Velocidad Inicial / Prototipado</strong></td>
+            <td>Generalmente más lenta para iniciar desde cero, depende de la habilidad y conocimiento específico del desarrollador.</td>
+            <td>Muy rápida para generar código base, prototipos y explorar ideas iniciales.</td>
+          </tr>
+          <tr>
+            <td><strong>Iteración y Refinamiento</strong></td>
+            <td>Puede ser laboriosa, requiere modificar y depurar código manualmente.</td>
+            <td>Iteración rápida mediante feedback y prompts adicionales para refinar o corregir.</td>
+          </tr>
+          <tr>
+            <td><strong>Curva de Aprendizaje</strong></td>
+            <td>Alta: Requiere dominio de lenguajes, frameworks, algoritmos y herramientas específicas.</td>
+            <td>Menor barrera inicial para generar algo funcional. Requiere nuevas habilidades: ingeniería de prompts, validación crítica, integración de código IA.</td>
+          </tr>
+          <tr>
+            <td><strong>Rol Principal del Desarrollador</strong></td>
+            <td>Escritor, diseñador y depurador directo del código. Control total y granular.</td>
+            <td>Director, validador, integrador, ingeniero de prompts. Control más estratégico y de alto nivel.</td>
+          </tr>
+          <tr>
+            <td><strong>Calidad y Fiabilidad Inicial</strong></td>
+            <td>Depende directamente de la experiencia y buenas prácticas del desarrollador. Puede ser muy alta.</td>
+            <td>Variable. El código generado puede contener errores, ineficiencias o vulnerabilidades ("alucinaciones"). Requiere validación exhaustiva.</td>
+          </tr>
+          <tr>
+            <td><strong>Control y Precisión</strong></td>
+            <td>Control total sobre cada detalle de la implementación.</td>
+            <td>Menor control granular directo. Se influye en el resultado a través de la calidad del prompt y la iteración.</td>
+          </tr>
+          <tr>
+            <td><strong>Innovación y Exploración</strong></td>
+            <td>Limitada por el tiempo y conocimiento del desarrollador para investigar alternativas.</td>
+            <td>Facilita la exploración rápida de múltiples enfoques y soluciones que el desarrollador quizás no consideraría inicialmente.</td>
+          </tr>
+           <tr>
+            <td><strong>Mantenimiento a Largo Plazo</strong></td>
+            <td>El código bien escrito es mantenible. La estructura es definida por el humano.</td>
+            <td>Potencialmente más complejo si el código generado no sigue patrones consistentes o si la IA introduce complejidad oculta. Requiere disciplina.</td>
+          </tr>
+        </tbody>
+      </table>
+  
+      <h3>El Impacto Exponencial de los LLM y el Lenguaje Natural</h3>
+      <p>
+          El auge del <strong>Prompt-Driven Development</strong> está intrínsecamente ligado al avance exponencial de los <strong>Grandes Modelos de Lenguaje (LLM)</strong> en los últimos años. Estas redes neuronales masivas, entrenadas con cantidades ingentes de texto y código, han desarrollado una capacidad sorprendente para comprender y generar lenguaje natural y código fuente con una fluidez sin precedentes.
+      </p>
+      <p>
+          Esta revolución tecnológica está transformando la interacción humano-computadora. El <strong>lenguaje natural</strong> se está convirtiendo en una interfaz cada vez más viable y poderosa para tareas complejas que antes requerían conocimientos técnicos especializados. Para los desarrolladores y creadores, esto abre un abanico de posibilidades: desde acelerar drásticamente el desarrollo y reducir tareas repetitivas, hasta explorar nuevas soluciones creativas y superar barreras de conocimiento, actuando la IA como un colaborador o asistente inteligente siempre disponible. El dominio del lenguaje natural como herramienta de creación se perfila como una habilidad clave en el futuro tecnológico.
+      </p>
+  
+  </div> 
