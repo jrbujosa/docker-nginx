@@ -1,0 +1,167 @@
+<!-- Inicio del Fragmento HTML -->
+
+<style>
+  /* --- TUS ESTILOS ORIGINALES --- */
+  /* Añadir margen superior e inferior a las cabeceras H2 dentro de la sección de instalación */
+  .arquitectura-view h2 {
+    margin-top: 2em; /* Espacio por encima (ajusta si es necesario) */
+    margin-bottom: 1em; /* Espacio por debajo (ajusta este valor: 0.5em, 1.5em, 15px) */
+  }
+
+  /* Indentar las listas (ajusta el padding según necesites) */
+  .arquitectura-view ul {
+     padding-left: 40px; /* Ajusta este valor para mover toda la lista (bullets incluidos) */
+     margin-bottom: 1em; /* Añadido espacio después de listas */
+  }
+
+  /* Estilos para los items de la lista */
+  .arquitectura-view ul li {
+    /* padding-left: 1.5em; */ /* Probablemente ya no necesitas esto si indentas el UL */
+    margin-bottom: 0.5em; /* Espacio vertical entre items */
+  }
+
+  /* Quitar el margen inferior del último item de cada lista */
+   .arquitectura-view ul li:last-child {
+     margin-bottom: 0;
+   }
+
+  /* Opcional: Si no quieres margen extra en la PRIMERA cabecera H2 dentro del div */
+  /*
+  .arquitectura-view h2:first-of-type {
+     margin-top: 0;
+  }
+  */
+  /* --- FIN TUS ESTILOS ORIGINALES --- */
+
+  /* --- ESTILOS ADICIONALES (RECOMENDADOS) para el contenido Markdown --- */
+  .arquitectura-view h1,
+  .arquitectura-view h3, /* Aplicar márgenes a otros niveles de encabezado si aparecen */
+  .arquitectura-view h4,
+  .arquitectura-view h5,
+  .arquitectura-view h6 {
+    margin-top: 1.5em;
+    margin-bottom: 0.8em;
+  }
+
+  .arquitectura-view ol { /* Estilo para listas ordenadas */
+     padding-left: 40px;
+     margin-bottom: 1em;
+  }
+   .arquitectura-view ol li {
+      margin-bottom: 0.5em;
+   }
+   .arquitectura-view ol li:last-child {
+      margin-bottom: 0;
+   }
+
+  .arquitectura-view p { /* Espacio entre párrafos */
+    margin-bottom: 1em;
+    line-height: 1.6;
+  }
+
+  .arquitectura-view pre { /* Estilo para bloques de código */
+    background-color: #f6f8fa;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    padding: 16px;
+    overflow-x: auto;
+    margin-top: 0.5em;
+    margin-bottom: 1em;
+    font-family: monospace;
+    font-size: 0.9em;
+  }
+
+  .arquitectura-view code { /* Estilo para código en línea */
+     font-family: monospace;
+     background-color: rgba(27,31,35,0.05);
+     padding: 0.2em 0.4em;
+     margin: 0;
+     font-size: 85%;
+     border-radius: 3px;
+  }
+  .arquitectura-view pre code { /* Resetear estilo para código dentro de <pre> */
+      background-color: transparent;
+      padding: 0; margin: 0; font-size: inherit; border-radius: 0; border: none;
+  }
+
+   /* Asegurar que el primer elemento cargado no tenga margen superior extra */
+  .arquitectura-view > *:first-child {
+      margin-top: 0 !important; /* Puede necesitar !important */
+  }
+
+  /* Estilos para mensajes de carga y error */
+  .readme-loading, .readme-error {
+      color: #555; font-style: italic; padding: 20px; text-align: center;
+  }
+  .readme-error {
+      color: #d9534f; font-weight: bold; background-color: #f2dede;
+      border: 1px solid #ebccd1; border-radius: 4px;
+  }
+  /* --- FIN ESTILOS ADICIONALES --- */
+
+</style>
+
+<!-- Título principal (fuera del div dinámico, como lo tenías) -->
+<h2 id="main-title">Instalación</h2>
+
+<!--
+  CONTENEDOR donde se inyectará el contenido del README.md.
+  Comienza con un mensaje de carga.
+-->
+<div class="arquitectura-view">
+  <p class="readme-loading">Cargando instrucciones desde GitHub...</p>
+  <!-- El script de abajo reemplazará este párrafo con el contenido del README -->
+</div>
+
+<!-- Scripts necesarios (idealmente colocados después del div que manipulan) -->
+
+<!-- 1. Cargar la librería marked.js -->
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
+<!-- 2. Script para buscar, convertir e inyectar el README -->
+<script>
+  (function() {
+    const readmeUrl = 'https://raw.githubusercontent.com/jrbujosa/docker-nginx/main/README.md';
+    const targetDiv = document.querySelector('.arquitectura-view'); // Selecciona TU div
+
+    // Verificar si el div existe
+    if (!targetDiv) {
+      console.error("Error: El contenedor '.arquitectura-view' no fue encontrado.");
+      return;
+    }
+
+    // Función asíncrona para manejar la carga
+    async function loadReadmeContent() {
+      try {
+        // Realizar la petición para obtener el Markdown crudo
+        const response = await fetch(readmeUrl, { cache: 'no-cache' }); // Evitar caché
+
+        // Verificar si la petición fue exitosa
+        if (!response.ok) {
+          throw new Error(`Error al contactar GitHub: ${response.status} ${response.statusText}`);
+        }
+
+        // Obtener el texto del README
+        const markdownText = await response.text();
+
+        // Convertir Markdown a HTML usando marked.js
+        // Asegúrate de que `marked.parse` es la función correcta para tu versión de marked
+        const htmlContent = marked.parse(markdownText);
+
+        // Limpiar el div (quitar el mensaje de carga) e insertar el HTML
+        targetDiv.innerHTML = htmlContent;
+
+      } catch (error) {
+        // Si algo falla (red, parseo, etc.), mostrar un error
+        console.error('Fallo al cargar/renderizar el README:', error);
+        targetDiv.innerHTML = `<div class="readme-error">Lo sentimos, no se pudieron cargar las instrucciones. Error: ${error.message}</div>`;
+      }
+    }
+
+    // Ejecutar la función para iniciar el proceso
+    loadReadmeContent();
+
+  })(); // Fin de la función autoejecutable (IIFE)
+</script>
+
+<!-- Fin del Fragmento HTML -->

@@ -1,18 +1,25 @@
 <!-- Contenido de fragments/arquitectura.html -->
 
+<!-- INICIO: Imagen de Arquitectura -->
+<img 
+    src="assets/images/arquitectura-docker-nginx.jpg"  
+    alt="Diagrama de la arquitectura de la aplicación" 
+    class="arquitectura-imagen-principal"> 
+<!-- FIN: Imagen de Arquitectura -->
+
 <h2 id="main-title">Arquitectura de la Aplicación</h2>
 
 <div class="arquitectura-view">
     <p>Estructura de carpetas y archivos recomendada para este proyecto:</p>
     <pre>
-tu-proyecto/
+html/
 ├── index.html             <- Página principal (Contenedor)
 ├── style.css              <- Hoja de estilos principal
 ├── script.js              <- Lógica principal (navegación, fetch)
 │
 ├── fragments/             <- Piezas de HTML cargadas en <main>
-│   ├── dashboard.html
-│   ├── arquitectura.html  <- Este mismo archivo
+│   ├── instalacion.html
+│   ├── arquitectura.html  
 │   ├── ejemplos-css.html
 │   ├── ejemplos-js.html
 │   ├── ejemplos-html.html
@@ -30,6 +37,7 @@ tu-proyecto/
 └── assets/                <- Recursos: imágenes, iconos, fuentes (opcional)
     └── images/
         └── logo.png
+        └── arquiitectura.jpg <- Tu imagen aquí
     </pre>
 </br>
 </br>
@@ -94,6 +102,18 @@ tu-proyecto/
             font-style: italic;
             color: #777;
         }
+
+        /* --- NUEVO ESTILO PARA LA IMAGEN --- */
+        .arquitectura-imagen-principal {
+            display: block; /* Para poder centrarla con margen auto */
+            max-width: 100%; /* Asegura que sea responsiva y no se salga del contenedor */
+            height: auto; /* Mantiene la proporción */
+            margin: 0 auto 25px auto; /* Centra horizontalmente y añade margen inferior */
+            border: 1px solid #eee; /* Opcional: añade un borde sutil */
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1); /* Opcional: añade una sombra */
+        }
+        /* --- FIN NUEVO ESTILO --- */
+
     </style>
     <table>
         <thead>
