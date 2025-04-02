@@ -14,7 +14,7 @@
             flex-direction: column;
             align-items: center;
             justify-content: flex-start;
-            min-height: 100vh; /* Ensure full height for proper centering */
+            min-height: 100vh; /* Ensure full height */
         }
 
         .container {
@@ -25,6 +25,7 @@
             width: 80%; /* Adjust width as needed */
             max-width: 800px;
             margin-top: 20px;
+            margin-bottom: 40px; /* Add margin at the bottom */
         }
 
         h1 {
@@ -89,13 +90,79 @@
             margin-top: 10px;
             text-align: center;
         }
+
+        /* Estilos para la sección de explicación del flujo */
+        .explanation-section {
+            width: 80%;
+            max-width: 800px;
+            background-color: #e9ecef; /* Light grey background */
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            margin-top: 30px;
+            margin-bottom: 30px;
+            border: 1px solid #ced4da; /* Slightly darker border */
+            font-size: 0.95em; /* Slightly smaller font for explanation */
+            line-height: 1.6; /* Improved readability */
+        }
+
+        .explanation-section h2 {
+            margin-top: 0;
+            color: #0056b3; /* Darker blue */
+            border-bottom: 1px solid #adb5bd;
+            padding-bottom: 10px;
+            font-size: 1.4em; /* Adjust heading size */
+        }
+        .explanation-section h3 {
+             margin-top: 20px;
+             color: #343a40; /* Dark grey */
+             font-size: 1.2em; /* Adjust heading size */
+         }
+
+        .explanation-section ul, .explanation-section ol {
+            margin-left: 20px;
+            padding-left: 20px; /* Add padding for better indentation */
+        }
+
+        .explanation-section li {
+            margin-bottom: 12px; /* Slightly more space between items */
+        }
+         .explanation-section ul ul,
+         .explanation-section ol ul,
+         .explanation-section ul ol,
+         .explanation-section ol ol {
+             margin-left: 25px; /* Further indent sub-lists */
+             margin-top: 8px;
+         }
+
+        .explanation-section .code-inline { /* Use a class for inline code representation */
+            background-color: #d1ecf1; /* Light cyan background for code */
+            color: #0c5460; /* Dark cyan text */
+            padding: 2px 5px;
+            border-radius: 3px;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.95em;
+            word-wrap: break-word; /* Wrap long code snippets */
+        }
+
+        .explanation-section strong {
+            color: #495057; /* Slightly darker text for emphasis */
+        }
+         .explanation-section em {
+             font-style: italic;
+             color: #6c757d; /* Grey italic text */
+         }
+         .explanation-section .step-marker { /* Style for step numbers */
+             font-weight: bold;
+             color: #0056b3;
+         }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>Visualizador de Datos</h1>
 
-        <p>Probar tambien con: http://localhost:8080/examples/js/api-js/index.php?tipo=clientes</p>
+        <p>Probar tambien con: <code class="code-inline">http://localhost:8080/examples/js/api-js/index.php?tipo=clientes</code></p>
 
         <label for="data-type">Seleccione el tipo de datos:</label>
         <select id="data-type" name="data-type">
@@ -140,36 +207,65 @@
         });
 
         async function fetchData(dataType) {
+             // Mostrar "Cargando..." en la tabla mientras se obtienen los datos
+             dataTable.innerHTML = '<thead><tr><th>Cargando...</th></tr></thead><tbody></tbody>';
+             errorMessageDiv.textContent = ''; // Limpiar errores anteriores
+
             try {
+                // Añadir un pequeño retraso simulado (opcional, para ver el "Cargando...")
+                // await new Promise(resolve => setTimeout(resolve, 300));
+
                 const response = await fetch(`/examples/js/api-js/index.php?tipo=${dataType}`);
 
                 if (!response.ok) {
-                    throw new Error(`Error al cargar los datos: ${response.status} ${response.statusText}`);
+                    // Intentar leer el mensaje de error del cuerpo si es JSON
+                    let errorMsg = `Error al cargar los datos: ${response.status} ${response.statusText}`;
+                    try {
+                        const errorData = await response.json();
+                        if (errorData && errorData.error) {
+                             errorMsg += ` - Servidor dice: ${errorData.error}`;
+                        }
+                    } catch (e) {
+                        // No hacer nada si el cuerpo no es JSON válido
+                    }
+                    throw new Error(errorMsg);
                 }
 
                 const data = await response.json();
 
                 if (data && Array.isArray(data) && data.length > 0) {
                     displayData(data);
-                } else if (data && data.error) {
+                } else if (data && data.error) { // Comprobar error JSON incluso con respuesta 200 OK
                     errorMessageDiv.textContent = `Error del servidor: ${data.error}`;
-                    dataTable.innerHTML = ''; // Clear table
+                    dataTable.innerHTML = '<thead></thead><tbody></tbody>'; // Limpiar tabla
+                } else if (data && Array.isArray(data) && data.length === 0) {
+                     errorMessageDiv.textContent = 'No se encontraron datos para este tipo.';
+                     dataTable.innerHTML = '<thead></thead><tbody></tbody>'; // Limpiar tabla
                 } else {
-                    errorMessageDiv.textContent = 'No se encontraron datos.';
-                    dataTable.innerHTML = ''; // Clear table
+                     errorMessageDiv.textContent = 'Respuesta inesperada del servidor o datos vacíos.';
+                     dataTable.innerHTML = '<thead></thead><tbody></tbody>'; // Limpiar tabla
                 }
 
             } catch (error) {
                 errorMessageDiv.textContent = `Error: ${error.message}`;
-                dataTable.innerHTML = ''; // Clear table
+                dataTable.innerHTML = '<thead></thead><tbody></tbody>'; // Limpiar tabla en caso de error de red/fetch
             }
         }
 
         function displayData(data) {
-            const headers = Object.keys(data[0]); // Get keys from the first object
+            // Comprobar si hay datos antes de intentar acceder a data[0]
+            if (!data || data.length === 0) {
+                 errorMessageDiv.textContent = 'No hay datos para mostrar.';
+                 dataTable.innerHTML = '<thead></thead><tbody></tbody>';
+                 return;
+             }
+
+            const headers = Object.keys(data[0]); // Obtener claves del primer objeto
             let theadHtml = '<tr>';
             headers.forEach(header => {
-                theadHtml += `<th>${header}</th>`;
+                // Capitalizar la primera letra del encabezado para mejor presentación
+                const formattedHeader = header.charAt(0).toUpperCase() + header.slice(1);
+                theadHtml += `<th>${formattedHeader}</th>`;
             });
             theadHtml += '</tr>';
 
@@ -177,7 +273,9 @@
             data.forEach(item => {
                 tbodyHtml += '<tr>';
                 headers.forEach(header => {
-                    tbodyHtml += `<td>${item[header] || ''}</td>`; // Handle missing values
+                    // Usar '' si el valor es null o undefined
+                    const value = item[header] !== null && item[header] !== undefined ? item[header] : '';
+                    tbodyHtml += `<td>${value}</td>`;
                 });
                 tbodyHtml += '</tr>';
             });
@@ -188,5 +286,129 @@
             `;
         }
     </script>
+
+    <!-- INICIO: Sección de Explicación del Flujo de Control -->
+    <div class="explanation-section">
+        <h2>Explicación del Flujo de Control</h2>
+<p> Este flujo demuestra una interacción cliente-servidor típica usando AJAX (específicamente con fetch): el frontend maneja la interfaz y la interacción, solicita datos al backend cuando es necesario, y el backend procesa la lógica de negocio (en este caso, leer archivos) y devuelve los datos al frontend para su visualización.</p>
+
+        <h3>Actores Principales:</h3>
+        <ul>
+            <li><strong>Navegador Web:</strong> Interpreta HTML, CSS, ejecuta JavaScript, envía peticiones HTTP y renderiza la interfaz.</li>
+            <li><strong>Usuario:</strong> Interactúa con la página (selecciona una opción, hace clic en el botón).</li>
+            <li><strong>JavaScript (Frontend - en <span class="code-inline">index.html</span>):</strong> Maneja la interacción del usuario, realiza peticiones al backend, procesa respuestas y actualiza el DOM (la tabla y los mensajes de error).</li>
+            <li><strong>Servidor Web (ej: Apache, Nginx):</strong> Recibe peticiones HTTP del navegador y ejecuta el script PHP.</li>
+            <li><strong>PHP (Backend - <span class="code-inline">index.php</span>):</strong> Recibe la petición del frontend, valida el tipo solicitado, lee datos desde un archivo JSON en el servidor y devuelve una respuesta JSON (datos o error).</li>
+            <li><strong>Sistema de Archivos del Servidor:</strong> Donde residen los archivos <span class="code-inline">.json</span> (<span class="code-inline">/data/usuarios.json</span>, etc.).</li>
+        </ul>
+
+        <h3>Flujo de Control:</h3>
+        <ol>
+            <li>
+                <span class="step-marker"></span> <strong>Carga Inicial de la Página (<span class="code-inline">index.html</span>):</strong>
+                <ul>
+                    <li>El <strong>Usuario</strong> accede a la URL.</li>
+                    <li>El <strong>Navegador</strong> solicita y recibe <span class="code-inline">index.html</span> del <strong>Servidor Web</strong>.</li>
+                    <li>El <strong>Navegador</strong> procesa el HTML/CSS y construye el DOM inicial (título, select, botón, tabla vacía, etc.).</li>
+                    <li>El <strong>Navegador</strong> ejecuta el JavaScript dentro de la etiqueta <span class="code-inline">script</span>:
+                        <ul>
+                            <li>Obtiene referencias a elementos del DOM (select, botón, tabla, div de error).</li>
+                            <li><strong>Adjunta un Event Listener</strong> al botón "Cargar Datos", esperando un clic.</li>
+                            <li>Define las funciones <span class="code-inline">fetchData</span> y <span class="code-inline">displayData</span>.</li>
+                        </ul>
+                    </li>
+                    <li>El <strong>Navegador</strong> muestra la página inicial al usuario.</li>
+                </ul>
+            </li>
+            <li>
+                <span class="step-marker"></span> <strong>Interacción del Usuario:</strong>
+                <ul>
+                    <li>El <strong>Usuario</strong> selecciona una opción (ej: "Clientes") en el desplegable.</li>
+                    <li>El <strong>Usuario</strong> hace clic en el botón "Cargar Datos".</li>
+                </ul>
+            </li>
+            <li>
+                <span class="step-marker"></span> <strong>Disparo del Event Listener (Click):</strong>
+                <ul>
+                    <li>El <strong>Navegador</strong> detecta el clic y ejecuta la función asociada al listener del botón.</li>
+                    <li><strong>Ejecución JavaScript (Listener):</strong>
+                        <ul>
+                            <li>Obtiene el valor seleccionado ("clientes").</li>
+                            <li>Valida que se haya seleccionado un valor.</li>
+                            <li>Limpia mensajes de error previos.</li>
+                            <li>Llama a <span class="code-inline">fetchData("clientes")</span>.</li>
+                        </ul>
+                    </li>
+                </ul>
+            </li>
+            <li>
+                <span class="step-marker"></span> <strong>Petición de Datos (<span class="code-inline">fetchData</span> - JavaScript):</strong>
+                <ul>
+                    <li>La función <span class="code-inline">fetchData</span> se ejecuta asíncronamente.</li>
+                    <li>Usa <span class="code-inline">fetch</span> para enviar una petición HTTP GET al <strong>Servidor Web</strong> a la URL <span class="code-inline">/examples/js/api-js/index.php?tipo=clientes</span>.</li>
+                    <li>El <strong>Navegador</strong> realiza la petición de red.</li>
+                </ul>
+            </li>
+            <li>
+                <span class="step-marker"></span> <strong>Procesamiento en el Backend (Servidor Web / <span class="code-inline">index.php</span>):</strong>
+                <ul>
+                    <li>El <strong>Servidor Web</strong> recibe la petición y ejecuta <span class="code-inline">index.php</span>.</li>
+                    <li><strong>Ejecución <span class="code-inline">index.php</span> (PHP):</strong>
+                        <ul>
+                            <li>Establece cabeceras (Content-Type JSON, CORS).</li>
+                            <li>Obtiene <span class="code-inline">tipo=clientes</span> de la URL.</li>
+                            <li>Valida que "clientes" sea un tipo permitido.</li>
+                            <li>Llama a <span class="code-inline">obtenerDatos('clientes')</span>.</li>
+                            <li><strong>Ejecución <span class="code-inline">obtenerDatos('clientes')</span> (PHP):</strong>
+                                <ul>
+                                    <li>Construye la ruta <span class="code-inline">/data/clientes.json</span>.</li>
+                                    <li>Lee el archivo del <strong>Sistema de Archivos</strong>.</li>
+                                    <li>Decodifica el JSON a un array PHP.</li>
+                                    <li>Retorna el array PHP.</li>
+                                </ul>
+                            </li>
+                            <li>Codifica el array PHP resultante a una cadena JSON.</li>
+                            <li>Imprime (<span class="code-inline">echo</span>) la cadena JSON.</li>
+                        </ul>
+                    </li>
+                    <li>El <strong>Servidor Web</strong> envía la respuesta HTTP (estado 200 OK, cabeceras, cuerpo JSON) de vuelta al <strong>Navegador</strong>.</li>
+                </ul>
+            </li>
+            <li>
+                <span class="step-marker"></span> <strong>Procesamiento de la Respuesta (<span class="code-inline">fetchData</span> - JavaScript):</strong>
+                <ul>
+                    <li>El <strong>Navegador</strong> recibe la respuesta.</li>
+                    <li>La ejecución de <span class="code-inline">fetchData</span> continúa (<span class="code-inline">await</span>).</li>
+                    <li>Verifica <span class="code-inline">response.ok</span> (es true).</li>
+                    <li>Parsea el cuerpo JSON de la respuesta (<span class="code-inline">await response.json()</span>) a un objeto/array JavaScript (<span class="code-inline">data</span>).</li>
+                    <li>Verifica si <span class="code-inline">data</span> es un array válido y no vacío.</li>
+                    <li>Llama a <span class="code-inline">displayData(data)</span>.</li>
+                </ul>
+            </li>
+            <li>
+                <span class="step-marker"></span> <strong>Visualización de Datos (<span class="code-inline">displayData</span> - JavaScript):</strong>
+                <ul>
+                    <li>Recibe el array <span class="code-inline">data</span>.</li>
+                    <li>Obtiene los nombres de las propiedades del primer objeto para los encabezados.</li>
+                    <li>Construye dinámicamente el HTML para el <span class="code-inline">thead</span>.</li>
+                    <li>Itera sobre cada objeto en <span class="code-inline">data</span>, construyendo una fila <span class="code-inline">tr</span> con celdas <span class="code-inline">td</span> para cada valor.</li>
+                    <li>Construye dinámicamente el HTML para el <span class="code-inline">tbody</span>.</li>
+                    <li>Actualiza el <span class="code-inline">innerHTML</span> de la tabla (<span class="code-inline">dataTable</span>) con el nuevo <span class="code-inline">thead</span> y <span class="code-inline">tbody</span>.</li>
+                    <li>El <strong>Navegador</strong> detecta el cambio en el DOM y <strong>re-renderiza la tabla</strong>, mostrando los datos al usuario.</li>
+                </ul>
+            </li>
+            <li>
+                <span class="step-marker"></span> <strong>Flujo en Caso de Error (Ejemplo: Tipo Inválido):</strong>
+                <ul>
+                    <li>Si se intenta cargar <span class="code-inline">?tipo=facturas</span>:</li>
+                    <li>PHP (Paso 5) detecta tipo inválido, envía respuesta con estado 400 y JSON de error.</li>
+                    <li>JavaScript (Paso 6) detecta <span class="code-inline">response.ok</span> como false, lanza un error.</li>
+                    <li>El bloque <span class="code-inline">catch</span> en <span class="code-inline">fetchData</span> se ejecuta, muestra el mensaje de error en <span class="code-inline">errorMessageDiv</span> y limpia la tabla.</li>
+                </ul>
+            </li>
+        </ol>
+    </div>
+    <!-- FIN: Sección de Explicación del Flujo de Control -->
+
 </body>
 </html>

@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tareas y Productos</title>
+    <style>
+        body { font-family: sans-serif; max-width: 800px; margin: 20px auto; padding: 0 15px; }
+        ul { list-style: none; padding: 0; }
+        li { margin-bottom: 8px; border-bottom: 1px solid #eee; padding-bottom: 5px; display: flex; justify-content: space-between; align-items: center; }
+        li.completed span { text-decoration: line-through; color: grey; } /* Estilo para tareas completadas */
+        h1, h2 { border-bottom: 2px solid black; padding-bottom: 5px; margin-top: 30px;}
+        button { margin: 5px; padding: 8px 15px; cursor: pointer; border: 1px solid #ccc; background-color: #f0f0f0; border-radius: 4px; }
+        button:hover { background-color: #e0e0e0; }
+        input[type="text"] { padding: 8px; margin-right: 5px; border: 1px solid #ccc; border-radius: 4px; min-width: 250px;}
+        form { margin-top: 15px; margin-bottom: 15px; display: flex; align-items: center; }
+        hr { margin-top: 30px; margin-bottom: 30px; border: 0; border-top: 1px solid #ccc; }
+        #error-message { color: red; margin-top: 10px; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <h1>Mi Aplicación Completa</h1>
+
+    <div id="error-message"></div> <!-- Área para mostrar errores -->
+
+    <!-- Sección de Tareas -->
+    <h2>Tareas</h2>
+
+    <!-- Formulario para añadir nuevas tareas -->
+    <form id="addTaskForm">
+        <input type="text" id="newTaskInput" placeholder="Descripción de la nueva tarea" required>
+        <button type="submit">Añadir Tarea</button>
+    </form>
+
+    <button id="fetchTasksBtn">Recargar Lista de Tareas</button>
+    <ul id="taskList">
+        <!-- Las tareas se cargarán aquí -->
+        <li>Haz clic en "Recargar Lista de Tareas" para empezar.</li>
+    </ul>
+
+    <hr>
+
+    <!-- Sección de Productos -->
+    <h2>Productos</h2>
+    <button id="fetchProductsBtn">Cargar Productos</button>
+    <ul id="productList">
+        <!-- Los productos se cargarán aquí -->
+        <li>Haz clic en "Cargar Productos".</li>
+    </ul>
+
+    <script src="script.js" defer></script>
+</body>
+</html>

@@ -63,12 +63,51 @@
     .arquitectura-view h3:first-of-type {
        margin-top: 0.5em; /* Un margen menor para la primera cabecera */
     }
+  /* Estilos para la cita destacada */
+  .quote-box {
+    border-left: 5px solid #4A90E2;
+    background: #f9f9f9;
+    padding: 15px 20px;
+    margin: 20px 0;
+    font-style: italic;
+    font-size: 1.2em;
+    position: relative;
+  }
+  .quote-box::before, .quote-box::after {
+    content: '"';
+    font-size: 2em;
+    color: #4A90E2;
+    position: absolute;
+  }
+  .quote-box::before {
+    top: 5px;
+    left: 10px;
+  }
+  .quote-box::after {
+    bottom: 5px;
+    right: 10px;
+  }
+  .quote-author {
+    display: block;
+    margin-top: 10px;
+    text-align: right;
+    font-weight: bold;
+  }
   </style>
   
   <!-- Resto del HTML sin cambios -->
-  <h2 id="main-title">Instalación</h2> <!-- ASUMO QUE ESTE TÍTULO ES EL GENERAL DE LA SECCIÓN -->
+  <h2 id="main-title">Prompt-Driven Development</h2> <!-- ASUMO QUE ESTE TÍTULO ES EL GENERAL DE LA SECCIÓN -->
   
   <div class="arquitectura-view">
+<!-- Cita destacada -->
+<div class="quote-box">
+  "Los estudiantes y profesionales deben centrarse en comprender cómo funciona la inteligencia artificial y cómo pueden utilizarla de forma eficaz, más que en memorizar estructuras o comandos específicos."
+  <span class="quote-author">- Sam Altman, abril 2025</span>
+</div>
+
+      <P> Este sitio web ha sido desarrolado 100% con lo que hemos llamado Prompt-Driven Development. Esto es, para crear este sitio no se ha escrito ni una sola línea de código nuevo. Todo el código proviene de hacer preguntas y comentarios al código generado principalmente por <a href="https://aistudio.google.com/">Google IA Studio Gemini 2.5 Pro</a>.</p>
+
+<p>Como se expone a continuación el objetivo de este sitio es, no sólo que los alumnos dispongan de un entorno complejo donde acceder a ejemplos de código HTML, CSS y JS, sino que puedan centrarse más en el <strong>'Qué'</strong> que en el <strong>'Cómo':</strong> </p>
   
       <h3>¿Qué es Prompt-Driven Development (PDD)?</h3>
       <p>

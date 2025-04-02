@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Visualizador de Datos</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            min-height: 100vh; /* Ensure full height for proper centering */
+        }
+
+        .container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            width: 80%; /* Adjust width as needed */
+            max-width: 800px;
+            margin-top: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-weight: bold;
+        }
+
+        select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        button {
+            background-color: #007bff;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        #data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        #data-table th, #data-table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        #data-table th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+        }
+
+        #data-table tbody tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        #error-message {
+            color: red;
+            margin-top: 10px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Visualizador de Datos</h1>
+
+        <p>Probar tambien con: http://localhost:8080/examples/js/api-js/index.php?tipo=clientes</p>
+
+        <label for="data-type">Seleccione el tipo de datos:</label>
+        <select id="data-type" name="data-type">
+            <option value="">Seleccione...</option>
+            <option value="usuarios">Usuarios</option>
+            <option value="clientes">Clientes</option>
+            <option value="productos">Productos</option>
+        </select>
+
+        <button id="load-data">Cargar Datos</button>
+
+        <div id="error-message"></div>
+
+        <table id="data-table">
+            <thead>
+                <tr>
+                    <!-- Encabezados dinámicos se insertarán aquí -->
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Datos dinámicos se insertarán aquí -->
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        const dataTypeSelect = document.getElementById('data-type');
+        const loadDataButton = document.getElementById('load-data');
+        const dataTable = document.getElementById('data-table');
+        const errorMessageDiv = document.getElementById('error-message');
+
+        loadDataButton.addEventListener('click', function() {
+            const selectedType = dataTypeSelect.value;
+
+            if (!selectedType) {
+                errorMessageDiv.textContent = 'Por favor, seleccione un tipo de datos.';
+                return;
+            }
+
+            errorMessageDiv.textContent = ''; // Clear previous error
+            fetchData(selectedType);
+        });
+
+        async function fetchData(dataType) {
+            try {
+                const response = await fetch(`/examples/js/api-js/index.php?tipo=${dataType}`);
+
+                if (!response.ok) {
+                    throw new Error(`Error al cargar los datos: ${response.status} ${response.statusText}`);
+                }
+
+                const data = await response.json();
+
+                if (data && Array.isArray(data) && data.length > 0) {
+                    displayData(data);
+                } else if (data && data.error) {
+                    errorMessageDiv.textContent = `Error del servidor: ${data.error}`;
+                    dataTable.innerHTML = ''; // Clear table
+                } else {
+                    errorMessageDiv.textContent = 'No se encontraron datos.';
+                    dataTable.innerHTML = ''; // Clear table
+                }
+
+            } catch (error) {
+                errorMessageDiv.textContent = `Error: ${error.message}`;
+                dataTable.innerHTML = ''; // Clear table
+            }
+        }
+
+        function displayData(data) {
+            const headers = Object.keys(data[0]); // Get keys from the first object
+            let theadHtml = '<tr>';
+            headers.forEach(header => {
+                theadHtml += `<th>${header}</th>`;
+            });
+            theadHtml += '</tr>';
+
+            let tbodyHtml = '';
+            data.forEach(item => {
+                tbodyHtml += '<tr>';
+                headers.forEach(header => {
+                    tbodyHtml += `<td>${item[header] || ''}</td>`; // Handle missing values
+                });
+                tbodyHtml += '</tr>';
+            });
+
+            dataTable.innerHTML = `
+                <thead>${theadHtml}</thead>
+                <tbody>${tbodyHtml}</tbody>
+            `;
+        }
+    </script>
+</body>
+</html>

@@ -5,17 +5,97 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tareas y Productos</title>
     <style>
-        body { font-family: sans-serif; max-width: 800px; margin: 20px auto; padding: 0 15px; }
+        body { font-family: sans-serif; max-width: 800px; margin: 20px auto; padding: 0 15px; background-color: #f9f9f9; } /* Added background color */
         ul { list-style: none; padding: 0; }
-        li { margin-bottom: 8px; border-bottom: 1px solid #eee; padding-bottom: 5px; display: flex; justify-content: space-between; align-items: center; }
+        li { margin-bottom: 8px; border-bottom: 1px solid #eee; padding-bottom: 5px; display: flex; justify-content: space-between; align-items: center; background-color: #fff; padding: 8px; border-radius: 3px;} /* Added style to list items */
+        li:last-child { border-bottom: none; }
         li.completed span { text-decoration: line-through; color: grey; } /* Estilo para tareas completadas */
         h1, h2 { border-bottom: 2px solid black; padding-bottom: 5px; margin-top: 30px;}
-        button { margin: 5px; padding: 8px 15px; cursor: pointer; border: 1px solid #ccc; background-color: #f0f0f0; border-radius: 4px; }
+        h1 { text-align: center; }
+        button { margin: 5px; padding: 8px 15px; cursor: pointer; border: 1px solid #ccc; background-color: #f0f0f0; border-radius: 4px; transition: background-color 0.2s; }
         button:hover { background-color: #e0e0e0; }
-        input[type="text"] { padding: 8px; margin-right: 5px; border: 1px solid #ccc; border-radius: 4px; min-width: 250px;}
-        form { margin-top: 15px; margin-bottom: 15px; display: flex; align-items: center; }
+        button[type="submit"] { background-color: #28a745; color: white; border-color: #28a745; } /* Style submit button */
+        button[type="submit"]:hover { background-color: #218838; }
+        input[type="text"] { padding: 8px; margin-right: 5px; border: 1px solid #ccc; border-radius: 4px; min-width: 250px; flex-grow: 1;} /* Allow input to grow */
+        form { margin-top: 15px; margin-bottom: 15px; display: flex; align-items: center; gap: 10px; } /* Added gap */
         hr { margin-top: 30px; margin-bottom: 30px; border: 0; border-top: 1px solid #ccc; }
-        #error-message { color: red; margin-top: 10px; font-weight: bold; }
+        #error-message { color: #dc3545; background-color: #f8d7da; border: 1px solid #f5c6cb; border-radius: 4px; padding: 10px; margin-top: 10px; margin-bottom: 15px; font-weight: bold; text-align: center; }
+        #error-message:empty { display: none; } /* Hide error div when empty */
+
+        /* Estilos para la sección de explicación del flujo */
+        .explanation-section {
+            background-color: #e9ecef; /* Light grey background */
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            margin-top: 40px; /* More space above */
+            margin-bottom: 30px;
+            border: 1px solid #ced4da; /* Slightly darker border */
+            font-size: 0.95em; /* Slightly smaller font for explanation */
+            line-height: 1.6; /* Improved readability */
+        }
+
+        .explanation-section h2 {
+            margin-top: 0;
+            color: #0056b3; /* Darker blue */
+            border-bottom: 1px solid #adb5bd;
+            padding-bottom: 10px;
+            font-size: 1.4em; /* Adjust heading size */
+        }
+        .explanation-section h3 {
+             margin-top: 20px;
+             color: #343a40; /* Dark grey */
+             font-size: 1.2em; /* Adjust heading size */
+         }
+
+        .explanation-section ul, .explanation-section ol {
+            margin-left: 20px;
+            padding-left: 20px; /* Add padding for better indentation */
+        }
+
+        .explanation-section li {
+            margin-bottom: 12px; /* Slightly more space between items */
+            background-color: transparent; /* Override default li style */
+            border: none; /* Override default li style */
+            padding: 0; /* Override default li style */
+            display: list-item; /* Ensure it behaves like a list item */
+        }
+         .explanation-section ul ul,
+         .explanation-section ol ul,
+         .explanation-section ul ol,
+         .explanation-section ol ol {
+             margin-left: 25px; /* Further indent sub-lists */
+             margin-top: 8px;
+         }
+         .explanation-section ul ul li,
+         .explanation-section ol ul li,
+         .explanation-section ul ol li,
+         .explanation-section ol ol li {
+             margin-bottom: 8px; /* Smaller margin for sub-items */
+         }
+
+        .explanation-section .code-inline { /* Use a class for inline code representation */
+            background-color: #d1ecf1; /* Light cyan background for code */
+            color: #0c5460; /* Dark cyan text */
+            padding: 2px 5px;
+            border-radius: 3px;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.95em;
+            word-wrap: break-word; /* Wrap long code snippets */
+        }
+
+        .explanation-section strong {
+            color: #495057; /* Slightly darker text for emphasis */
+        }
+         .explanation-section em {
+             font-style: italic;
+             color: #6c757d; /* Grey italic text */
+         }
+         .explanation-section .step-marker { /* Style for step numbers */
+             font-weight: bold;
+             color: #0056b3;
+             margin-right: 5px;
+         }
     </style>
 </head>
 <body>
@@ -49,5 +129,153 @@
     </ul>
 
     <script src="script.js" defer></script>
+
+    <!-- INICIO: Sección de Explicación del Flujo de Control -->
+    <div class="explanation-section">
+        <h2>Resumen del Flujo de Control</h2>
+        <p>Cuando el usuario interactúa (hace clic en "Recargar Tareas", "Cargar Productos" o "Añadir Tarea"), el JavaScript correspondiente se dispara. Este JavaScript realiza una petición <code class="code-inline">fetch</code> asíncrona (GET o POST) a la URL base <code class="code-inline">http://localhost:8080/api</code> seguida de la ruta específica (<code class="code-inline">/tasks</code> o <code class="code-inline">/products</code>). Se asume que un proxy inverso (como Nginx) escucha en <code class="code-inline">localhost:8080</code> y reenvía estas peticiones al servidor backend Node.js/Express (<code class="code-inline">server.js</code>) que escucha internamente en el puerto 3000. (Previamente debe haberse ejecutado <code class="code-inline">npm install</code> desde "docker-nginx\api"). El backend procesa la petición (lee datos en memoria o añade una nueva tarea), y devuelve una respuesta JSON. El JavaScript en el navegador recibe esta respuesta, la procesa (verifica errores, extrae datos) y actualiza dinámicamente el contenido de las listas (ul <code class="code-inline">taskList</code> o <code class="code-inline">productList</code>) o muestra mensajes de error en el div <code class="code-inline">error-message</code>, todo sin necesidad de recargar la página completa.
+        </p>
+
+        <h2>Explicación Detallada del Flujo</h2>
+
+        <h3>Actores Principales:</h3>
+        <ul>
+            <li><strong>Navegador Web:</strong> Interpreta HTML/CSS, ejecuta JavaScript, envía peticiones HTTP (usando <code class="code-inline">fetch</code>) vía Nginx, renderiza la UI.</li>
+            <li><strong>Usuario:</strong> Interactúa con la página (escribe, hace clic).</li>
+            <li><strong>JavaScript (Frontend - <code class="code-inline">script.js</code>):</strong> Maneja eventos, valida, construye/envía peticiones, procesa respuestas JSON, actualiza el DOM.</li>
+            <li><strong>Proxy Inverso (Nginx - <em>Inferido por <code class="code-inline">API_BASE_URL</code></em>):</strong> Escucha en <code class="code-inline">localhost:8080</code>, recibe peticiones del navegador para <code class="code-inline">/api/*</code> y las reenvía al servidor Node.js en <code class="code-inline">http://localhost:3000</code> (o al nombre del servicio si está en Docker).</li>
+            <li><strong>Backend (Servidor Node.js/Express - <code class="code-inline">server.js</code>):</strong> Escucha en el puerto 3000 (internamente), maneja rutas <code class="code-inline">/tasks</code> (GET/POST) y <code class="code-inline">/products</code> (GET), usa middleware (CORS, <code class="code-inline">express.json</code>), interactúa con datos en memoria, devuelve respuestas JSON.</li>
+        </ul>
+
+        <h3>Flujo de Control Detallado:</h3>
+        <ol>
+            <li>
+                <span class="step-marker">1.</span> <strong>Carga Inicial de la Página (<code class="code-inline">index.html</code>):</strong>
+                <ul>
+                    <li>El <strong>Usuario</strong> accede a la URL de <code class="code-inline">index.html</code> (probablemente servida por Nginx en <code class="code-inline">localhost:8080</code>).</li>
+                    <li>El <strong>Navegador</strong> solicita y recibe <code class="code-inline">index.html</code>.</li>
+                    <li>El <strong>Navegador</strong> parsea el HTML, construye el DOM (títulos, form, botones, listas vacías), aplica CSS. Encuentra <code class="code-inline">script src="script.js" defer</code>.</li>
+                    <li>Termina de parsear HTML y ejecuta <code class="code-inline">script.js</code>.</li>
+                    <li><strong>Ejecución <code class="code-inline">script.js</code> (Inicial):</strong>
+                        <ul>
+                            <li>Obtiene referencias a elementos del DOM.</li>
+                            <li>Define <code class="code-inline">API_BASE_URL</code> como <code class="code-inline">http://localhost:8080/api</code>.</li>
+                            <li>Define funciones auxiliares y principales.</li>
+                            <li>Adjunta listeners: <code class="code-inline">fetchTasksBtn</code> (click -> <code class="code-inline">fetchAndDisplayTasks</code>), <code class="code-inline">addTaskForm</code> (submit -> <code class="code-inline">addNewTask</code>), <code class="code-inline">fetchProductsBtn</code> (click -> <code class="code-inline">fetchAndDisplayProducts</code>).</li>
+                        </ul>
+                    </li>
+                    <li>El <strong>Navegador</strong> muestra la página estática inicial. No hay llamadas a la API todavía.</li>
+                </ul>
+            </li>
+            <li>
+                <span class="step-marker">2.</span> <strong>Usuario hace clic en "Recargar Lista de Tareas" (<code class="code-inline">fetchTasksBtn</code>):</strong>
+                <ul>
+                    <li>El <strong>Navegador</strong> detecta <code class="code-inline">click</code>, ejecuta <code class="code-inline">fetchAndDisplayTasks</code>.</li>
+                    <li><strong>Ejecución <code class="code-inline">fetchAndDisplayTasks</code> (JavaScript):</strong>
+                        <ul>
+                            <li>Limpia errores (<code class="code-inline">clearError</code>).</li>
+                            <li>Actualiza UI (<code class="code-inline">taskListUl</code>) a "Cargando tareas...".</li>
+                            <li>Envía <code class="code-inline">fetch</code> <strong>GET</strong> a <code class="code-inline">http://localhost:8080/api/tasks</code>.</li>
+                            <li>La petición llega al <strong>Proxy Nginx</strong>.</li>
+                            <li><strong>Nginx</strong> reenvía la petición GET <code class="code-inline">/tasks</code> al <strong>Backend Node.js</strong> (en <code class="code-inline">http://localhost:3000/tasks</code> o similar).</li>
+                            <li><strong>Ejecución <code class="code-inline">server.js</code> (Backend - GET <code class="code-inline">/tasks</code>):</strong>
+                                <ul>
+                                    <li>La ruta <code class="code-inline">app.get('/tasks', ...)</code> coincide.</li>
+                                    <li>Se ejecuta el callback. Loguea la petición.</li>
+                                    <li>Devuelve (<code class="code-inline">res.status(200).json(tasks)</code>) el array <code class="code-inline">tasks</code> en memoria como JSON con estado 200.</li>
+                                </ul>
+                            </li>
+                            <li>La respuesta JSON viaja de vuelta a través de <strong>Nginx</strong> al <strong>Navegador</strong>.</li>
+                            <li><strong>Ejecución <code class="code-inline">fetchAndDisplayTasks</code> (JavaScript - continúa):</strong>
+                                <ul>
+                                    <li><code class="code-inline">await response</code> se resuelve. <code class="code-inline">response.ok</code> es true.</li>
+                                    <li><code class="code-inline">await response.json()</code> parsea la respuesta a un array <code class="code-inline">tasks</code>.</li>
+                                    <li>Limpia la UI (<code class="code-inline">taskListUl</code>).</li>
+                                    <li>Itera sobre <code class="code-inline">tasks</code>, llamando a <code class="code-inline">appendTaskToList</code> para cada una.</li>
+                                    <li><code class="code-inline">appendTaskToList</code> crea elementos <code class="code-inline">li</code> y <code class="code-inline">span</code> y los añade al DOM. El <strong>Navegador</strong> actualiza la lista visible.</li>
+                                </ul>
+                            </li>
+                            <li><em>Manejo de Errores:</em> Si fetch falla o <code class="code-inline">response.ok</code> es false, el <code class="code-inline">catch</code> muestra el error.</li>
+                        </ul>
+                    </li>
+                </ul>
+            </li>
+            <li>
+                <span class="step-marker">3.</span> <strong>Usuario hace clic en "Cargar Productos" (<code class="code-inline">fetchProductsBtn</code>):</strong>
+                <ul>
+                    <li>El <strong>Navegador</strong> detecta <code class="code-inline">click</code>, ejecuta <code class="code-inline">fetchAndDisplayProducts</code>.</li>
+                    <li><strong>Ejecución <code class="code-inline">fetchAndDisplayProducts</code> (JavaScript):</strong>
+                        <ul>
+                            <li>Limpia errores, actualiza UI (<code class="code-inline">productListUl</code>) a "Cargando productos...".</li>
+                            <li>Envía <code class="code-inline">fetch</code> <strong>GET</strong> a <code class="code-inline">http://localhost:8080/api/products</code>.</li>
+                            <li>La petición viaja por <strong>Nginx</strong> al <strong>Backend Node.js</strong>.</li>
+                            <li><strong>Ejecución <code class="code-inline">server.js</code> (Backend - GET <code class="code-inline">/products</code>):</strong>
+                                <ul>
+                                    <li>La ruta <code class="code-inline">app.get('/products', ...)</code> coincide.</li>
+                                    <li>Loguea la petición.</li>
+                                    <li>Devuelve (<code class="code-inline">res.status(200).json(products)</code>) el array <code class="code-inline">products</code> como JSON.</li>
+                                </ul>
+                            </li>
+                            <li>La respuesta JSON viaja de vuelta al <strong>Navegador</strong>.</li>
+                            <li><strong>Ejecución <code class="code-inline">fetchAndDisplayProducts</code> (JavaScript - continúa):</strong>
+                                <ul>
+                                    <li>Procesa la respuesta (<code class="code-inline">response.ok</code>, <code class="code-inline">response.json()</code>).</li>
+                                    <li>Limpia <code class="code-inline">productListUl</code>.</li>
+                                    <li>Itera sobre <code class="code-inline">products</code>, llamando a <code class="code-inline">appendProductToList</code>.</li>
+                                    <li><code class="code-inline">appendProductToList</code> crea <code class="code-inline">li</code> con nombre/precio y los añade al DOM. El <strong>Navegador</strong> actualiza la lista.</li>
+                                </ul>
+                            </li>
+                            <li><em>Manejo de Errores:</em> Similar al de tareas.</li>
+                        </ul>
+                    </li>
+                </ul>
+            </li>
+             <li>
+                 <span class="step-marker">4.</span> <strong>Usuario añade una nueva tarea:</strong>
+                 <ul>
+                     <li>El <strong>Usuario</strong> escribe en <code class="code-inline">newTaskInput</code> y pulsa "Añadir Tarea" (o Enter).</li>
+                     <li>El <strong>Navegador</strong> detecta <code class="code-inline">submit</code> en <code class="code-inline">addTaskForm</code>, ejecuta <code class="code-inline">addNewTask</code>.</li>
+                     <li><strong>Ejecución <code class="code-inline">addNewTask</code> (JavaScript):</strong>
+                         <ul>
+                             <li><code class="code-inline">event.preventDefault()</code> evita recarga.</li>
+                             <li>Limpia errores.</li>
+                             <li>Obtiene y valida el texto (<code class="code-inline">taskText</code>). Muestra error si está vacío.</li>
+                             <li>Envía <code class="code-inline">fetch</code> <strong>POST</strong> a <code class="code-inline">http://localhost:8080/api/tasks</code> con:
+                                 <ul>
+                                     <li><code class="code-inline">method: 'POST'</code></li>
+                                     <li><code class="code-inline">headers: { 'Content-Type': 'application/json' }</code></li>
+                                     <li><code class="code-inline">body: JSON.stringify({ text: taskText })</code></li>
+                                 </ul>
+                             </li>
+                             <li>La petición viaja por <strong>Nginx</strong> al <strong>Backend Node.js</strong>.</li>
+                             <li><strong>Ejecución <code class="code-inline">server.js</code> (Backend - POST <code class="code-inline">/tasks</code>):</strong>
+                                 <ul>
+                                     <li>El middleware <code class="code-inline">express.json()</code> parsea el cuerpo JSON en <code class="code-inline">req.body</code>.</li>
+                                     <li>La ruta <code class="code-inline">app.post('/tasks', ...)</code> coincide.</li>
+                                     <li>Valida que <code class="code-inline">req.body.text</code> exista y no esté vacío. Si falla, devuelve error 400 JSON.</li>
+                                     <li>Crea un objeto <code class="code-inline">newTask</code> con nuevo ID, texto recibido y <code class="code-inline">completed: false</code>.</li>
+                                     <li>Añade <code class="code-inline">newTask</code> al array <code class="code-inline">tasks</code> en memoria (<code class="code-inline">tasks.push(newTask)</code>).</li>
+                                     <li>Loguea la nueva tarea.</li>
+                                     <li>Devuelve (<code class="code-inline">res.status(201).json(newTask)</code>) la tarea creada como JSON con estado 201 (Created).</li>
+                                 </ul>
+                             </li>
+                             <li>La respuesta JSON viaja de vuelta al <strong>Navegador</strong>.</li>
+                             <li><strong>Ejecución <code class="code-inline">addNewTask</code> (JavaScript - continúa):</strong>
+                                 <ul>
+                                     <li><code class="code-inline">await response</code> se resuelve. <code class="code-inline">response.ok</code> es true (para 201).</li>
+                                     <li><code class="code-inline">await response.json()</code> parsea la respuesta a un objeto <code class="code-inline">newTask</code>.</li>
+                                     <li>Llama a <code class="code-inline">appendTaskToList(newTask)</code> para añadir la nueva tarea al DOM. El <strong>Navegador</strong> actualiza la lista.</li>
+                                     <li>Limpia el input (<code class="code-inline">newTaskInput.value = ''</code>).</li>
+                                 </ul>
+                             </li>
+                             <li><em>Manejo de Errores:</em> Si fetch falla, <code class="code-inline">response.ok</code> es false (ej. por validación 400 en backend), o JSON parse falla, el <code class="code-inline">catch</code> muestra el error.</li>
+                         </ul>
+                     </li>
+                 </ul>
+             </li>
+        </ol>
+    </div>
+    <!-- FIN: Sección de Explicación del Flujo de Control -->
+
 </body>
 </html>

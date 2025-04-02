@@ -1,13 +1,84 @@
 <!-- Contenido de fragments/arquitectura.html -->
 
+<!-- INICIO: Tabla de Contenidos -->
+<style>
+    /* Estilos para la Tabla de Contenidos */
+    .tabla-contenidos {
+        background-color: #f0f8ff; /* AliceBlue, un azul muy claro */
+        border: 1px solid #add8e6; /* LightBlue */
+        padding: 15px 20px;
+        margin-bottom: 30px;
+        border-radius: 5px;
+    }
+
+    .tabla-contenidos h3 {
+        margin-top: 0;
+        margin-bottom: 15px;
+        color: #4682b4; /* SteelBlue */
+        border-bottom: 1px solid #b0c4de; /* LightSteelBlue */
+        padding-bottom: 5px;
+    }
+
+    .tabla-contenidos ul {
+        list-style-type: none; /* Quita los puntos de la lista principal */
+        padding-left: 0;
+        margin-bottom: 0; /* Evita margen extra al final */
+    }
+
+    .tabla-contenidos ul ul {
+        list-style-type: circle; /* Estilo diferente para sublistas */
+        padding-left: 25px; /* Indentación para sublistas */
+        margin-top: 5px;
+    }
+
+    .tabla-contenidos li {
+        margin-bottom: 8px;
+    }
+
+    .tabla-contenidos a {
+        text-decoration: none;
+        color: #1e90ff; /* DodgerBlue */
+        transition: color 0.2s ease;
+    }
+
+    .tabla-contenidos a:hover,
+    .tabla-contenidos a:focus {
+        color: #4169e1; /* RoyalBlue */
+        text-decoration: underline;
+    }
+</style>
+
+<div class="tabla-contenidos">
+    <h3>Tabla de Contenidos</h3>
+    <ul>
+        <li><a href="#arquitectura-aplicacion">Arquitectura de la Aplicación</a></li>
+        <li><a href="#estructura-carpetas">Estructura de carpetas</a></li>
+        <li><a href="#analisis-calidad">Análisis de la Estructura de la Calidad Técnica</a>
+            <ul>
+                <li><a href="#tabla-calidad">Análisis de Calidad Técnica (Tabla)</a></li>
+            </ul>
+        </li>
+        <li><a href="#flujo-control-detallado">Flujo de Control Detallado</a>
+            <ul>
+                <li><a href="#flujo-actores">Actores Principales</a></li>
+                <li><a href="#flujo-pasos">Flujo de Control (Pasos)</a></li>
+            </ul>
+        </li>
+    </ul>
+</div>
+<!-- FIN: Tabla de Contenidos -->
+
+
 <!-- INICIO: Imagen de Arquitectura -->
-<img 
-    src="assets/images/arquitectura-docker-nginx.jpg"  
-    alt="Diagrama de la arquitectura de la aplicación" 
-    class="arquitectura-imagen-principal"> 
+<h2 id="arquitectura-aplicacion">Arquitectura de la Aplicación</h2>
+<img
+    src="assets/images/arquitectura-docker-nginx.jpg"
+    alt="Diagrama de la arquitectura de la aplicación"
+    class="arquitectura-imagen-principal">
 <!-- FIN: Imagen de Arquitectura -->
 
-<h2 id="main-title">Arquitectura de la Aplicación</h2>
+
+<h2 id="estructura-carpetas">Estructura de carpetas</h2>
 
 <div class="arquitectura-view">
     <p>Estructura de carpetas y archivos recomendada para este proyecto:</p>
@@ -19,7 +90,7 @@ html/
 │
 ├── fragments/             <- Piezas de HTML cargadas en <main>
 │   ├── instalacion.html
-│   ├── arquitectura.html  
+│   ├── arquitectura.html
 │   ├── ejemplos-css.html
 │   ├── ejemplos-js.html
 │   ├── ejemplos-html.html
@@ -41,14 +112,14 @@ html/
     </pre>
 </br>
 </br>
-    <h2>Análisis de la Estructura de la Calidad Técnica de este sitio web</h2>
+    <h2 id="analisis-calidad">Análisis de la Estructura de la Calidad Técnica de este sitio web</h2>
     <p class="nota">Esta estructura facilita la organización y el crecimiento del proyecto a largo plazo.</p>
 
-    <p>Un aspecto clave de esta arquitectura es su **facilidad para añadir nuevo contenido**.  La clara separación en carpetas como `fragments/` y `examples/`, cada una con una semántica bien definida, simplifica enormemente la creación y la incorporación de nuevas secciones y ejemplos.  La construcción de páginas a partir de **fragmentos HTML reutilizables** agiliza el desarrollo y garantiza una mayor consistencia en el diseño.</p>
+    <p>Un aspecto clave de esta arquitectura es su <strong>facilidad para añadir nuevo contenido</strong>.  La clara separación en carpetas como <code>fragments/</code> y <code>examples/</code>, cada una con una semántica bien definida, simplifica enormemente la creación y la incorporación de nuevas secciones y ejemplos.  La construcción de páginas a partir de <strong>fragmentos HTML reutilizables</strong> agiliza el desarrollo y garantiza una mayor consistencia en el diseño.</p>
 
-    <p>Además, el uso de **iframes** para mostrar los ejemplos de HTML, CSS y JavaScript resulta especialmente conveniente para este tipo de repositorio.  Permite aislar cada ejemplo, evitando conflictos entre estilos y scripts, y facilitando su visualización y experimentación de forma independiente.</p>
+    <p>Además, el uso de <strong>iframes</strong> para mostrar los ejemplos de HTML, CSS y JavaScript resulta especialmente conveniente para este tipo de repositorio.  Permite aislar cada ejemplo, evitando conflictos entre estilos y scripts, y facilitando su visualización y experimentación de forma independiente.</p>
 
-    <h3>Análisis de Calidad Técnica</h3>
+    <h3 id="tabla-calidad">Análisis de Calidad Técnica</h3>
     <style>
         /* Estilos en línea para asegurar que la tabla se vea bien en el fragmento */
         table {
@@ -108,11 +179,54 @@ html/
             display: block; /* Para poder centrarla con margen auto */
             max-width: 100%; /* Asegura que sea responsiva y no se salga del contenedor */
             height: auto; /* Mantiene la proporción */
-            margin: 0 auto 25px auto; /* Centra horizontalmente y añade margen inferior */
+            margin: 25px auto; /* Centra horizontalmente y añade margen superior e inferior */
             border: 1px solid #eee; /* Opcional: añade un borde sutil */
             box-shadow: 0 2px 5px rgba(0,0,0,0.1); /* Opcional: añade una sombra */
         }
         /* --- FIN NUEVO ESTILO --- */
+
+        /* Estilos para la sección de Flujo de Control añadida */
+        .flujo-control-section {
+            margin-top: 30px;
+            padding: 20px;
+            background-color: #f9f9f9;
+            border: 1px solid #eee;
+            border-radius: 5px;
+        }
+        /* Modificación para que el h3 dentro de flujo-control no herede el estilo del h3 de la ToC */
+        .flujo-control-section > h3 { /* Selector más específico */
+            margin-top: 0;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+            color: #333; /* Color por defecto o el que prefieras */
+        }
+        .flujo-control-section ul,
+        .flujo-control-section ol {
+            margin-left: 20px; /* Indentación base para listas */
+        }
+        .flujo-control-section li {
+            margin-bottom: 10px;
+        }
+        .flujo-control-section ul ul,
+        .flujo-control-section ol ul,
+        .flujo-control-section ul ol,
+        .flujo-control-section ol ol {
+            margin-left: 30px; /* Indentación adicional para sublistas */
+            margin-top: 5px;
+        }
+        .flujo-control-section code {
+             background-color: #e8e8e8;
+             padding: 2px 4px;
+             border-radius: 3px;
+             font-family: monospace;
+        }
+        .flujo-control-section strong {
+             font-weight: bold;
+        }
+         .flujo-control-section em {
+             font-style: italic;
+         }
 
     </style>
     <table>
@@ -182,4 +296,134 @@ html/
         </tbody>
     </table>
 
-</div>
+    <!-- INICIO: Flujo de Control Detallado Añadido -->
+    <h2 id="flujo-control-detallado">Flujo de Control Detallado (Carga Inicial y Cambio de Sección)</h2>
+    <div class="flujo-control-section">
+
+        <h3 id="flujo-actores">Actores Principales:</h3>
+        <ul>
+            <li><strong>Navegador Web:</strong> Es el programa (Chrome, Firefox, etc.) que solicita, recibe, interpreta y muestra la página web. Ejecuta el HTML, CSS y JavaScript.</li>
+            <li><strong>Usuario:</strong> La persona que interactúa con la página (en este caso, haciendo clic).</li>
+            <li><strong>Servidor Web:</strong> Donde están alojados los archivos (<code>index.html</code>, <code>style.css</code>, <code>script.js</code>, <code>fragments/*.html</code>). Responde a las peticiones del navegador enviando los archivos solicitados.</li>
+            <li><strong>Código HTML (<code>index.html</code>):</strong> Define la estructura inicial de la página.</li>
+            <li><strong>Código CSS (<code>style.css</code>):</strong> Define la apariencia visual.</li>
+            <li><strong>Código JavaScript (<code>script.js</code>):</strong> Define el comportamiento interactivo y dinámico de la página.</li>
+        </ul>
+
+        <h3 id="flujo-pasos">Flujo de Control:</h3>
+        <ol>
+            <li>
+                <strong>Solicitud Inicial (Usuario/Navegador):</strong>
+                <ul>
+                    <li>El usuario introduce la URL de <code>index.html</code> en el navegador o hace clic en un enlace que apunta a ella.</li>
+                    <li>El <strong>Navegador</strong> envía una solicitud HTTP GET al <strong>Servidor Web</strong> pidiendo el archivo <code>index.html</code>.</li>
+                </ul>
+            </li>
+            <li>
+                <strong>Respuesta del Servidor:</strong>
+                <ul>
+                    <li>El <strong>Servidor Web</strong> encuentra <code>index.html</code> y lo envía de vuelta al <strong>Navegador</strong>.</li>
+                </ul>
+            </li>
+            <li>
+                <strong>Procesamiento de <code>index.html</code> (Navegador):</strong>
+                <ul>
+                    <li>El <strong>Navegador</strong> comienza a <em>parsear</em> (interpretar) el código HTML de <code>index.html</code> de arriba abajo.</li>
+                    <li>Encuentra <code>link rel="stylesheet" href="style.css"</code> en el <code>head</code>: Inicia una solicitud al <strong>Servidor Web</strong> para obtener <code>style.css</code>. Mientras tanto, sigue parseando el HTML.</li>
+                    <li>Construye el DOM (Document Object Model): Crea una representación en memoria de la estructura de la página (header, aside con botones, main vacío, footer).</li>
+                    <li>Encuentra <code>script src="script.js" defer /script</code> justo antes de cerrar <code>/body</code>:
+                        <ul>
+                            <li>Gracias a <code>defer</code>, el <strong>Navegador</strong> inicia la solicitud al <strong>Servidor Web</strong> para obtener <code>script.js</code> de forma asíncrona (puede seguir parseando el HTML).</li>
+                            <li>El script <code>script.js</code> <em>no se ejecutará</em> hasta que el <strong>Navegador</strong> haya terminado de parsear <em>todo</em> el HTML (<code>index.html</code>), pero sí <em>antes</em> de que se dispare el evento <code>DOMContentLoaded</code>.</li>
+                        </ul>
+                    </li>
+                    <li>El <strong>Navegador</strong> muestra la estructura inicial definida en <code>index.html</code> (cabecera, barra lateral con botones, pie de página). El <code>main id="main-content"</code> está presente pero vacío. Aplica los estilos de <code>style.css</code> a medida que este se carga y parsea.</li>
+                </ul>
+            </li>
+            <li>
+                <strong>Ejecución de <code>script.js</code> (Navegador):</strong>
+                <ul>
+                    <li>Una vez que el HTML de <code>index.html</code> ha sido completamente parseado, el <strong>Navegador</strong> ejecuta el código de <code>script.js</code>.</li>
+                    <li><strong>Listener <code>DOMContentLoaded</code>:</strong> El código principal está dentro de <code>document.addEventListener('DOMContentLoaded', () => { ... });</code>. Esto asegura que el código interno solo se ejecute cuando el DOM inicial esté listo.</li>
+                    <li><strong>Obtención de Referencias:</strong> El <strong>script</strong> obtiene referencias a elementos importantes del DOM: <code>mainContent</code> (el <code>main</code>) y <code>sidebarButtons</code> (todos los botones con <code>data-fragment</code>).</li>
+                    <li><strong>Definición de Funciones:</strong> El <strong>script</strong> define las funciones <code>loadMainContent</code>, <code>showExerciseInIframe</code>, <code>updateActiveButton</code>. En este punto, solo las define, no las ejecuta (excepto las que se llaman en la inicialización).</li>
+                    <li><strong>Asignación de Event Listeners (Botones Sidebar):</strong> El <strong>script</strong> recorre cada botón en <code>sidebarButtons</code> y les añade un <em>escuchador de eventos</em> (<code>click</code>). Este escuchador está <em>preparado</em> para ejecutarse <em>cuando</em> el usuario haga clic en uno de esos botones. La función que se ejecutará al hacer clic llamará a <code>loadMainContent</code> con el <code>data-fragment</code> del botón y a <code>updateActiveButton</code>.</li>
+                    <li><strong>Asignación de Event Listener (Delegado en <code>mainContent</code>):</strong> El <strong>script</strong> añade un escuchador de eventos <code>click</code> al elemento <code>mainContent</code>. Este es un <em>listener delegado</em>, lo que significa que escuchará clics en cualquier elemento <em>dentro</em> de <code>mainContent</code>, incluso si esos elementos se añaden más tarde. Comprobará si el clic fue en un enlace con <code>data-url</code> para luego llamar a <code>showExerciseInIframe</code>.</li>
+                    <li><strong>Bloque de Inicialización (¡Clave para la carga inicial!):</strong>
+                        <ul>
+                            <li>El <strong>script</strong> busca si algún botón del sidebar tiene la clase <code>active</code> en el HTML inicial (<code>index.html</code>). Encuentra <code>button class="sidebar-button active" data-fragment="ejemplos-js.html" Ejemplos JS /button</code>.</li>
+                            <li>Obtiene el valor <code>data-fragment</code> de ese botón: <code>"ejemplos-js.html"</code>.</li>
+                            <li>Define <code>initialFragment = "ejemplos-js.html"</code>.</li>
+                            <li><strong>¡Llama a <code>loadMainContent(initialFragment)</code>!</strong> -> Se ejecuta <code>loadMainContent("ejemplos-js.html")</code>.</li>
+                        </ul>
+                    </li>
+                </ul>
+            </li>
+            <li>
+                <strong>Ejecución de <code>loadMainContent('ejemplos-js.html')</code> (Script/Navegador):</strong>
+                <ul>
+                    <li>La función <code>loadMainContent</code> es llamada por el bloque de inicialización del <strong>script</strong>.</li>
+                    <li>Actualiza <code>currentFragment</code> a <code>"ejemplos-js.html"</code>.</li>
+                    <li><strong>Muestra "Cargando...":</strong> El <strong>script</strong> modifica el <code>innerHTML</code> de <code>mainContent</code> para mostrar <code>p class="loading-message" Cargando... /p</code>. El <strong>Navegador</strong> actualiza la pantalla y el usuario ve "Cargando..." en la sección principal.</li>
+                    <li><strong>Petición <code>fetch</code>:</strong> El <strong>script</strong> usa <code>fetch('./fragments/ejemplos-js.html')</code> para pedirle al <strong>Servidor Web</strong> el contenido de ese fragmento HTML. El <strong>Navegador</strong> realiza la solicitud HTTP GET.</li>
+                    <li><strong>Respuesta del Servidor:</strong> El <strong>Servidor Web</strong> envía el contenido de <code>ejemplos-js.html</code>.</li>
+                    <li><strong>Procesamiento de la Respuesta:</strong>
+                        <ul>
+                            <li>El <strong>script</strong> recibe la respuesta.</li>
+                            <li>Verifica que fue exitosa (<code>response.ok</code>).</li>
+                            <li>Lee el contenido HTML como texto (<code>response.text()</code>).</li>
+                            <li><strong>Reemplaza Contenido:</strong> El <strong>script</strong> actualiza <em>de nuevo</em> el <code>innerHTML</code> de <code>mainContent</code>, esta vez reemplazando el "Cargando..." con el <em>contenido completo</em> de <code>ejemplos-js.html</code> (el <code>h2</code>, el <code>div#grid-container</code>, las tarjetas de ejemplos JS, etc.).</li>
+                            <li>El <strong>Navegador</strong> <em>renderiza</em> este nuevo HTML dentro del <code>main</code>. El usuario ahora ve la lista de ejemplos de JavaScript.</li>
+                            <li>El <strong>script</strong> ejecuta el post-procesamiento (asegurar que <code>#main-title</code> y <code>#grid-container</code> sean visibles, aunque probablemente ya lo serían).</li>
+                        </ul>
+                    </li>
+                </ul>
+            </li>
+            <li>
+                <strong>Interacción del Usuario (Clic en "Ejemplos HTML"):</strong>
+                <ul>
+                    <li>El <strong>Usuario</strong> hace clic en el botón del sidebar que dice "Ejemplos HTML". Este botón tiene el atributo <code>data-fragment="ejemplos-html.html"</code>.</li>
+                </ul>
+            </li>
+            <li>
+                <strong>Disparo del Event Listener (Navegador/Script):</strong>
+                <ul>
+                    <li>El <strong>Navegador</strong> detecta el evento <code>click</code> en ese botón específico.</li>
+                    <li>El <strong>Navegador</strong> invoca la función <em>escuchadora</em> que el <strong>script</strong> asoció a ese botón en el paso 4.</li>
+                    <li><strong>Dentro del Listener:</strong>
+                        <ul>
+                            <li>El <strong>script</strong> obtiene el <code>data-fragment</code> del botón clickeado: <code>"ejemplos-html.html"</code>.</li>
+                            <li><strong>Llama a <code>loadMainContent("ejemplos-html.html")</code></strong>.</li>
+                            <li><strong>Llama a <code>updateActiveButton(botonClickeado)</code></strong>.
+                                <ul>
+                                    <li>La función <code>updateActiveButton</code> (ejecutada por el <strong>script</strong>) quita la clase <code>active</code> del botón "Ejemplos JS" y la añade al botón "Ejemplos HTML". El <strong>Navegador</strong> actualiza la apariencia del sidebar.</li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </li>
+            <li>
+                <strong>Ejecución de <code>loadMainContent('ejemplos-html.html')</code> (Script/Navegador):</strong>
+                <ul>
+                    <li>La función <code>loadMainContent</code> se ejecuta <em>de nuevo</em>, ahora con <code>"ejemplos-html.html"</code>.</li>
+                    <li>Actualiza <code>currentFragment</code> a <code>"ejemplos-html.html"</code>.</li>
+                    <li><strong>Muestra "Cargando...":</strong> El <strong>script</strong> cambia el <code>innerHTML</code> de <code>mainContent</code> a "Cargando...". El <strong>Navegador</strong> lo muestra, reemplazando la lista de ejemplos JS.</li>
+                    <li><strong>Petición <code>fetch</code>:</strong> El <strong>script</strong> usa <code>fetch('./fragments/ejemplos-html.html')</code> para pedir el nuevo fragmento al <strong>Servidor Web</strong>. El <strong>Navegador</strong> hace la solicitud.</li>
+                    <li><strong>Respuesta del Servidor:</strong> El <strong>Servidor Web</strong> envía el contenido de <code>ejemplos-html.html</code>.</li>
+                    <li><strong>Procesamiento de la Respuesta:</strong>
+                        <ul>
+                            <li>El <strong>script</strong> recibe la respuesta, la valida y lee el texto HTML.</li>
+                            <li><strong>Reemplaza Contenido:</strong> El <strong>script</strong> actualiza el <code>innerHTML</code> de <code>mainContent</code> con el contenido de <code>ejemplos-html.html</code>.</li>
+                            <li>El <strong>Navegador</strong> <em>renderiza</em> el nuevo contenido HTML (el título y las tarjetas de ejemplos HTML) dentro del <code>main</code>. <strong>El usuario ve ahora la sección de ejemplos HTML.</strong></li>
+                            <li>El <strong>script</strong> ejecuta el post-procesamiento.</li>
+                        </ul>
+                    </li>
+                </ul>
+            </li>
+        </ol>
+        <p><strong>En resumen:</strong> El navegador carga la estructura básica, el script se ejecuta para cargar el contenido inicial (JS), y luego, ante un clic del usuario en "Ejemplos HTML", el script vuelve a ejecutarse para buscar y mostrar el fragmento HTML correspondiente en la sección principal.</p>
+    </div>
+    <!-- FIN: Flujo de Control Detallado Añadido -->
+
+</div> <!-- Fin de .arquitectura-view -->
