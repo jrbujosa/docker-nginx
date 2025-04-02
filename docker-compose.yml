@@ -1,15 +1,20 @@
+version: '3.8'
+
 services:
   web:
     image: nginx:alpine
-    container_name: nginx_server
+    container_name: nginx_server # Usamos variable de entorno para prefijo
     ports:
-      - "8080:80"
+      - "8080:80" # Nginx sigue escuchando en el puerto 8080 del host
     volumes:
       - ./html:/var/www/html # Archivos estáticos y quizás la base del frontend JS
       - ./nginx/default.conf:/etc/nginx/conf.d/default.conf # Configuración Nginx
+      # El sitio estático generado por Eleventy podría servirse por Nginx en producción,
+      # montando ./docs/_site en una ubicación que Nginx sirva. Ejemplo:
+      # - ./docs/_site:/var/www/docs_static 
     depends_on:
       - php
-      - api # Nginx ahora también depende del servicio API de Node.js
+      - api
     restart: always
 
   php:
@@ -17,32 +22,48 @@ services:
     container_name: php_server
     volumes:
       - ./html:/var/www/html # Código PHP (si lo usas)
-      - ./data:/data  #  Añade esta línea
-      - ./logs:/var/log/myapp  # Montamos el directorio 'logs' en '/var/log/myapp'
+      - ./data:/data
+      - ./logs:/var/log/myapp
     environment:
-      - GEMMA_API_KEY=${GEMMA_API_KEY} # Lee la variable del entorno del host      
+      - GEMMA_API_KEY=${GEMMA_API_KEY} # Lee la variable del entorno del host
     restart: always
 
-  # ---- NUEVO SERVICIO NODE.JS ----
   api:
-    image: node:18-alpine # Imagen ligera de Node.js
+    image: node:18-alpine
     container_name: node_api_server
-    working_dir: /app # Directorio de trabajo dentro del contenedor
+    working_dir: /app
     volumes:
-      - ./api:/app # Monta tu código Node.js desde una carpeta local ./api
-    # Expone el puerto INTERNO del contenedor (no necesita mapeo al host si Nginx actúa como proxy)
-    expose:
+      - ./api:/app
+    expose: # No se mapea al host directamente, Nginx lo proxyaría si fuera necesario
       - "3000"
-    # Comando para iniciar tu aplicación Node.js (ajusta 'server.js' si tu archivo principal es otro)
-    # Si usas nodemon para desarrollo: command: npm run dev
-    # Si es producción simple: command: node server.js
-    command: node server.js
+    command: node server.js # O 'npm run dev' si usas nodemon
     restart: always
     environment:
-      # Puedes añadir variables de entorno aquí si tu app Node las necesita
       - NODE_ENV=development
-    # user: "node" # Buena práctica usar usuario no-root si la imagen lo soporta
-    # Considera user: "1000:1000" si necesitas escribir en el volumen montado y evitar problemas de permisos
+    # user: "node"
 
-networks: # Definir redes explícitas es una buena práctica, aunque Docker Compose crea una por defecto
+  # ---- NUEVO SERVICIO ELEVENTY ----
+
+  eleventy_docs:
+    image: node:lts # O node:20
+    container_name: eleventy_docs
+    working_dir: /app
+    # Opción 1: Usar npx (como antes)
+    command: sh -c "npm install && npx @11ty/eleventy --serve --watch --port=8080"
+    # Opción 2: Usar el script de package.json (más limpio)
+    # command: sh -c "npm install && npm run watch:docs -- --port=8080"
+    ports:
+      - "8081:8080"
+    volumes:
+      - ./docs_src:/app
+      # Volumen 2: Mapea el directorio de salida deseado en el host a /build_output
+      - ./html:/build_output
+    restart: unless-stopped
+
+
+networks:
   default:
+
+# Definición opcional del volumen nombrado (solo si usas el volumen de node_modules)
+# volumes:
+#   eleventy_node_modules:

@@ -46,6 +46,12 @@ Si algún otro contenedor (no relacionado con este proyecto) está usando el pue
 git clone https://github.com/jrbujosa/docker-nginx.git
 ```
 
+# Añade Eleventy como dependencia:
+```bash 
+npm install @11ty/eleventy --save-dev
+```
+@11ty/eleventy: El paquete que quieres instalar.
+
 # Abrir una terminal y navegar hasta la carpeta docker-nginx
 ```bash 
 cd docker-nginx
@@ -64,18 +70,33 @@ cd docker-nginx
 
 # (Opcional) Editar la configuración del fichero compose.yml
 
+# Añade Eleventy como dependencia:
+
+Ve a tu directorio ./docs_src en tu máquina local.
+
+Ejecuta el siguiente comando (necesitas Node.js/npm en tu máquina):
+```bash
+npm install @11ty/eleventy --save-dev
+```
+
 # Crear los contenedores ejecutando
 ```bash 
 docker compose up -d
-
 ```
 
-# Ejecutar npm (Node Package Manager), el gestor de paquetes por defecto para Node.js.
+# Ejecutar npm (Node Package Manager), el gestor de paquetes por defecto para Node.js. dentro del contenedor
 ```bash 
-cd docker-nginx\api
+cd api
 npm install
 ```
+Esto lee el archivo package.json dentro de la carpeta /app del contenedor (que está mapeada a tu carpeta local ./api) y descarga/instala los paquetes necesarios usando el entorno Node.js del contenedor.
 
+# Instala Dependencias (Eleventy Docs Service):
+``bash 
+cd docs_src
+npm install
+```
+Esto lee el package.json dentro de la carpeta /app del contenedor eleventy_docs (mapeada a tu carpeta local ./docs_src) e instala Eleventy y cualquier plugin que hayas definido. Creará o actualizará tu archivo package-lock.json para incluir Eleventy y sus propias dependencias.
 
 # Después de ejecutar docker-compose up -d, Puedes verificar el estado de los contenedores utilizando el comando
 ```bash 

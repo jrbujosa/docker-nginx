@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title or 'Mi Documentación' }}</title> {# Usa el título del front matter o uno por defecto #}
+    <link rel="stylesheet" href="/docs/assets/css/style.css"> {# Ejemplo: Enlaza a un CSS si lo tienes #}
+  </head>
+  <body>
+    <header>
+      <h1>{{ title or 'Documentación' }}</h1>
+      {# Aquí podrías añadir un menú de navegación si quieres #}
+    </header>
+
+    <main>
+      {{ content | safe }} {# <--- ¡MUY IMPORTANTE! Aquí va el contenido de tus .md #}
+    </main>
+
+    <footer>
+      <p>© 2025 Tu Nombre/Empresa</p>
+    </footer>
+  </body>
+</html>
