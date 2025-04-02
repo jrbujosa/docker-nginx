@@ -52,8 +52,8 @@ cd docker-nginx
 ```
 # Obtener una clave para Google IA Studio
 
-- Ir a https://aistudio.google.com/prompts/new_chat
-- Ir a [https://aistudio.google.com/prompts/new_chat](Google IA Studio)
+
+- Ir a [Google IA Studio](https://aistudio.google.com/prompts/new_chat)
 - Pulsar Get API Key arriba a la derecha
 - Obtener una clave
 - Ir a la carpeta docker-nginx
