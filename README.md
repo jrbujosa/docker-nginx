@@ -50,6 +50,17 @@ git clone https://github.com/jrbujosa/docker-nginx.git
 ```bash 
 cd docker-nginx
 ```
+# Obtener una clave para Google IA Studio
+
+- Ir a https://aistudio.google.com/prompts/new_chat
+- Ir a [https://aistudio.google.com/prompts/new_chat](Google IA Studio)
+- Pulsar Get API Key arriba a la derecha
+- Obtener una clave
+- Ir a la carpeta docker-nginx
+- crear un fichero .env
+- Incluir la clave en .env
+- GEMMA_API_KEY=(Tu clave)
+- Guardar el fichero
 
 # (Opcional) Editar la configuración del fichero compose.yml
 
