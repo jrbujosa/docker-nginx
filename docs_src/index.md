@@ -1,11 +1,10 @@
 ---
-title: Bienvenido a la Documentación del Repositorio de Ejercicios
+title: Documentación del Repositorio de Ejercicios para el alumno
 layout: base.njk  # Opcional: Especifica un layout si usas uno (ej. en _includes/base.njk)
 ---
 
-# Documentación Técnica Principal
+# Indice de contenido
 
-¡Bienvenido! Esta es la documentación centralizada para nuestro proyecto.
 
 Aquí encontrarás guías, referencias y explicaciones sobre las diferentes tecnologías y arquitecturas que utilizamos.
 
@@ -13,10 +12,10 @@ Aquí encontrarás guías, referencias y explicaciones sobre las diferentes tecn
 
 Puedes navegar directamente a las secciones principales utilizando los siguientes enlaces:
 
-*   ### [HTML](./html/)
+*   ### [HTML](html/index.html)
     Aprende sobre la estructura semántica, elementos comunes y formularios en HTML5.
 
-*   ### [CSS](./css/)
+*   ### [CSS](css/index.html)
     Descubre cómo estilizar tus páginas, entiende el modelo de caja y domina los selectores de CSS.
 
 *   ### [JavaScript](./javascript/)

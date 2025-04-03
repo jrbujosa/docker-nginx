@@ -45,21 +45,26 @@ services:
   # ---- NUEVO SERVICIO ELEVENTY ----
 
   eleventy_docs:
-    image: node:lts # O node:20
+    image: node:lts
     container_name: eleventy_docs
     working_dir: /app
-    # Opción 1: Usar npx (como antes)
-    command: sh -c "npm install && npx @11ty/eleventy --serve --watch --port=8080"
-    # Opción 2: Usar el script de package.json (más limpio)
-    # command: sh -c "npm install && npm run watch:docs -- --port=8080"
+    environment:
+      # Mantenemos el polling para detección de cambios fiable
+      - CHOKIDAR_USEPOLLING=1
+    # Comando SIN --output (definido en .eleventy.js)
+    # Mantenemos --serve (que ahora se configura con setBrowserSyncConfig)
+    command: sh -c "npm install && npx @11ty/eleventy --serve"
     ports:
+      # Acceso desde http://localhost:8081 en tu host
       - "8081:8080"
     volumes:
+      # Tu código fuente (incluyendo .eleventy.js, _includes, tus .md, etc.)
       - ./docs_src:/app
-      # Volumen 2: Mapea el directorio de salida deseado en el host a /build_output
+      # La carpeta padre donde Eleventy creará la subcarpeta 'docs'
       - ./html:/build_output
+      # Opcional: volumen para node_modules
+      # - /app/node_modules
     restart: unless-stopped
-
 
 networks:
   default:

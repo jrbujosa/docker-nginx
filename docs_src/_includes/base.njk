@@ -3,21 +3,78 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ title or 'Mi Documentación' }}</title> {# Usa el título del front matter o uno por defecto #}
-    <link rel="stylesheet" href="/docs/assets/css/style.css"> {# Ejemplo: Enlaza a un CSS si lo tienes #}
+    <title>{{ title or 'Mi Documentación' }}</title>
+    {# --- RUTA CSS ---
+         Asegúrate que esta ruta es correcta relativa a la raíz de tu sitio servido.
+         Si tus páginas están en http://localhost:8081/docs/... y tus assets están
+         en ./html/docs/assets/, entonces "/docs/assets/css/style.css" debería funcionar.
+    #}
+    <link rel="stylesheet" href="/docs/assets/css/style.css">
+    <style>
+      /* Estilos básicos opcionales para los botones/nav */
+      .site-nav {
+        margin-bottom: 1em;
+        padding-bottom: 0.5em;
+        border-bottom: 1px solid #eee;
+      }
+      .site-nav button,
+      .site-nav a {
+        display: inline-block;
+        padding: 0.5em 1em;
+        margin-right: 0.5em;
+        background-color: #f0f0f0;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        text-decoration: none;
+        color: #333;
+        cursor: pointer;
+        font-size: 0.9em;
+      }
+      .site-nav button:hover,
+      .site-nav a:hover {
+        background-color: #e0e0e0;
+        border-color: #bbb;
+      }
+    </style>
   </head>
   <body>
     <header>
       <h1>{{ title or 'Documentación' }}</h1>
-      {# Aquí podrías añadir un menú de navegación si quieres #}
+
+      {# --- NAVEGACIÓN --- #}
+      <nav class="site-nav">
+        {# 1. Botón "Volver Atrás" (usa historial del navegador) #}
+        {#    Usa JavaScript para simular el botón 'atrás' del navegador. #}
+        <button onclick="window.history.back()">← Volver</button> {# ← es una flecha izquierda #}
+
+        {# 2. Enlace a la página de Inicio de la Documentación #}
+        {#    Asegúrate que la ruta href="/docs/" es correcta para la raíz
+             de tu documentación tal como la sirve el servidor web.
+             Si tu URL base es http://localhost:8081/docs/, entonces "/docs/" es correcto.
+        #}
+        <a href="/docs/">Inicio Docs</a>
+
+        {# --- Puedes añadir más enlaces a secciones principales aquí --- #}
+        {# Ejemplo: <a href="/docs/instalacion/">Instalación</a> #}
+        {# Ejemplo: <a href="/docs/api/">Referencia API</a> #}
+
+      </nav>
+      {# --- FIN NAVEGACIÓN --- #}
+
     </header>
 
     <main>
-      {{ content | safe }} {# <--- ¡MUY IMPORTANTE! Aquí va el contenido de tus .md #}
+      {{ content | safe }} {# <--- El contenido de tu .md se inserta aquí #}
     </main>
 
     <footer>
       <p>© 2025 Tu Nombre/Empresa</p>
+      {# Podrías poner aquí también un botón de "Volver arriba" si la página es larga #}
+      {# <button onclick="window.scrollTo({top: 0, behavior: 'smooth'});">↑ Volver Arriba</button> #}
     </footer>
+
+    {# No necesitas JavaScript adicional si usas 'onclick' directamente,
+       pero si prefieres separar el JS, podrías hacerlo aquí o en un archivo .js externo.
+    #}
   </body>
 </html>
