@@ -1,5 +1,5 @@
 ---
-title: Documentación del Repositorio de Ejercicios para el alumno
+title: Documentación del Repositorio de Ejercicios para los alumnos
 layout: base.njk  # Opcional: Especifica un layout si usas uno (ej. en _includes/base.njk)
 ---
 
@@ -12,7 +12,7 @@ Aquí encontrarás guías, referencias y explicaciones sobre las diferentes tecn
 
 Puedes navegar directamente a las secciones principales utilizando los siguientes enlaces:
 
-*   ### [HTML](html/index.html)
+*   ### [HTML](docs/html/index.html)
     Aprende sobre la estructura semántica, elementos comunes y formularios en HTML5.
 
 *   ### [CSS](css/index.html)

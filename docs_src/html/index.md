@@ -1,6 +1,6 @@
 ---
 title: HTML
-layout: base.njk  # Opcional: Especifica un layout si usas uno (ej. en _includes/base.njk)
+layout: base.njk  
 ---
 
 # HTML

@@ -1,43 +1,4 @@
-<!doctype html>
-<html lang="es">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ title or 'Mi Documentación' }}</title>
-    {# --- RUTA CSS ---
-         Asegúrate que esta ruta es correcta relativa a la raíz de tu sitio servido.
-         Si tus páginas están en http://localhost:8081/docs/... y tus assets están
-         en ./html/docs/assets/, entonces "/docs/assets/css/style.css" debería funcionar.
-    #}
-    <link rel="stylesheet" href="/docs/assets/css/style.css">
-    <style>
-      /* Estilos básicos opcionales para los botones/nav */
-      .site-nav {
-        margin-bottom: 1em;
-        padding-bottom: 0.5em;
-        border-bottom: 1px solid #eee;
-      }
-      .site-nav button,
-      .site-nav a {
-        display: inline-block;
-        padding: 0.5em 1em;
-        margin-right: 0.5em;
-        background-color: #f0f0f0;
-        border: 1px solid #ccc;
-        border-radius: 4px;
-        text-decoration: none;
-        color: #333;
-        cursor: pointer;
-        font-size: 0.9em;
-      }
-      .site-nav button:hover,
-      .site-nav a:hover {
-        background-color: #e0e0e0;
-        border-color: #bbb;
-      }
-    </style>
-  </head>
-  <body>
+<div>
     <header>
       <h1>{{ title or 'Documentación' }}</h1>
 
@@ -76,5 +37,4 @@
     {# No necesitas JavaScript adicional si usas 'onclick' directamente,
        pero si prefieres separar el JS, podrías hacerlo aquí o en un archivo .js externo.
     #}
-  </body>
-</html>
+</div>
