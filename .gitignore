@@ -16,4 +16,3 @@
 # Esto nos permite mantener la carpeta logs/ versionada aunque esté "vacía".
 !/logs/.gitkeep
 
-html/docs/

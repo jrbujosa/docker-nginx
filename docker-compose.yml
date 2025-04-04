@@ -42,33 +42,6 @@ services:
       - NODE_ENV=development
     # user: "node"
 
-  # ---- NUEVO SERVICIO ELEVENTY ----
-
-  eleventy_docs:
-    image: node:lts
-    container_name: eleventy_docs
-    working_dir: /app
-    environment:
-      # Mantenemos el polling para detección de cambios fiable
-      - CHOKIDAR_USEPOLLING=1
-    # Comando SIN --output (definido en .eleventy.js)
-    # Mantenemos --serve (que ahora se configura con setBrowserSyncConfig)
-    command: sh -c "npm install && npx @11ty/eleventy --serve"
-    ports:
-      # Acceso desde http://localhost:8081 en tu host
-      - "8081:8080"
-    volumes:
-      # Tu código fuente (incluyendo .eleventy.js, _includes, tus .md, etc.)
-      - ./docs_src:/app
-      # La carpeta padre donde Eleventy creará la subcarpeta 'docs'
-      - ./html:/build_output
-      # Opcional: volumen para node_modules
-      # - /app/node_modules
-    restart: unless-stopped
-
 networks:
   default:
 
-# Definición opcional del volumen nombrado (solo si usas el volumen de node_modules)
-# volumes:
-#   eleventy_node_modules:
