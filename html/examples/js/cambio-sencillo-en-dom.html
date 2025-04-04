@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manipulaciones básicas del DOM con JS</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        /* Estilos generales */
+        body {
+            font-family: 'Poppins', sans-serif; background-color: #f0f2f5;
+            margin: 0; padding: 20px; color: #333;
+        }
+        h1.main-title { text-align: center; color: #1a2a4a; margin-bottom: 40px; }
+
+        /* Contenedor de la retícula */
+        .grid-container {
+            display: grid; grid-template-columns: repeat(2, 1fr);
+            gap: 25px; max-width: 1100px; margin: 0 auto;
+        }
+
+        /* Estilos para cada celda */
+        .grid-item {
+            background-color: #ffffff; border-radius: 10px; padding: 25px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); transition: background-color 0.3s ease;
+            min-height: 300px; /* Ajustar altura mínima */ display: flex; flex-direction: column;
+        }
+        .grid-item h2 {
+            margin-top: 0; color: #0056b3; border-bottom: 2px solid #e0e0e0;
+            padding-bottom: 10px; margin-bottom: 15px; font-size: 1.3em;
+        }
+        .grid-item h3 { margin: 0 0 10px 0; color: #444; font-size: 1.1em; }
+        .grid-item p, .grid-item ul, .grid-item div, .grid-item form { margin-bottom: 15px; line-height: 1.6; }
+        .grid-item > p:first-of-type { color: #555; font-size: 0.95em; }
+        .grid-item ul { padding-left: 20px; flex-grow: 1; }
+
+        /* Inputs, Selects, Textareas, Forms */
+        .grid-item input[type="text"], .grid-item select, .grid-item textarea, .grid-item input[type="email"] {
+            padding: 9px 10px; border: 1px solid #ccc; border-radius: 4px; margin-bottom: 15px;
+            width: 100%; box-sizing: border-box; font-size: 0.95em; font-family: inherit;
+        }
+        .grid-item textarea { min-height: 60px; resize: vertical; }
+        .grid-item form { display: flex; flex-direction: column; }
+
+        /* Input + Botón (Ej 1, 13, 18, 25) */
+        .input-button-line { display: flex; align-items: center; gap: 10px; margin-bottom: 15px; flex-wrap: wrap;}
+        .input-button-line input { flex-grow: 1; margin-bottom: 0; min-width: 100px;}
+        .input-button-line button { margin-top: 0; flex-shrink: 0; }
+
+         .grid-item img {
+            max-width: 100px; height: auto; display: block; margin-bottom: 15px;
+            border: 1px solid #eee; padding: 5px; border-radius: 4px;
+        }
+
+        .grid-item button {
+            background-color: #007bff; color: white; border: none; padding: 10px 18px;
+            border-radius: 5px; cursor: pointer; font-size: 0.95em;
+            transition: background-color 0.2s ease, opacity 0.2s ease;
+            align-self: flex-start; margin-top: auto;
+        }
+        .grid-item button:hover:not(:disabled) { background-color: #0056b3; }
+        .grid-item button:disabled { background-color: #adb5bd; cursor: not-allowed; opacity: 0.7; }
+
+        /* Párrafo de explicación de utilidad */
+        .utility-explanation {
+            font-size: 0.85em; color: #495057; background-color: #e9ecef;
+            border-left: 4px solid #adb5bd; padding: 8px 12px; margin-top: 15px !important;
+        }
+
+        /* Clases y Elementos Específicos */
+        .hidden { display: none; }
+        #elementoOcultable4, #innerHTMLTarget13, #replaceTarget19, #cloneSource20, #styledParagraph21, #dimensionBox22, #textNodeTarget25 {
+            background-color: #e9f5ff; border: 1px dashed #90caff; padding: 10px;
+            border-radius: 5px; min-height: 30px;
+        }
+        .output-span {
+            font-weight: bold; min-height: 1.6em; background-color: #f8f9fa;
+            padding: 5px 8px; border-radius: 3px; display: inline-block; word-break: break-all;
+        }
+        #salidaTexto5 { color: #28a745; } #selectOutput9 { color: #dc3545; }
+        #dataReadout14 { color: #fd7e14; } #formOutput16 { color: #6f42c1; }
+        #computedStyleOutput21 { color: darkcyan; } #dimensionsOutput22 { color: firebrick; }
+        #hasAttrOutput26 { color: #0d6efd; }
+
+        #hoverArea8 { padding: 15px; border: 2px dashed #adb5bd; border-radius: 5px; cursor: pointer; transition: background-color 0.3s, border-color 0.3s; }
+        .highlighted, .traversal-highlight { background-color: #fff3cd !important; border-color: #ffeeba !important; font-weight: bold; transition: all 0.3s ease-out; }
+        .validation-message { font-size: 0.9em; min-height: 1.4em; margin-top: -10px; margin-bottom: 10px; }
+        .error-message { color: #dc3545; } .success-message { color: #28a745; } .error-input { border-color: #dc3545; }
+
+        #charCount11 { font-size: 0.9em; color: #6c757d; }
+        #charCount11.limit-near { color: #ffc107; font-weight: bold;}
+        #charCount11.limit-exceeded { color: #dc3545; font-weight: bold;}
+        .checkbox-label { display: flex; align-items: center; cursor: pointer; margin-bottom: 15px; }
+        .checkbox-label input[type="checkbox"] { margin-right: 8px; width: auto; margin-bottom: 0; }
+        .highlighted-list-item { background-color: #cff4fc; color: #055160; font-weight: bold; }
+        #listaMultiple15 li, #listaInsert18 li { margin-bottom: 5px; padding: 3px; border-radius: 3px;}
+        .warning-note { font-size: 0.85em; color: #664d03; background-color: #fff3cd; border: 1px solid #ffecb5; border-radius: 4px; padding: 8px; margin-top: 10px; }
+
+        /* Estilos específicos nuevos */
+        #styledParagraph21 { font-size: 18px; color: darkcyan; font-weight: bold; }
+        #dimensionBox22 { width: 150px; height: 80px; background: lightcoral; margin: 20px auto; text-align: center; line-height: 80px; color: white; }
+        #scrollContainer23 { height: 100px; overflow: auto; border: 1px solid grey; padding: 5px; background: #eee; }
+        #scrollContainer23 p { margin-bottom: 5px; }
+        #inputDisabled24 { background-color: #e9ecef; }
+        #textNodeTarget25 span { background-color: #fff3cd; padding: 0 3px; border-radius: 2px; margin: 0 2px;}
+
+        /* Ajustes Responsivos */
+        @media (max-width: 900px) {
+             .grid-container { grid-template-columns: 1fr; }
+             .grid-item { min-height: auto; }
+             .input-button-line { flex-wrap: wrap; }
+        }
+    </style>
+</head>
+<body>
+
+    <h1 class="main-title">Manipulaciones básicas del DOM con JS</h1>
+
+    <div class="grid-container">
+
+       <!-- Ejemplo 1: Cambiar Texto desde Input -->
+        <div class="grid-item" id="ejemplo1-container">
+            <h2>1. Cambiar Texto desde Input</h2>
+            <h3 id="titulo1">Hola Mundo</h3>
+            <p>Escribe y haz clic para cambiar el título.</p>
+            <div class="input-button-line">
+                <input type="text" id="inputText1" placeholder="Nuevo título...">
+                <button id="cambiar1">Cambiar</button>
+            </div>
+            <script>
+                document.getElementById("cambiar1").addEventListener("click", function() {
+                   const input = document.getElementById("inputText1");
+                   document.getElementById("titulo1").innerText = input.value || "Hola Mundo";
+                });
+            </script>
+        </div>
+
+        <!-- Ejemplo 2: Añadir Elemento (appendChild) -->
+        <div class="grid-item" id="ejemplo2-container">
+            <h2>2. Añadir Elemento (appendChild)</h2>
+            <p>Añade elementos al final de la lista:</p>
+            <ul id="lista2"><li>Elemento inicial</li></ul>
+            <button id="agregar2">Agregar al final</button>
+            <script>
+                const lista2 = document.getElementById("lista2");
+                document.getElementById("agregar2").addEventListener("click", () => {
+                    const li = document.createElement("li");
+                    li.textContent = "Nuevo elemento " + (lista2.children.length + 1);
+                    lista2.appendChild(li); // Añade al final
+                });
+            </script>
+        </div>
+
+        <!-- Ejemplo 3: Cambiar Estilo Inline -->
+        <div class="grid-item" id="ejemplo3-container">
+            <h2>3. Cambiar Estilo Inline</h2>
+            <p>Clic para cambiar el color de fondo.</p>
+            <button id="cambiarColor3">Cambiar color</button>
+            <script>
+                const cont3 = document.getElementById("ejemplo3-container");
+                document.getElementById("cambiarColor3").addEventListener("click", () => {
+                    const c = ["#ffadad","#ffd6a5","#fdffb6","#caffbf","#9bf6ff","#a0c4ff","#bdb2ff","#ffc6ff"];
+                    cont3.style.backgroundColor = c[Math.floor(Math.random() * c.length)];
+                });
+            </script>
+        </div>
+
+        <!-- Ejemplo 4: Añadir/Quitar Clase CSS -->
+        <div class="grid-item" id="ejemplo4-container">
+            <h2>4. Añadir/Quitar Clase (classList)</h2>
+            <p>Alterna la clase 'hidden' del párrafo.</p>
+            <div id="elementoOcultable4">¡Párrafo secreto!</div>
+            <button id="botonToggle4">Ocultar</button>
+            <script>
+                const btn4 = document.getElementById("botonToggle4");
+                const elem4 = document.getElementById("elementoOcultable4");
+                btn4.addEventListener("click", () => {
+                    elem4.classList.toggle("hidden"); // Alterna la clase
+                    btn4.textContent = elem4.classList.contains("hidden") ? "Mostrar" : "Ocultar";
+                });
+            </script>
+        </div>
+
+        <!-- Ejemplo 5: Leer Valor de Input -->
+        <div class="grid-item" id="ejemplo5-container">
+            <h2>5. Leer Valor de Input (.value)</h2>
+            <p>Escribe y muestra el texto introducido:</p>
+            <input type="text" id="inputTexto5" placeholder="Escribe aquí...">
+            <button id="botonMostrar5">Mostrar Texto</button>
+            <p>Texto: <span id="salidaTexto5" class="output-span">(aún nada)</span></p>
+            <script>
+                document.getElementById("botonMostrar5").addEventListener("click", () => {
+                    const input = document.getElementById("inputTexto5");
+                    document.getElementById("salidaTexto5").textContent = input.value || "(vacío)";
+                });
+            </script>
+        </div>
+
+        <!-- Ejemplo 6: Eliminar Elemento -->
+        <div class="grid-item" id="ejemplo6-container">
+            <h2>6. Eliminar Elemento (remove)</h2>
+            <p>Elimina el último de la lista:</p>
+            <ul id="lista6"><li>Manzana</li><li>Plátano</li><li>Naranja</li><li>Fresa</li></ul>
+            <button id="botonQuitar6">Quitar último</button>
+            <script>
+                const lista6 = document.getElementById("lista6");
+                document.getElementById("botonQuitar6").addEventListener("click", () => {
+                    if (lista6.lastElementChild) lista6.lastElementChild.remove(); // Elimina directo
+                    else alert("¡Lista vacía!");
+                });
+            </script>
+        </div>
+
+        <!-- Ejemplo 7: Cambiar Atributo (src, alt) -->
+        <div class="grid-item" id="ejemplo7-container">
+            <h2>7. Cambiar Atributo (src, alt)</h2>
+            <p>Haz clic para cambiar la imagen:</p>
+            <img id="imagen7" src="https://via.placeholder.com/100/007bff/ffffff?text=Img+1" alt="Imagen 1">
+            <button id="botonCambiarImg7">Mostrar Imagen 2</button>
+            <script>
+                const img7 = document.getElementById("imagen7"); const btn7 = document.getElementById("botonCambiarImg7");
+                const url1 = "https://via.placeholder.com/100/007bff/ffffff?text=Img+1";
+                const url2 = "https://via.placeholder.com/100/28a745/ffffff?text=Img+2";
+                btn7.addEventListener("click", () => {
+                    const esImg1 = img7.src.includes("Img+1");
+                    img7.src = esImg1 ? url2 : url1; // Cambia src
+                    img7.alt = esImg1 ? "Imagen 2" : "Imagen 1"; // Cambia alt
+                    btn7.textContent = esImg1 ? "Mostrar Imagen 1" : "Mostrar Imagen 2";
+                });
+            </script>
+        </div>
+
+        <!-- Ejemplo 8: Eventos del Ratón (mouseover/out) -->
+        <div class="grid-item" id="ejemplo8-container">
+            <h2>8. Eventos del Ratón (hover)</h2>
+            <p>Pasa el ratón sobre el área de abajo:</p>
+            <div id="hoverArea8">Pasa el cursor por aquí.</div>
+            <p style="margin-top: auto; font-size: 0.8em; color: #666;">(Usa mouseover/mouseout)</p>
+            <script>
+                const area8 = document.getElementById("hoverArea8");
+                area8.addEventListener("mouseover", () => area8.classList.add("highlighted"));
+                area8.addEventListener("mouseout", () => area8.classList.remove("highlighted"));
+            </script>
+        </div>
+
+        <!-- Ejemplo 9: Evento Change (Select) -->
+        <div class="grid-item" id="ejemplo9-container">
+            <h2>9. Evento Change (Select)</h2>
+            <p>Elige una opción del desplegable:</p>
+            <select id="selectColor9">
+                <option value="">-- Elige un color --</option>
+                <option value="Rojo">Rojo</option><option value="Azul">Azul</option><option value="Verde">Verde</option>
+            </select>
+            <p>Seleccionado: <span id="selectOutput9" class="output-span">(ninguno)</span></p>
+            <script>
+                document.getElementById("selectColor9").addEventListener("change", function() {
+                    document.getElementById("selectOutput9").textContent = this.value || "(ninguno)";
+                });
+            </script>
+        </div>
+
+         <!-- Ejemplo 10: Evento Input y Validación -->
+        <div class="grid-item" id="ejemplo10-container">
+            <h2>10. Evento Input y Validación</h2>
+            <p>Escribe al menos 5 caracteres:</p>
+            <input type="text" id="inputValidation10" placeholder="Mínimo 5 caracteres">
+            <div id="errorMsg10" class="validation-message"></div>
+            <script>
+                const input10 = document.getElementById("inputValidation10"); const msg10 = document.getElementById("errorMsg10");
+                input10.addEventListener("input", function() { // 'input' detecta cualquier cambio
+                    const len = this.value.length; msg10.className = "validation-message"; input10.classList.remove("error-input");
+                    if (len === 0) { msg10.textContent = ""; }
+                    else if (len < 5) { msg10.textContent = `¡Corto! Faltan ${5 - len}`; msg10.classList.add("error-message"); input10.classList.add("error-input"); }
+                    else { msg10.textContent = "¡Correcto!"; msg10.classList.add("success-message"); }
+                });
+            </script>
+        </div>
+
+         <!-- Ejemplo 11: Contador de Caracteres (Textarea) -->
+        <div class="grid-item" id="ejemplo11-container">
+            <h2>11. Contador de Caracteres</h2>
+            <p>Escribe (máx 50 caracteres):</p>
+            <textarea id="textarea11" maxlength="60" placeholder="Escribe tu texto..."></textarea>
+            <div id="charCount11">0 / 50 caracteres</div>
+            <script>
+                const ta11 = document.getElementById("textarea11"); const count11 = document.getElementById("charCount11");
+                const maxL = 50; const nearL = 45;
+                ta11.addEventListener("input", function() {
+                    const len = this.value.length; count11.textContent = `${len} / ${maxL} caracteres`;
+                    count11.className = "char-count"; // Asegurar clase base si existe
+                    count11.classList.remove("limit-near", "limit-exceeded"); // Limpiar clases estado
+                    if (len > maxL) count11.classList.add("limit-exceeded"); else if (len >= nearL) count11.classList.add("limit-near");
+                });
+            </script>
+        </div>
+
+         <!-- Ejemplo 12: Habilitar/Deshabilitar Elemento -->
+        <div class="grid-item" id="ejemplo12-container">
+            <h2>12. Habilitar/Deshabilitar Botón</h2>
+            <p>Marca la casilla para habilitar el botón:</p>
+            <label class="checkbox-label"><input type="checkbox" id="checkboxEnable12">Acepto términos</label>
+            <button id="submitButton12" disabled>Enviar</button>
+            <script>
+                document.getElementById("checkboxEnable12").addEventListener("change", function() {
+                    document.getElementById("submitButton12").disabled = !this.checked; // Habilita/deshabilita
+                });
+            </script>
+        </div>
+
+        <!-- Ejemplo 13: Usar innerHTML -->
+        <div class="grid-item" id="ejemplo13-container">
+            <h2>13. Insertar HTML (innerHTML)</h2>
+            <p>Escribe HTML (ej: <strong>hola</strong>) y renderiza:</p>
+             <div class="input-button-line">
+                 <input type="text" id="htmlInput13" placeholder="<b>Texto en negrita</b>">
+                 <button id="renderHtml13">Renderizar</button>
+             </div>
+            <div id="innerHTMLTarget13">Contenido renderizado aquí.</div>
+            <div class="warning-note">Cuidado con XSS al usar innerHTML con datos de usuario.</div>
+            <script>
+                document.getElementById("renderHtml13").addEventListener("click", () => {
+                    document.getElementById("innerHTMLTarget13").innerHTML = document.getElementById("htmlInput13").value;
+                });
+            </script>
+        </div>
+
+        <!-- Ejemplo 14: Atributos data-* (dataset) -->
+        <div class="grid-item" id="ejemplo14-container">
+            <h2>14. Atributos data-* (dataset)</h2>
+            <p>Lee y modifica atributos personalizados:</p>
+            <button id="dataButton14" data-info="Valor Inicial" data-clicks="0">Haz Clic Aquí</button>
+            <p>Info: <span id="dataReadout14" class="output-span">(haz clic)</span> Clics: <span id="clickCount14" class="output-span">0</span></p>
+            <script>
+                const btn14 = document.getElementById("dataButton14");
+                const r14 = document.getElementById("dataReadout14"); const c14 = document.getElementById("clickCount14");
+                btn14.addEventListener("click", function() {
+                    let clicks = parseInt(this.dataset.clicks) + 1; // Lee y suma
+                    r14.textContent = this.dataset.info; c14.textContent = clicks;
+                    this.dataset.clicks = clicks; // Modifica dataset
+                    this.dataset.info = `Valor tras ${clicks} clics`; // Modifica otro data-*
+                    this.textContent = `Clic N° ${clicks+1}`;
+                });
+            </script>
+        </div>
+
+        <!-- Ejemplo 15: Iterar sobre Nodos (querySelectorAll) -->
+        <div class="grid-item" id="ejemplo15-container">
+            <h2>15. Iterar Nodos (querySelectorAll)</h2>
+            <p>Aplica/quita estilo a todos los ítems:</p>
+            <ul id="listaMultiple15"><li>Primer ítem</li><li>Segundo ítem</li><li>Tercer ítem</li><li>Cuarto ítem</li></ul>
+            <button id="highlightAll15">Resaltar Todos</button>
+            <script>
+                document.getElementById("highlightAll15").addEventListener("click", (e) => {
+                    const items = document.querySelectorAll("#listaMultiple15 li"); // Selecciona todos
+                    items.forEach(item => item.classList.toggle("highlighted-list-item")); // Itera y aplica/quita clase
+                    e.target.textContent = e.target.textContent === "Resaltar Todos" ? "Quitar Resaltado" : "Resaltar Todos";
+                });
+            </script>
+        </div>
+
+        <!-- Ejemplo 16: Manejar Envío Formulario (preventDefault) -->
+        <div class="grid-item" id="ejemplo16-container">
+            <h2>16. Envío Formulario (preventDefault)</h2>
+            <p>Envía sin recargar la página:</p>
+            <form id="sampleForm16">
+                <label for="emailInput16">Email:</label>
+                <input type="email" id="emailInput16" placeholder="tu@email.com" required>
+                <button type="submit">Enviar Formulario</button>
+            </form>
+             <p>Resultado: <span id="formOutput16" class="output-span">(esperando)</span></p>
+            <script>
+                const form16 = document.getElementById("sampleForm16"); const out16 = document.getElementById("formOutput16");
+                form16.addEventListener("submit", function(event) {
+                    event.preventDefault(); // Evita recarga
+                    out16.textContent = `Enviado: ${document.getElementById("emailInput16").value}`;
+                    alert(`Formulario interceptado! Email: ${document.getElementById("emailInput16").value}`);
+                });
+            </script>
+        </div>
+
+        <!-- Ejemplo 17: DOM Traversal (Navegación) -->
+        <div class="grid-item" id="ejemplo17-container">
+            <h2>17. DOM Traversal (Navegación)</h2>
+            <p>Encuentra elementos relacionados:</p>
+            <div id="traversalContainer17"><div>Abuelo<div>Padre<div>Hermano Anterior</div><div id="traversalTarget17">¡Yo!</div><div>Hermano Siguiente</div></div></div></div>
+            <button id="findParent17">Padre</button>
+            <button id="findSibling17" style="margin-left: 10px;">Sig. Hermano</button>
+            <div class="utility-explanation">Permite moverse entre elementos (padre, hijos, hermanos). Esencial para encontrar elementos cercanos sin usar IDs o clases complejas.</div>
+            <script>
+                const target17 = document.getElementById("traversalTarget17");
+                function clearH17(){ document.querySelectorAll('#traversalContainer17 div').forEach(el => el.classList.remove('traversal-highlight')); }
+                document.getElementById("findParent17").addEventListener("click", () => { clearH17(); target17.parentElement?.classList.add("traversal-highlight"); });
+                document.getElementById("findSibling17").addEventListener("click", () => { clearH17(); target17.nextElementSibling?.classList.add("traversal-highlight"); });
+            </script>
+        </div>
+
+        <!-- Ejemplo 18: Insertar Antes (insertBefore) -->
+        <div class="grid-item" id="ejemplo18-container">
+            <h2>18. Insertar Antes (insertBefore)</h2>
+            <p>Inserta un ítem antes del segundo:</p>
+            <ul id="listaInsert18"><li>Primer Ítem</li><li id="insertBeforeTarget18">Segundo Ítem</li><li>Tercer Ítem</li></ul>
+             <div class="input-button-line">
+                <input type="text" id="textInsert18" placeholder="Texto nuevo ítem"> <button id="btnInsertBefore18">Insertar Antes</button>
+            </div>
+            <div class="utility-explanation">Añade un elemento nuevo justo antes de otro nodo específico dentro del mismo padre. Útil para insertar en posiciones concretas de una lista o grupo.</div>
+            <script>
+                document.getElementById("btnInsertBefore18").addEventListener("click", () => {
+                    const list18 = document.getElementById("listaInsert18"); const targetN = document.getElementById("insertBeforeTarget18");
+                    const inputTxt = document.getElementById("textInsert18").value || "Nuevo Ítem";
+                    if(targetN){ const newItem = document.createElement("li"); newItem.textContent = inputTxt; newItem.style.backgroundColor = '#cfe2ff'; list18.insertBefore(newItem, targetN); document.getElementById("textInsert18").value = "";}
+                });
+            </script>
+        </div>
+
+         <!-- Ejemplo 19: Reemplazar Elemento (replaceWith) -->
+        <div class="grid-item" id="ejemplo19-container">
+            <h2>19. Reemplazar Elemento (replaceWith)</h2>
+            <p>Reemplaza el párrafo con un H4:</p>
+            <div id="replaceTarget19"><p>Soy un párrafo a reemplazar.</p></div>
+            <button id="btnReplace19">Reemplazar</button>
+            <div class="utility-explanation">Sustituye un nodo existente en el DOM por un nodo nuevo. Práctico para cambiar completamente un elemento por otro (ej. un 'Cargando...' por el contenido).</div>
+            <script>
+                document.getElementById("btnReplace19").addEventListener("click", (e) => {
+                    const targetP = document.querySelector("#replaceTarget19 p");
+                    if(targetP){ const newH = document.createElement("h4"); newH.textContent = "¡Reemplazado!"; newH.style.color = "purple"; targetP.replaceWith(newH); e.target.disabled = true; }
+                });
+            </script>
+        </div>
+
+         <!-- Ejemplo 20: Clonar Nodo (cloneNode) -->
+        <div class="grid-item" id="ejemplo20-container">
+            <h2>20. Clonar Nodo (cloneNode)</h2>
+            <p>Crea copias del elemento de abajo:</p>
+            <div id="cloneSource20">Original <span>con hijo</span></div>
+            <button id="btnClone20">Clonar y Añadir</button>
+            <div id="cloneTarget20"><em>Clones aquí:</em></div>
+            <div class="utility-explanation">Crea una copia de un nodo existente, opcionalmente incluyendo todos sus descendientes. Muy útil para duplicar estructuras complejas sin recrearlas.</div>
+            <script>
+                const src20 = document.getElementById("cloneSource20"); const target20 = document.getElementById("cloneTarget20"); let count20 = 0;
+                document.getElementById("btnClone20").addEventListener("click", () => {
+                    const cloned = src20.cloneNode(true); count20++; cloned.id=""; cloned.classList.add("cloned-item"); cloned.appendChild(document.createTextNode(` (Clon #${count20})`)); target20.appendChild(cloned);
+                });
+            </script>
+        </div>
+
+        <!-- Ejemplo 21: Leer Estilo Computado -->
+        <div class="grid-item" id="ejemplo21-container">
+            <h2>21. Leer Estilo Computado</h2>
+            <p id="styledParagraph21">Párrafo con estilo CSS.</p>
+            <button id="btnGetStyle21">Mostrar Estilo Computado</button>
+            <p>Estilos: <span id="computedStyleOutput21" class="output-span">(esperando)</span></p>
+            <div class="utility-explanation">Útil para leer el estilo final aplicado por CSS (no solo inline). Permite tomar decisiones basadas en cómo se ve realmente un elemento.</div>
+            <script>
+                document.getElementById("btnGetStyle21").addEventListener("click", () => {
+                    const elem21 = document.getElementById("styledParagraph21");
+                    const styles = window.getComputedStyle(elem21);
+                    const size = styles.getPropertyValue('font-size');
+                    const color = styles.getPropertyValue('color');
+                    document.getElementById("computedStyleOutput21").textContent = `Size: ${size}, Color: ${color}`;
+                });
+            </script>
+        </div>
+
+        <!-- Ejemplo 22: Obtener Dimensiones/Posición -->
+        <div class="grid-item" id="ejemplo22-container">
+            <h2>22. Dimensiones/Posición (Rect)</h2>
+            <p>Obtiene tamaño y posición de la caja:</p>
+            <div id="dimensionBox22">Caja</div>
+            <button id="btnGetRect22">Obtener Bounding Rect</button>
+            <p>Rect: <span id="dimensionsOutput22" class="output-span">(esperando)</span></p>
+             <div class="utility-explanation">Fundamental para saber tamaño y posición exacta de un elemento en pantalla. Esencial para tooltips, animaciones o comprobar visibilidad.</div>
+            <script>
+                document.getElementById("btnGetRect22").addEventListener("click", () => {
+                    const box22 = document.getElementById("dimensionBox22");
+                    const rect = box22.getBoundingClientRect();
+                    const output = `W: ${Math.round(rect.width)}, H: ${Math.round(rect.height)}, Top: ${Math.round(rect.top)}`;
+                    document.getElementById("dimensionsOutput22").textContent = output;
+                });
+            </script>
+        </div>
+
+        <!-- Ejemplo 23: Manipular Scroll -->
+        <div class="grid-item" id="ejemplo23-container">
+            <h2>23. Manipular Scroll</h2>
+            <p>Controla el scroll del contenedor:</p>
+            <div id="scrollContainer23">
+                <p>Línea 1</p><p>Línea 2</p><p>Línea 3</p><p>Línea 4</p><p>Línea 5</p>
+                <p>Línea 6</p><p>Línea 7</p><p>Línea 8</p><p>Línea 9</p><p>Línea 10</p>
+            </div>
+            <button id="btnScrollDown23">Scroll al Final</button>
+            <button id="btnScrollUp23" style="margin-left: 10px;">Scroll Arriba</button>
+             <div class="utility-explanation">Permite controlar mediante programación el scroll de un elemento o ventana. Útil para navegación, chats o efectos de "scroll suave".</div>
+            <script>
+                const cont23 = document.getElementById("scrollContainer23");
+                document.getElementById("btnScrollDown23").addEventListener("click", () => cont23.scrollTop = cont23.scrollHeight );
+                document.getElementById("btnScrollUp23").addEventListener("click", () => cont23.scrollTo({ top: 0, behavior: 'smooth'}) ); // Con scroll suave
+            </script>
+        </div>
+
+        <!-- Ejemplo 24: Eliminar Atributo -->
+        <div class="grid-item" id="ejemplo24-container">
+            <h2>24. Eliminar Atributo (removeAttr)</h2>
+            <p>Habilita el input quitando 'disabled':</p>
+            <input type="text" id="inputDisabled24" placeholder="Estoy deshabilitado" disabled title="Título a eliminar">
+            <button id="btnRemoveAttr24">Habilitar y Quitar Título</button>
+             <div class="utility-explanation">Sirve para eliminar completamente un atributo, no solo cambiar su valor. Útil para limpiar estilos inline o quitar estados como 'disabled'.</div>
+            <script>
+                document.getElementById("btnRemoveAttr24").addEventListener("click", (e) => {
+                    const input24 = document.getElementById("inputDisabled24");
+                    input24.removeAttribute('disabled');
+                    input24.removeAttribute('title');
+                    input24.placeholder = "¡Habilitado y sin título!";
+                    e.target.disabled = true;
+                });
+            </script>
+        </div>
+
+        <!-- Ejemplo 25: Crear Nodo de Texto -->
+        <div class="grid-item" id="ejemplo25-container">
+            <h2>25. Crear Nodo de Texto</h2>
+            <p>Añade texto como un nodo separado:</p>
+            <div id="textNodeTarget25">Inicio: </div>
+             <div class="input-button-line">
+                <input type="text" id="textForNode25" placeholder="Texto a añadir">
+                <button id="btnAddTextNode25">Añadir Texto</button>
+            </div>
+             <div class="utility-explanation">Es la forma básica de crear contenido textual. Aunque 'textContent' es más simple, 'createTextNode' da más control al manejar nodos individuales.</div>
+            <script>
+                document.getElementById("btnAddTextNode25").addEventListener("click", () => {
+                    const targetDiv = document.getElementById("textNodeTarget25");
+                    const inputText = document.getElementById("textForNode25").value || "Texto Nodo";
+                    const textNode = document.createTextNode(` <span>${inputText}</span> `); // Creamos el nodo texto
+                    targetDiv.appendChild(textNode); // Lo añadimos
+                     document.getElementById("textForNode25").value = "";
+                });
+            </script>
+        </div>
+
+        <!-- Ejemplo 26: Verificar Atributo -->
+        <div class="grid-item" id="ejemplo26-container">
+            <h2>26. Verificar Atributo (hasAttribute)</h2>
+            <p>Comprueba si la imagen tiene atributo 'alt':</p>
+            <img id="imageCheck26" src="https://via.placeholder.com/80/adb5bd/ffffff?text=IMG" > <!-- Sin alt inicial -->
+            <button id="btnHasAttr26">¿Tiene 'alt'?</button>
+            <p>Resultado: <span id="hasAttrOutput26" class="output-span">(esperando)</span></p>
+             <div class="utility-explanation">Permite comprobar si un elemento tiene un atributo sin leer su valor. Útil para lógica condicional basada en la mera presencia de atributos.</div>
+            <script>
+                 document.getElementById("btnHasAttr26").addEventListener("click", () => {
+                     const img26 = document.getElementById("imageCheck26");
+                     const hasAlt = img26.hasAttribute('alt');
+                     document.getElementById("hasAttrOutput26").textContent = hasAlt ? 'Sí tiene alt' : 'No tiene alt';
+                     // Añadir alt si no lo tiene para la siguiente vez
+                     if (!hasAlt) { img26.setAttribute('alt', 'Imagen verificada'); }
+                 });
+            </script>
+        </div>
+
+    </div> <!-- Fin grid-container -->
+
+</body>
+</html>
