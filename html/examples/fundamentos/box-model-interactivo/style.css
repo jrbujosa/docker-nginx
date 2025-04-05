@@ -1,0 +1,239 @@
+/* --- Estilos Generales --- */
+body {
+    font-family: sans-serif;
+    margin: 0;
+    padding: 20px;
+    background-color: #f4f4f4;
+    color: #333;
+}
+
+h1, h2 {
+    text-align: center;
+    color: #2c3e50;
+    margin-bottom: 20px;
+}
+
+h2 {
+    font-size: 1.2em;
+    border-bottom: 1px solid #bdc3c7;
+    padding-bottom: 5px;
+    margin-top: 0;
+}
+
+.simulator-container {
+    display: flex;
+    gap: 20px; /* Espacio entre paneles */
+    align-items: flex-start; /* Alinea los paneles arriba */
+    flex-wrap: wrap; /* Permite que los paneles se ajusten si no caben */
+}
+
+.panel {
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    flex: 1; /* Hace que los paneles intenten ocupar el mismo espacio */
+    min-width: 300px; /* Ancho mínimo para evitar que se aplasten demasiado */
+}
+
+/* --- Panel Izquierdo --- */
+.left-panel .controls .control-group {
+    margin-bottom: 15px;
+}
+
+.left-panel label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+    font-size: 0.9em;
+    color: #34495e;
+}
+
+.left-panel input[type="range"] {
+    width: 70%;
+    vertical-align: middle;
+}
+.left-panel select {
+    padding: 5px;
+    vertical-align: middle;
+}
+
+.left-panel .value {
+    display: inline-block;
+    min-width: 50px; /* Espacio para el valor */
+    margin-left: 10px;
+    font-family: monospace;
+    background-color: #ecf0f1;
+    padding: 3px 6px;
+    border-radius: 3px;
+    font-size: 0.9em;
+}
+
+.css-output pre {
+    background-color: #2c3e50;
+    color: #ecf0f1;
+    padding: 15px;
+    border-radius: 5px;
+    font-family: monospace;
+    white-space: pre-wrap; /* Ajusta el texto */
+    word-wrap: break-word; /* Rompe palabras largas */
+    font-size: 0.85em;
+    max-height: 250px;
+    overflow-y: auto;
+}
+
+/* --- Panel Central --- */
+.center-panel {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.box-visualization {
+    width: 90%; /* Ancho relativo al panel */
+    max-width: 400px; /* Máximo ancho para la visualización */
+    margin-top: 20px;
+    margin-bottom: 20px;
+    position: relative; /* Para posicionar etiquetas */
+    display: flex; /* Para centrar */
+    justify-content: center; /* Para centrar */
+    align-items: center; /* Para centrar */
+    min-height: 300px; /* Altura mínima */
+}
+
+/* Capas de la visualización (usamos padding para simular el grosor visual) */
+.margin-layer, .border-layer, .padding-layer, .content-layer {
+    box-sizing: border-box; /* Importante para que el padding no aumente el tamaño total de la capa VISUAL */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative; /* Para posicionar etiquetas internas */
+}
+
+.margin-layer {
+    background-color: rgba(243, 156, 18, 0.2); /* Naranja transparente */
+    padding: 25px; /* Grosor visual del margen */
+    border: 1px dashed rgba(243, 156, 18, 0.8);
+}
+
+.border-layer {
+    background-color: rgba(241, 196, 15, 0.3); /* Amarillo transparente */
+    padding: 15px; /* Grosor visual del borde */
+    border: 1px dashed rgba(241, 196, 15, 0.8);
+    width: 100%; /* Ocupa todo el espacio del padre (margin) */
+}
+
+.padding-layer {
+    background-color: rgba(46, 204, 113, 0.3); /* Verde transparente */
+    padding: 20px; /* Grosor visual del padding */
+    border: 1px dashed rgba(46, 204, 113, 0.8);
+     width: 100%; /* Ocupa todo el espacio del padre (border) */
+}
+
+.content-layer {
+    background-color: rgba(52, 152, 219, 0.4); /* Azul transparente */
+    border: 1px dashed rgba(52, 152, 219, 0.8);
+    width: 100%; /* Ocupa todo el espacio del padre (padding) */
+    min-height: 50px; /* Altura mínima visual */
+    padding: 10px; /* Espacio interno para el texto */
+    text-align: center;
+    color: #2c3e50;
+    font-weight: bold;
+    position: relative; /* Para el div de dimensiones */
+}
+
+/* Etiquetas de las capas */
+.box-visualization .label {
+    position: absolute;
+    background: rgba(0,0,0,0.6);
+    color: white;
+    padding: 2px 5px;
+    font-size: 0.7em;
+    border-radius: 3px;
+    white-space: nowrap;
+}
+.margin-label { top: 2px; left: 2px; }
+.border-label { top: 2px; left: 2px; }
+.padding-label { top: 2px; left: 2px; }
+.content-label { top: 5px; left: 5px; background: none; color: #2c3e50; padding: 0; font-size: 0.8em;}
+
+#vis-content-dims {
+    font-size: 0.9em;
+    margin-top: 10px;
+    font-family: monospace;
+    background-color: rgba(255,255,255,0.7);
+    padding: 5px;
+    border-radius: 3px;
+}
+
+/* Dimensiones calculadas en la visualización */
+.dimension {
+    position: absolute;
+    font-size: 0.8em;
+    font-family: monospace;
+    background-color: rgba(255, 255, 255, 0.8);
+    padding: 3px 6px;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    white-space: nowrap;
+}
+.total-dims {
+    bottom: 5px; /* Posición relativa al margen */
+    left: 50%;
+    transform: translateX(-50%);
+}
+.outer-dims {
+    bottom: -20px; /* Fuera del margen */
+     left: 50%;
+    transform: translateX(-50%);
+    background-color: #e74c3c;
+    color: white;
+    border: none;
+}
+
+.calculation-info {
+    font-size: 0.8em;
+    color: #555;
+    margin-top: 15px;
+    border-top: 1px solid #eee;
+    padding-top: 10px;
+    text-align: left;
+    width: 90%;
+}
+.calculation-info p { margin: 5px 0; }
+
+
+/* --- Panel Derecho --- */
+.right-panel .rendered-box-container {
+    border: 2px dashed #bdc3c7;
+    padding: 20px;
+    margin-top: 20px;
+    min-height: 250px;
+    background-color: #ecf0f1;
+    display: flex; /* Para centrar y ver efecto de márgenes */
+    flex-direction: column;
+    align-items: center; /* Centra los items horizontalmente si son más estrechos */
+}
+
+.target-box {
+    /* Los estilos base se aplicarán con JS */
+    background-color: #3498db; /* Azul */
+    color: white;
+    border-style: solid; /* Estilo de borde por defecto */
+    border-color: #2980b9; /* Color de borde por defecto */
+    text-align: center;
+    padding: 10px; /* Padding inicial para que se vea algo */
+    overflow: hidden; /* Evita que el contenido se desborde si es muy pequeño */
+    transition: all 0.1s ease-in-out; /* Transición suave */
+}
+
+.sibling-box {
+    background-color: #95a5a6; /* Gris */
+    color: white;
+    padding: 10px;
+    text-align: center;
+    margin-bottom: 10px; /* Espacio por defecto debajo */
+    margin-top: 10px; /* Espacio por defecto encima */
+     width: 80%; /* Para que no ocupe todo el ancho y se vea el centrado */
+}

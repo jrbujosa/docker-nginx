@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulador Modelo de Caja (Box Model)</title>
+    <style>
+        /* --- Estilos Generales --- */
+        body {
+            font-family: sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+
+        h1, h2 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 20px;
+        }
+
+        h2 {
+            font-size: 1.2em;
+            border-bottom: 1px solid #bdc3c7;
+            padding-bottom: 5px;
+            margin-top: 0;
+        }
+
+        .simulator-container {
+            display: flex;
+            gap: 20px; /* Espacio entre paneles */
+            align-items: flex-start; /* Alinea los paneles arriba */
+            flex-wrap: wrap; /* Permite que los paneles se ajusten si no caben */
+        }
+
+        .panel {
+            background-color: #fff;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            flex: 1; /* Hace que los paneles intenten ocupar el mismo espacio */
+            min-width: 300px; /* Ancho mínimo para evitar que se aplasten demasiado */
+            margin-bottom: 20px; /* Espacio inferior si se envuelven */
+        }
+
+        /* --- Panel Izquierdo --- */
+        .left-panel .controls .control-group {
+            margin-bottom: 15px;
+        }
+
+        .left-panel label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            font-size: 0.9em;
+            color: #34495e;
+        }
+
+        .left-panel input[type="range"] {
+            width: 70%;
+            vertical-align: middle;
+        }
+        .left-panel select {
+            padding: 5px;
+            vertical-align: middle;
+        }
+
+        .left-panel .value {
+            display: inline-block;
+            min-width: 50px; /* Espacio para el valor */
+            margin-left: 10px;
+            font-family: monospace;
+            background-color: #ecf0f1;
+            padding: 3px 6px;
+            border-radius: 3px;
+            font-size: 0.9em;
+        }
+
+        .css-output pre {
+            background-color: #2c3e50;
+            color: #ecf0f1;
+            padding: 15px;
+            border-radius: 5px;
+            font-family: monospace;
+            white-space: pre-wrap; /* Ajusta el texto */
+            word-wrap: break-word; /* Rompe palabras largas */
+            font-size: 0.85em;
+            max-height: 250px;
+            overflow-y: auto;
+        }
+
+        /* --- Panel Central --- */
+        .center-panel {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .box-visualization {
+            width: 90%; /* Ancho relativo al panel */
+            max-width: 400px; /* Máximo ancho para la visualización */
+            margin-top: 20px;
+            margin-bottom: 20px;
+            position: relative; /* Para posicionar etiquetas */
+            display: flex; /* Para centrar */
+            justify-content: center; /* Para centrar */
+            align-items: center; /* Para centrar */
+            min-height: 300px; /* Altura mínima */
+        }
+
+        /* Capas de la visualización (usamos padding para simular el grosor visual) */
+        .margin-layer, .border-layer, .padding-layer, .content-layer {
+            box-sizing: border-box; /* Importante para que el padding no aumente el tamaño total de la capa VISUAL */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative; /* Para posicionar etiquetas internas */
+        }
+
+        .margin-layer {
+            background-color: rgba(243, 156, 18, 0.2); /* Naranja transparente */
+            padding: 25px; /* Grosor visual del margen */
+            border: 1px dashed rgba(243, 156, 18, 0.8);
+        }
+
+        .border-layer {
+            background-color: rgba(241, 196, 15, 0.3); /* Amarillo transparente */
+            padding: 15px; /* Grosor visual del borde */
+            border: 1px dashed rgba(241, 196, 15, 0.8);
+            width: 100%; /* Ocupa todo el espacio del padre (margin) */
+        }
+
+        .padding-layer {
+            background-color: rgba(46, 204, 113, 0.3); /* Verde transparente */
+            padding: 20px; /* Grosor visual del padding */
+            border: 1px dashed rgba(46, 204, 113, 0.8);
+             width: 100%; /* Ocupa todo el espacio del padre (border) */
+        }
+
+        .content-layer {
+            background-color: rgba(52, 152, 219, 0.4); /* Azul transparente */
+            border: 1px dashed rgba(52, 152, 219, 0.8);
+            width: 100%; /* Ocupa todo el espacio del padre (padding) */
+            min-height: 50px; /* Altura mínima visual */
+            padding: 10px; /* Espacio interno para el texto */
+            text-align: center;
+            color: #2c3e50;
+            font-weight: bold;
+            position: relative; /* Para el div de dimensiones */
+        }
+
+        /* Etiquetas de las capas */
+        .box-visualization .label {
+            position: absolute;
+            background: rgba(0,0,0,0.6);
+            color: white;
+            padding: 2px 5px;
+            font-size: 0.7em;
+            border-radius: 3px;
+            white-space: nowrap;
+        }
+        .margin-label { top: 2px; left: 2px; }
+        .border-label { top: 2px; left: 2px; }
+        .padding-label { top: 2px; left: 2px; }
+        .content-label { top: 5px; left: 5px; background: none; color: #2c3e50; padding: 0; font-size: 0.8em;}
+
+        #vis-content-dims {
+            font-size: 0.9em;
+            margin-top: 10px;
+            font-family: monospace;
+            background-color: rgba(255,255,255,0.7);
+            padding: 5px;
+            border-radius: 3px;
+        }
+
+        /* Dimensiones calculadas en la visualización */
+        .dimension {
+            position: absolute;
+            font-size: 0.8em;
+            font-family: monospace;
+            background-color: rgba(255, 255, 255, 0.8);
+            padding: 3px 6px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+            white-space: nowrap;
+        }
+        .total-dims {
+            bottom: 5px; /* Posición relativa al margen */
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        .outer-dims {
+            bottom: -20px; /* Fuera del margen */
+             left: 50%;
+            transform: translateX(-50%);
+            background-color: #e74c3c;
+            color: white;
+            border: none;
+        }
+
+        .calculation-info {
+            font-size: 0.8em;
+            color: #555;
+            margin-top: 15px;
+            border-top: 1px solid #eee;
+            padding-top: 10px;
+            text-align: left;
+            width: 90%;
+        }
+        .calculation-info p { margin: 5px 0; }
+
+
+        /* --- Panel Derecho --- */
+        .right-panel .rendered-box-container {
+            border: 2px dashed #bdc3c7;
+            padding: 20px;
+            margin-top: 20px;
+            min-height: 250px;
+            background-color: #ecf0f1;
+            display: flex; /* Para centrar y ver efecto de márgenes */
+            flex-direction: column;
+            align-items: center; /* Centra los items horizontalmente si son más estrechos */
+        }
+
+        .target-box {
+            /* Los estilos base se aplicarán con JS */
+            background-color: #3498db; /* Azul */
+            color: white;
+            border-style: solid; /* Estilo de borde por defecto */
+            border-color: #2980b9; /* Color de borde por defecto */
+            text-align: center;
+            padding: 10px; /* Padding inicial para que se vea algo */
+            overflow: hidden; /* Evita que el contenido se desborde si es muy pequeño */
+            transition: all 0.1s ease-in-out; /* Transición suave */
+        }
+
+        .sibling-box {
+            background-color: #95a5a6; /* Gris */
+            color: white;
+            padding: 10px;
+            text-align: center;
+            margin-bottom: 10px; /* Espacio por defecto debajo */
+            margin-top: 10px; /* Espacio por defecto encima */
+             width: 80%; /* Para que no ocupe todo el ancho y se vea el centrado */
+        }
+
+        /* --- Estilos Sección Definiciones --- */
+        .definitions-container {
+            max-width: 900px; /* Ancho máximo para mejorar legibilidad */
+            margin: 40px auto 20px auto; /* Centrar y añadir espacio arriba/abajo */
+            padding: 20px;
+            background-color: #fff;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .definitions-container h2 {
+             border-bottom: 2px solid #3498db;
+             padding-bottom: 10px;
+             margin-bottom: 25px;
+             text-align: left; /* Alineación izquierda para el título de esta sección */
+        }
+         .definitions-container h3 {
+            margin-top: 30px;
+            margin-bottom: 15px;
+            color: #2c3e50;
+             border-bottom: 1px solid #eee;
+             padding-bottom: 5px;
+             text-align: left; /* Alineación izquierda */
+        }
+        .definitions-container dl {
+            margin: 0;
+            padding: 0;
+        }
+        .definitions-container dt {
+            font-weight: bold;
+            font-size: 1.1em;
+            margin-top: 15px;
+            color: #3498db; /* Azul para destacar término */
+        }
+        .definitions-container dt code {
+             background-color: #ecf0f1;
+             padding: 2px 5px;
+             border-radius: 3px;
+             font-family: monospace;
+        }
+        .definitions-container dd {
+            margin-left: 20px; /* Indentación de la definición */
+            margin-bottom: 15px;
+            padding-left: 10px;
+            border-left: 3px solid #ecf0f1; /* Línea sutil a la izquierda */
+            line-height: 1.6;
+        }
+        .definitions-container ul { /* Estilo general para listas en definiciones */
+            list-style: disc;
+            margin-left: 20px;
+            padding-left: 15px; /* Espacio adicional para los puntos */
+            line-height: 1.6;
+        }
+         .definitions-container li {
+             margin-bottom: 8px;
+         }
+         .definitions-container code { /* Estilo general para code en definiciones */
+            background-color: #f0f0f0;
+            padding: 0.1em 0.4em;
+            border-radius: 3px;
+            font-family: Consolas, Monaco, monospace;
+            font-size: 0.95em;
+         }
+         .definitions-container strong code { /* Evitar doble fondo en dt */
+              background-color: transparent;
+              padding: 0;
+         }
+
+         /* Estilos específicos para la introducción al glosario */
+        .definitions-container .box-model-scope {
+            margin-bottom: 1em;
+            line-height: 1.6;
+            color: #333;
+        }
+        .definitions-container .box-model-scope strong {
+             color: #2c3e50;
+        }
+        .definitions-container .box-model-scope code { /* Hereda el estilo general de code, no necesita repetirse*/ }
+
+        .definitions-container .box-model-scope-list {
+            list-style: disc;
+            margin-left: 20px; /* Mantiene la indentación de listas */
+            margin-bottom: 1em;
+            padding-left: 15px; /* Mantiene el padding de listas */
+        }
+        .definitions-container .box-model-scope-list li {
+            margin-bottom: 0.5em; /* Menos espacio entre items de esta lista */
+        }
+         /* Separador visual antes de la lista de definiciones */
+        .definitions-container .box-model-scope:last-of-type { /* Aplica al último párrafo introductorio */
+             border-bottom: 1px solid #eee;
+             padding-bottom: 1.5em;
+             margin-bottom: 1.5em;
+        }
+    </style>
+</head>
+<body>
+    <h1>Simulador Interactivo del Modelo de Caja CSS</h1>
+
+    <div class="simulator-container">
+        <!-- Panel Izquierdo: Controles y CSS -->
+        <div class="panel left-panel">
+            <h2>Controles CSS</h2>
+            <div class="controls">
+                <!-- Width -->
+                <div class="control-group">
+                    <label for="width">Width:</label>
+                    <input type="range" id="width" name="width" min="50" max="300" value="150">
+                    <span class="value" id="width-value">150px</span>
+                </div>
+                <!-- Height -->
+                <div class="control-group">
+                    <label for="height">Height:</label>
+                    <input type="range" id="height" name="height" min="50" max="300" value="100">
+                    <span class="value" id="height-value">100px</span>
+                </div>
+                 <!-- Padding -->
+                 <div class="control-group">
+                    <label for="padding">Padding:</label>
+                    <input type="range" id="padding" name="padding" min="0" max="50" value="10">
+                    <span class="value" id="padding-value">10px</span>
+                </div>
+                 <!-- Border Width -->
+                 <div class="control-group">
+                    <label for="border">Border Width:</label>
+                    <input type="range" id="border" name="border" min="0" max="20" value="5">
+                    <span class="value" id="border-value">5px</span>
+                </div>
+                 <!-- Margin -->
+                 <div class="control-group">
+                    <label for="margin">Margin:</label>
+                    <input type="range" id="margin" name="margin" min="0" max="50" value="15">
+                    <span class="value" id="margin-value">15px</span>
+                </div>
+                 <!-- Box Sizing -->
+                 <div class="control-group">
+                    <label for="box-sizing">Box Sizing:</label>
+                    <select id="box-sizing" name="box-sizing">
+                        <option value="content-box" selected>content-box</option>
+                        <option value="border-box">border-box</option>
+                    </select>
+                </div>
+            </div>
+
+            <h2>Código CSS Resultante</h2>
+            <div class="css-output">
+                <pre><code id="css-code">.target-box {
+    /* Estilos se actualizarán aquí */
+}</code></pre>
+            </div>
+        </div>
+
+        <!-- Panel Central: Visualización Detallada -->
+        <div class="panel center-panel">
+            <h2>Visualización Detallada</h2>
+            <div class="box-visualization" id="box-visualization">
+                <div class="margin-layer" id="vis-margin">
+                    <span class="label margin-label">Margin: <span id="vis-margin-value">15px</span></span>
+                    <div class="border-layer" id="vis-border">
+                         <span class="label border-label">Border: <span id="vis-border-value">5px</span></span>
+                        <div class="padding-layer" id="vis-padding">
+                             <span class="label padding-label">Padding: <span id="vis-padding-value">10px</span></span>
+                            <div class="content-layer" id="vis-content">
+                                <span class="label content-label">Content</span>
+                                <div id="vis-content-dims">150px x 100px</div>
+                            </div>
+                        </div>
+                    </div>
+                     <div class="dimension total-dims" id="total-dims">Total Width: 200px</div>
+                     <div class="dimension outer-dims" id="outer-dims">Outer Width: 230px</div>
+                </div>
+            </div>
+             <div class="calculation-info" id="calculation-info">
+                 <p><strong>Cálculo Ancho (content-box):</strong><br> width + padding*2 + border*2</p>
+                 <p><strong>Cálculo Ancho (border-box):</strong><br> width (incluye padding y border)</p>
+             </div>
+        </div>
+
+        <!-- Panel Derecho: Renderizado Normal -->
+        <div class="panel right-panel">
+            <h2>Renderizado Normal</h2>
+            <div class="rendered-box-container">
+                <div class="sibling-box">Elemento vecino</div>
+                <div class="target-box" id="target-box">
+                    Soy el contenido del DIV. Mi tamaño y espaciado cambian.
+                </div>
+                 <div class="sibling-box">Otro elemento vecino</div>
+            </div>
+        </div>
+    </div> <!-- Cierre del div.simulator-container -->
+
+    <div class="definitions-container">
+        <h2>Glosario de Conceptos del Modelo de Caja</h2>
+
+        <!-- == INICIO: Texto añadido sobre el alcance == -->
+        <p class="box-model-scope">
+            <strong>¿Se aplica el Modelo de Cajas a todos los elementos HTML?</strong> Sí, fundamentalmente, <strong>todos</strong> los elementos que se renderizan en una página web son tratados por el motor de layout del navegador como una caja rectangular. Desde un simple enlace &lt;a></code> hasta un párrafo &lt;p></code> o un contenedor &lt;div></code>, cada uno ocupa un espacio definido por este modelo.
+        </p>
+        <p class="box-model-scope">
+            Sin embargo, la <strong>forma en que se aplican e interpretan</strong> las propiedades del modelo de caja (<code>width</code>, <code>height</code>, <code>padding</code>, <code>border</code>, <code>margin</code>) depende crucialmente del valor de la propiedad <strong&gt;display</code></strong> del elemento:
+        </p>
+        <ul class="box-model-scope-list">
+            <li><strong>Elementos de Bloque (<code>display: block</code>):</strong> Como &lt;div></code>, &lt;p></code>, &lt;h1></code>... Respetan todas las propiedades del modelo de caja (<code>width</code>, <code>height</code>, márgenes y paddings verticales y horizontales). Comienzan en una nueva línea y ocupan todo el ancho disponible por defecto.</li>
+            <li><strong>Elementos en Línea (<code>display: inline</code>):</strong> Como &lt;span></code>, &lt;a></code>, &lt;strong></code>... Fluyen dentro del texto. <strong>Ignoran</strong> <code>width</code> y <code>height</code> explícitas, y también <strong>ignoran</strong> <code>margin-top</code> y <code>margin-bottom</code>. Sí respetan <code>padding</code> y <code>border</code> en todos los lados, y <code>margin-left</code>/<code>margin-right</code>, aunque el padding/border vertical puede solaparse visualmente con otras líneas sin afectar al layout vertical general.</li>
+            <li><strong>Elementos en Línea-Bloque (<code>display: inline-block</code>):</strong> Un híbrido. Fluyen como elementos en línea pero respetan <code>width</code>, <code>height</code>, y todos los márgenes y paddings, como los elementos de bloque.</li>
+            <li><strong>Otros (<code>flex</code>, <code>grid</code>, <code>table</code>, etc.):</strong> Estos valores de <code>display</code> establecen contextos de formato específicos, pero los <i>ítems</i> dentro de estos contextos (flex items, grid items, table cells) siguen teniendo su propio modelo de caja individual.</li>
+        </ul>
+        <p class="box-model-scope">
+            Por lo tanto, aunque el <i>concepto</i> de caja es universal para los elementos renderizados, su comportamiento y cómo interactúa con las propiedades CSS varía según su tipo de display. Este simulador se centra principalmente en el comportamiento de los elementos de tipo bloque o inline-block, donde todas las propiedades del modelo de caja tienen un efecto visible y controlable.
+        </p>
+         <!-- == FIN: Texto añadido sobre el alcance == -->
+
+        <dl>
+            <dt&gt;box-sizing</code></dt>
+            <dd>
+                <p>Esta propiedad CSS define cómo se calculan la anchura (<code>width</code>) y altura (<code>height</code>) totales de un elemento. Tiene dos valores principales:</p>
+                <ul>
+                    <li>
+                        <strong&gt;content-box</code> (Valor por defecto):</strong> La anchura y altura especificadas (<code>width</code>, <code>height</code>) se aplican <strong>solo al área de contenido</strong> del elemento. El padding, el borde y el margen se añaden *fuera* de estas dimensiones, haciendo que el tamaño total renderizado del elemento en la página sea mayor que el <code>width</code>/<code>height</code> especificado.
+                        <br><em>Ancho Total = width + padding (izq+der) + border (izq+der)</em>
+                    </li>
+                    <li>
+                        <strong&gt;border-box</code>:</strong> La anchura y altura especificadas (<code>width</code>, <code>height</code>) definen el tamaño total del elemento <strong>incluyendo el padding y el borde</strong>, pero sin incluir el margen. El área de contenido se encogerá para hacer espacio al padding y al borde. Esto suele hacer que el diseño de layouts sea más intuitivo, ya que el tamaño que especificas es el tamaño que ocupa (sin contar el margen).
+                        <br><em>Ancho Total = width (ya incluye padding y border)</em>
+                    </li>
+                </ul>
+            </dd>
+
+            <dt&gt;Content</code> (Contenido)</dt>
+            <dd>Es el área donde se muestra el contenido real del elemento, como texto, imágenes u otros elementos anidados. Sus dimensiones vienen determinadas por las propiedades <code>width</code> y <code>height</code>, pero su cálculo depende del valor de <code>box-sizing</code>.</dd>
+
+            <dt&gt;Padding</code> (Relleno)</dt>
+            <dd>Es un espacio transparente alrededor del área de contenido, pero dentro del borde. Empuja el contenido hacia adentro, alejándolo del borde. El padding toma el color de fondo del elemento. Se puede especificar para cada lado (<code>padding-top</code>, <code>padding-right</code>, <code>padding-bottom</code>, <code>padding-left</code>) o con la propiedad abreviada <code>padding</code>.</dd>
+
+            <dt&gt;Border</code> (Borde)</dt>
+            <dd>Es una línea que se dibuja alrededor del padding y el contenido. Tiene grosor (<code>border-width</code>), estilo (<code>border-style</code>: solid, dashed, dotted, etc.) y color (<code>border-color</code>). El borde añade tamaño al elemento si se usa <code>box-sizing: content-box</code>. Se puede especificar por lados o con propiedades abreviadas como <code>border</code> o <code>border-width</code>.</dd>
+
+            <dt&gt;Margin</code> (Margen)</dt>
+            <dd>Es un espacio transparente *fuera* del borde. Se utiliza para crear separación entre un elemento y sus elementos vecinos. El margen no forma parte del tamaño "visible" del elemento (no tiene fondo ni borde) pero sí afecta al espacio que ocupa en el layout. Se puede especificar por lados (<code>margin-top</code>, etc.) o con la propiedad abreviada <code>margin</code>.</dd>
+
+             <dt&gt;Width</code> (Anchura) / <code>Height</code> (Altura)</dt>
+            <dd>Estas propiedades definen las dimensiones base del elemento. Lo que miden exactamente (solo contenido, o contenido + padding + borde) depende directamente del valor de <code>box-sizing</code>.</dd>
+
+        </dl>
+
+        <h3>Otros Aspectos Importantes a Considerar</h3>
+        <ul>
+            <li><strong>Colapso de Márgenes (Margin Collapsing):</strong> Los márgenes verticales (<code>margin-top</code>, <code>margin-bottom</code>) de elementos de bloque adyacentes pueden "colapsar" o fusionarse en un único margen, que será el mayor de los dos márgenes que colapsan. Esto no ocurre con los márgenes horizontales. También puede ocurrir entre un elemento padre y su primer/último hijo si no hay borde o padding entre ellos.</li>
+            <li><strong>Propiedad <code>display</code>:</strong> El tipo de caja que genera un elemento (<code>block</code>, <code>inline</code>, <code>inline-block</code>, <code>flex</code>, <code>grid</code>, etc.) afecta significativamente a cómo se aplica el modelo de caja. Por ejemplo, los elementos <code>inline</code> (como &lt;span></code> o &lt;a></code>) por defecto ignoran <code>width</code>, <code>height</code> y los márgenes verticales. <code>inline-block</code> permite aplicar dimensiones y márgenes verticales pero fluye en línea con el texto.</li>
+            <li><strong>Desbordamiento (<code>overflow</code>):</strong> Si el contenido es más grande que el área de contenido calculada (después de considerar <code>width</code>, <code>height</code>, <code>padding</code>, <code>border</code> y <code>box-sizing</code>), la propiedad <code>overflow</code> determina qué sucede (<code>visible</code> (por defecto), <code>hidden</code>, <code>scroll</code>, <code>auto</code>).</li>
+            <li><strong>Unidades:</strong> Aunque este simulador usa píxeles (<code>px</code>), las propiedades del modelo de caja pueden usar otras unidades (<code>%</code>, <code>em</code>, <code>rem</code>, <code>vw</code>, <code>vh</code>, etc.). Las unidades relativas (como <code>%</code>) calculan su valor en base a las dimensiones del contenedor padre, lo que añade otra capa de dependencia.</li>
+            <li><strong>Herramientas de Desarrollo del Navegador:</strong> La mejor forma de entender el modelo de caja de cualquier elemento en una página web real es usando las herramientas de desarrollo integradas en los navegadores (normalmente accesibles con F12 o clic derecho -> Inspeccionar). Suelen tener una pestaña "Computado" o "Layout" que muestra un diagrama interactivo del modelo de caja del elemento seleccionado con sus valores exactos calculados.</li>
+        </ul>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // --- Obtener Elementos del DOM ---
+            const controls = {
+                width: document.getElementById('width'),
+                height: document.getElementById('height'),
+                padding: document.getElementById('padding'),
+                border: document.getElementById('border'),
+                margin: document.getElementById('margin'),
+                boxSizing: document.getElementById('box-sizing')
+            };
+
+            const values = {
+                width: document.getElementById('width-value'),
+                height: document.getElementById('height-value'),
+                padding: document.getElementById('padding-value'),
+                border: document.getElementById('border-value'),
+                margin: document.getElementById('margin-value')
+            };
+
+            const targetBox = document.getElementById('target-box');
+            const cssCodeElement = document.getElementById('css-code');
+
+            // Elementos de Visualización Central
+            const visContent = document.getElementById('vis-content');
+            const visContentDims = document.getElementById('vis-content-dims');
+            const visPaddingValue = document.getElementById('vis-padding-value');
+            const visBorderValue = document.getElementById('vis-border-value');
+            const visMarginValue = document.getElementById('vis-margin-value');
+            const totalDimsElement = document.getElementById('total-dims');
+            const outerDimsElement = document.getElementById('outer-dims');
+            const calculationInfo = document.getElementById('calculation-info');
+
+            // --- Función Principal de Actualización ---
+            function updateBoxModel() {
+                // 1. Leer valores de los controles
+                const width = parseInt(controls.width.value);
+                const height = parseInt(controls.height.value);
+                const padding = parseInt(controls.padding.value);
+                const border = parseInt(controls.border.value);
+                const margin = parseInt(controls.margin.value);
+                const boxSizing = controls.boxSizing.value;
+
+                // 2. Actualizar los spans de valores junto a los sliders
+                values.width.textContent = `${width}px`;
+                values.height.textContent = `${height}px`;
+                values.padding.textContent = `${padding}px`;
+                values.border.textContent = `${border}px`;
+                values.margin.textContent = `${margin}px`;
+
+                // 3. Aplicar estilos al target-box (Panel Derecho)
+                targetBox.style.width = `${width}px`;
+                targetBox.style.height = `${height}px`;
+                targetBox.style.padding = `${padding}px`;
+                targetBox.style.borderWidth = `${border}px`;
+                // Asegurarse que siempre haya un estilo de borde para que se vea el width
+                targetBox.style.borderStyle = border > 0 ? 'solid' : 'none';
+                targetBox.style.margin = `${margin}px`;
+                targetBox.style.boxSizing = boxSizing;
+
+                // 4. Generar y mostrar el código CSS (Panel Izquierdo)
+                const cssString = `
+.target-box {
+  width: ${width}px;
+  height: ${height}px;
+  padding: ${padding}px;
+  border: ${border}px solid #2980b9; ${/* Mantenemos color y estilo fijos */''}
+  margin: ${margin}px;
+  box-sizing: ${boxSizing};
+  background-color: #3498db;
+  color: white;
+  /* ... otros estilos base ... */
+}`;
+                cssCodeElement.textContent = cssString.trim();
+
+
+                // 5. Actualizar la Visualización Central (La parte más compleja)
+
+                // Forzamos al navegador a recalcular estilos AHORA MISMO
+                // Usar getComputedStyle DESPUÉS de aplicar los estilos
+                const computedStyle = window.getComputedStyle(targetBox);
+
+                // Extraer dimensiones computadas (incluyen 'px', los parseamos)
+                // Usamos parseFloat para manejar decimales que puedan surgir con border-box
+                const computedWidth = parseFloat(computedStyle.width);
+                const computedHeight = parseFloat(computedStyle.height);
+                const computedPaddingTop = parseFloat(computedStyle.paddingTop);
+                const computedPaddingRight = parseFloat(computedStyle.paddingRight);
+                const computedPaddingBottom = parseFloat(computedStyle.paddingBottom);
+                const computedPaddingLeft = parseFloat(computedStyle.paddingLeft);
+                const computedBorderTop = parseFloat(computedStyle.borderTopWidth);
+                const computedBorderRight = parseFloat(computedStyle.borderRightWidth);
+                const computedBorderBottom = parseFloat(computedStyle.borderBottomWidth);
+                const computedBorderLeft = parseFloat(computedStyle.borderLeftWidth);
+                const computedMarginTop = parseFloat(computedStyle.marginTop);
+                const computedMarginRight = parseFloat(computedStyle.marginRight);
+                const computedMarginBottom = parseFloat(computedStyle.marginBottom);
+                const computedMarginLeft = parseFloat(computedStyle.marginLeft);
+
+
+                // Calcular dimensiones de CADA PARTE para la visualización
+
+                let contentWidth, contentHeight;
+                let totalWidth, totalHeight; // Anchura/Altura ocupada (sin margen)
+                let outerWidth, outerHeight; // Anchura/Altura total con margen
+
+                if (boxSizing === 'content-box') {
+                    contentWidth = computedWidth; // En content-box, width/height es el del contenido
+                    contentHeight = computedHeight;
+                    totalWidth = contentWidth + computedPaddingLeft + computedPaddingRight + computedBorderLeft + computedBorderRight;
+                    totalHeight = contentHeight + computedPaddingTop + computedPaddingBottom + computedBorderTop + computedBorderBottom;
+                    calculationInfo.innerHTML = `<p><strong>Cálculo Ancho (content-box):</strong><br> Total = width + padding*2 + border*2<br> ${width}px + ${padding*2}px + ${border*2}px = ${totalWidth.toFixed(1)}px</p>`;
+                } else { // border-box
+                    // En border-box, width/height especificados (o computados si son auto) incluyen padding y border
+                    totalWidth = computedWidth;
+                    totalHeight = computedHeight;
+                    // Restamos padding y border para obtener el área de contenido real
+                    contentWidth = totalWidth - computedPaddingLeft - computedPaddingRight - computedBorderLeft - computedBorderRight;
+                    contentHeight = totalHeight - computedPaddingTop + computedPaddingBottom - computedBorderTop - computedBorderBottom;
+                    calculationInfo.innerHTML = `<p><strong>Cálculo Ancho (border-box):</strong><br> Total = width (incluye padding y border)<br> ${width}px = ${totalWidth.toFixed(1)}px</p>`;
+                }
+
+                 // Asegurar que no sean negativos visualmente si los valores son extraños
+                contentWidth = Math.max(0, contentWidth);
+                contentHeight = Math.max(0, contentHeight);
+
+                // Dimensiones Exteriores (incluyendo margen)
+                // Nota: El navegador puede colapsar márgenes verticales, aquí sumamos simple para la visualización
+                outerWidth = totalWidth + computedMarginLeft + computedMarginRight;
+                outerHeight = totalHeight + computedMarginTop + computedMarginBottom;
+
+
+                // Actualizar textos en la visualización central
+                visContentDims.textContent = `${contentWidth.toFixed(1)}px x ${contentHeight.toFixed(1)}px`;
+                visPaddingValue.textContent = `${padding}px`; // Usamos el valor del input para simplicidad visual
+                visBorderValue.textContent = `${border}px`; // Usamos el valor del input
+                visMarginValue.textContent = `${margin}px`; // Usamos el valor del input
+
+                // Actualizar dimensiones calculadas mostradas
+                totalDimsElement.textContent = `Total Width: ${totalWidth.toFixed(1)}px`;
+                outerDimsElement.textContent = `Outer Width: ${outerWidth.toFixed(1)}px`;
+
+                // Actualizar el tamaño VISUAL del content-layer (opcional, pero ayuda)
+                // Usamos porcentajes o flexbox en CSS para que se ajuste, pero podemos darle un min-height/width
+                // para que no desaparezca si el contenido calculado es 0.
+                visContent.style.minWidth = `${Math.max(20, contentWidth / 2)}px`; // Escala visual simple
+                visContent.style.minHeight = `${Math.max(20, contentHeight / 2)}px`; // Escala visual simple
+
+            }
+
+            // --- Añadir Event Listeners ---
+            // Escuchar cambios en CUALQUIER control
+            for (const key in controls) {
+                controls[key].addEventListener('input', updateBoxModel);
+            }
+
+            // --- Llamada Inicial ---
+            // Ejecutar la función una vez al cargar la página para inicializar todo
+            updateBoxModel();
+        });
+    </script>
+
+</body>
+</html>

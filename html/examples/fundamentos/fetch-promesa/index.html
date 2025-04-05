@@ -1,0 +1,906 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulador Asíncrono (Fetch / Promesas)</title>
+    <style>
+        /* --- Estilos Generales --- */
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+            margin: 0;
+            padding: 0; /* Remove body padding */
+            background-color: #f0f2f5;
+            color: #333;
+            line-height: 1.6; /* Improved readability */
+        }
+
+        .page-container {
+            max-width: 1400px; /* Limit overall width */
+            margin: 20px auto; /* Center container */
+            padding: 20px;
+        }
+
+
+        h1, h2 {
+            text-align: center;
+            color: #1a253c;
+            margin-bottom: 15px;
+        }
+        h1 {
+            margin-bottom: 30px;
+        }
+        h2 {
+            font-size: 1.2em; /* Slightly larger section titles */
+            margin-top: 0;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #d9dee3;
+            color: #343a40; /* Darker heading color */
+        }
+        /* Adjust heading margin within panels */
+         .panel h2, .panel h3 {
+            margin-top: 0;
+            margin-bottom: 10px; /* Consistent spacing below headings */
+            padding-bottom: 5px; /* Less padding below panel headings */
+            font-size: 1.1em; /* Slightly smaller panel headings */
+             text-align: left; /* Align panel headings left */
+        }
+         .panel h3 {
+             font-size: 1em; /* Even smaller for sub-headings */
+             border-bottom: none; /* No border for h3 */
+             color: #495057;
+             margin-top: 15px;
+         }
+
+
+        /* --- Estilos Simulador --- */
+        .async-simulator {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); /* Responsive columns, slightly wider min */
+            gap: 20px;
+            background-color: #fff;
+            padding: 25px; /* More padding */
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); /* Softer shadow */
+            margin-bottom: 40px; /* Space below simulator */
+        }
+
+        .panel {
+            border: 1px solid #d9dee3;
+            border-radius: 6px;
+            padding: 15px;
+            background-color: #ffffff; /* White panel background */
+            display: flex;
+            flex-direction: column; /* Stack title and content */
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05); /* Subtle shadow on panels */
+        }
+
+        .panel-content {
+            flex-grow: 1; /* Take remaining space */
+            min-height: 180px; /* Ensure panels have some height */
+            background-color: #f8f9fa; /* Lighter background for content area */
+            padding: 12px; /* More padding */
+            border-radius: 4px;
+            font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace; /* Monospace font */
+            font-size: 0.88em; /* Slightly adjusted font size */
+            overflow-y: auto; /* Scroll if content overflows */
+            white-space: pre-wrap; /* Respect whitespace and wrap */
+            word-break: break-word;
+            margin-top: 10px; /* Space below title */
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.06);
+            color: #495057; /* Text color inside panels */
+        }
+
+        .panel-content > div,
+        .panel-content > p {
+            padding: 6px 10px; /* Adjusted padding */
+            margin-bottom: 6px;
+            border-radius: 4px; /* Slightly more rounded */
+            background-color: #fff;
+            border: 1px solid #ced4da;
+            transition: background-color 0.3s ease, transform 0.2s ease; /* Added transform transition */
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        }
+        .panel-content > div:hover {
+             transform: scale(1.01); /* Slight scale on hover */
+        }
+
+
+        /* Specific Panel Styles & Colors */
+        #call-stack .panel-content > div { background-color: #e0fbfc; border-color: #a6d8d4;} /* Cyan light */
+        #web-apis .panel-content > div { background-color: #fff3cd; border-color: #ffe69c;} /* Yellow light */
+        #microtask-queue .panel-content > div { background-color: #d1e7dd; border-color: #a3cfbb;} /* Green light */
+        #task-queue .panel-content > div { background-color: #f8d7da; border-color: #f5c2c7;} /* Red light */
+
+        #console-log .log-entry {
+            border-left: 4px solid; /* Thicker border */
+            padding: 4px 10px; /* Adjusted padding */
+            margin-bottom: 5px;
+            background-color: #f8f9fa; /* Keep log background light */
+            font-size: 0.95em; /* Slightly larger log font */
+            border-radius: 3px;
+        }
+        #console-log .log-sync { border-left-color: #0d6efd; } /* Blue */
+        #console-log .log-event { border-left-color: #6f42c1; } /* Purple */
+        #console-log .log-api { border-left-color: #fd7e14; } /* Orange */
+        #console-log .log-microtask { border-left-color: #198754;} /* Green */
+        #console-log .log-task { border-left-color: #dc3545;} /* Red */
+        #console-log .log-result { border-left-color: #0dcaf0; font-weight: bold; background-color: #e0fbfc;} /* Cyan */
+        #console-log .log-error { border-left-color: #dc3545; color: #dc3545; font-weight: bold; background-color: #f8d7da;} /* Red */
+
+
+        /* Left Panel Specifics */
+        .left-panel button {
+            display: block;
+            width: 100%;
+            padding: 12px 18px; /* More padding */
+            font-size: 1.05em; /* Larger font */
+            font-weight: 500;
+            background-color: #0d6efd;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-bottom: 20px; /* More space */
+            transition: background-color 0.2s ease, transform 0.1s ease;
+        }
+        .left-panel button:hover:not(:disabled) {
+            background-color: #0b5ed7;
+            transform: translateY(-1px); /* Slight lift on hover */
+        }
+         .left-panel button:disabled {
+            background-color: #6c757d;
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+
+        #results {
+            min-height: 60px; /* Taller results area */
+            background-color: #e9ecef;
+            padding: 12px;
+            border-radius: 4px;
+            margin-bottom: 15px; /* Adjusted space */
+            font-style: italic;
+            color: #495057;
+            font-size: 0.95em;
+             border: 1px solid #ced4da;
+        }
+         #results.success {
+             background-color: #d1e7dd; /* Green background on success */
+             color: #0f5132;
+             border-color: #a3cfbb;
+             font-style: normal;
+             font-weight: 500;
+         }
+          #results.error {
+             background-color: #f8d7da; /* Red background on error */
+             color: #842029;
+             border-color: #f5c2c7;
+             font-style: normal;
+             font-weight: 500;
+         }
+
+        /* Styles for code blocks in left panel */
+        .left-panel pre {
+             background-color: #282c34; /* Dark background for code */
+             color: #abb2bf; /* Light text */
+             padding: 15px;
+             border-radius: 5px;
+             font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace;
+             font-size: 0.87em; /* Slightly smaller code font */
+             white-space: pre;
+             overflow-x: auto;
+             line-height: 1.4;
+             margin-bottom: 15px; /* Space below code blocks */
+             max-height: 250px; /* Limit height */
+             overflow-y: auto; /* Add scroll if too tall */
+        }
+        .left-panel pre code {
+            background: none; /* Inherit background */
+            padding: 0;
+            color: inherit; /* Inherit color */
+            border: none;
+            font-size: inherit;
+        }
+
+        .clarification-note {
+            font-size: 0.85em;
+            margin-top: -10px; /* Pull note up slightly */
+            margin-bottom: 15px;
+            padding: 8px;
+            background-color: #fff3cd; /* Yellow note background */
+            border: 1px solid #ffe69c;
+            border-radius: 4px;
+            color: #664d03;
+        }
+
+
+        /* Animation for items entering/leaving */
+        .panel-content > div.entering {
+             animation: fadeIn 0.4s ease-out;
+        }
+         .panel-content > div.leaving {
+             animation: fadeOut 0.4s ease-in forwards;
+         }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-8px) scale(0.98); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        @keyframes fadeOut {
+            from { opacity: 1; transform: translateY(0) scale(1); }
+            to { opacity: 0; transform: translateY(8px) scale(0.98); }
+        }
+
+
+        /* --- Estilos Sección Información --- */
+        .info-container {
+            background-color: #fff;
+            padding: 30px 40px; /* More horizontal padding */
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+
+        .info-container h2 {
+            text-align: left; /* Align heading left */
+            border-bottom: 2px solid #0d6efd; /* Blue underline */
+            margin-bottom: 25px;
+            padding-bottom: 10px;
+            color: #1a253c; /* Darker blue */
+        }
+
+        .info-container h3 {
+            font-size: 1.3em; /* Larger sub-headings */
+            color: #0d6efd; /* Blue sub-headings */
+            margin-top: 30px;
+            margin-bottom: 15px;
+            padding-bottom: 5px;
+            border-bottom: 1px solid #e9ecef; /* Light separator */
+        }
+
+        .info-container p,
+        .info-container li,
+        .info-container dd { /* Apply base style to dd as well */
+            font-size: 1em; /* Standard text size */
+            color: #343a40; /* Slightly darker text */
+            margin-bottom: 12px; /* Space between paragraphs/items */
+        }
+
+        .info-container ul, .info-container ol { /* Style ordered lists too */
+            list-style: disc;
+            margin-left: 20px;
+            padding-left: 15px;
+            margin-bottom: 15px;
+        }
+        .info-container ol {
+            list-style: decimal; /* Use numbers for ordered lists */
+        }
+
+         .info-container code {
+            background-color: #e9ecef; /* Light grey background for code */
+            padding: 0.2em 0.5em; /* Padding */
+            border-radius: 4px;
+            font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace;
+            font-size: 0.95em; /* Consistent code size */
+            color: #d63384; /* Pinkish color for inline code */
+            border: 1px solid #ced4da; /* Subtle border */
+         }
+
+         .info-container pre {
+             background-color: #282c34;
+             color: #abb2bf;
+             padding: 15px;
+             border-radius: 5px;
+             overflow-x: auto;
+             font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace;
+             font-size: 0.9em;
+             margin: 15px 0;
+         }
+          .info-container pre code {
+              background-color: transparent;
+              padding: 0;
+              border: none;
+              color: inherit; /* Inherit color from pre */
+          }
+
+        .info-container strong {
+             color: #212529; /* Darker color for strong text */
+             font-weight: 600;
+        }
+
+        /* Specific styles for definition lists (dl) */
+        .info-container dl {
+            margin-bottom: 20px;
+        }
+         .info-container dt {
+            font-weight: bold;
+            font-size: 1.05em; /* Slightly larger term */
+            color: #0d6efd; /* Blue term */
+            margin-top: 15px;
+         }
+         .info-container dd {
+             margin-left: 25px; /* Indent definition */
+             margin-bottom: 10px;
+             padding-left: 15px; /* Space from border */
+             border-left: 3px solid #e9ecef; /* Subtle left border */
+         }
+
+         /* Styles for the panel explanations */
+        .info-container .panel-explanation dt {
+            font-weight: bold;
+            color: #198754; /* Green for panel names */
+            margin-top: 10px;
+        }
+        .info-container .panel-explanation dd {
+            margin-left: 25px;
+            margin-bottom: 10px;
+            padding-left: 10px;
+            border-left: 2px solid #e9ecef;
+        }
+
+        /* Style for the parameter explanation */
+        .parameter-explanation {
+             background-color: #e9ecef;
+             padding: 10px 15px;
+             border-radius: 4px;
+             border: 1px solid #ced4da;
+             margin-top: 5px;
+             font-size: 0.95em;
+         }
+        .parameter-explanation code {
+             background-color: #d6e9ff; /* Light blue background for code */
+             border-color: #a8cfff;
+             color: #0a58ca; /* Dark blue text */
+         }
+
+    </style>
+</head>
+<body>
+<div class="page-container">
+
+    <h1>Simulador Asíncrono (Fetch / Async-Await)</h1>
+
+    <div class="async-simulator">
+        <!-- Panel Izquierdo: Controles, Resultados, Código -->
+        <div class="panel left-panel">
+            <h2>Controles y Código</h2>
+            <button id="fetch-button">Iniciar Fetch de Datos</button>
+
+            <h3>Resultado:</h3>
+            <div id="results">Esperando inicio...</div>
+
+            <!-- == INICIO: Código Fetch con .then/.catch == -->
+            <h3>Código JavaScript (Fetch con .then/.catch):</h3>
+            <pre id="js-code-then"><code>
+function fetchDataWithThen(url) { // <-- 'url' aquí es PARÁMETRO
+  console.log("Iniciando con .then...");
+  simulateFetch(url) // <-- 'url' aquí USA el valor del parámetro
+    .then(response => {
+      console.log("Fetch Promise resuelta (then)");
+      return response; // Simulación: 'response' ya son los datos
+    })
+    .then(data => {
+      console.log("Datos finales recibidos (then)");
+      updateResults(`Datos recibidos: ${data.message}`);
+      console.log("Completado con .then");
+    })
+    .catch(error => {
+      console.error("ERROR con .then:", error);
+      updateResults(`Error: ${error.message}`, true);
+    });
+  console.log("Llamada a fetch con .then realizada.");
+}
+// Ejemplo de llamada: fetchDataWithThen('/api/data');
+            </code></pre>
+            <!-- == FIN: Código Fetch con .then/.catch == -->
+
+            <!-- == INICIO: Código Fetch con Async/Await == -->
+            <h3>Código JavaScript (Async/Await - Usado en Simulación):</h3>
+            <pre id="js-code-async"><code>
+async function fetchData(url) { // <-- 'url' aquí es PARÁMETRO
+  logToConsole("console.log('1. Iniciando fetchData...')");
+  try {
+    logToConsole("console.log('2. Antes de llamar a fetch...')");
+    const responsePromise = simulateFetch(url); // <-- 'url' aquí USA el valor
+    logToConsole("console.log('3. Después de llamar a fetch')");
+
+    logToConsole("await responsePromise - Pausando fetchData...");
+    const data = await responsePromise; // <-- Pausa aquí
+
+    logToConsole("console.log('6. Reanudando fetchData...')");
+    updateResults(`Datos recibidos: ${data.message}`);
+    logToConsole("console.log('7. fetchData completado.')");
+
+  } catch (error) {
+    logToConsole(`ERROR: ${error.message}`, 'error');
+    updateResults(`Error: ${error.message}`, true);
+  }
+}
+// El botón llama a fetchData('/api/data') al hacer clic
+            </code></pre>
+             <p class="clarification-note">
+                <strong>Nota:</strong> La simulación visual sigue el flujo del código <strong>Async/Await</strong>. Ambos ejemplos usan <code>simulateFetch</code> que simula el retraso de red y el comportamiento de la Promesa.
+             </p>
+             <!-- == FIN: Código Fetch con Async/Await == -->
+        </div>
+
+        <!-- Panel Central: Call Stack y Web APIs -->
+        <div class="panel center-panel">
+            <div>
+                <h2>Call Stack (Motor JS)</h2>
+                <div id="call-stack" class="panel-content"></div>
+            </div>
+            <div style="margin-top: 20px;">
+                <h2>Web APIs / Background (Navegador)</h2>
+                <div id="web-apis" class="panel-content"></div>
+            </div>
+        </div>
+
+        <!-- Panel Derecho: Queues y Consola -->
+        <div class="panel right-panel">
+             <div>
+                <h2>Microtask Queue (Promesas)</h2>
+                <div id="microtask-queue" class="panel-content"></div>
+            </div>
+             <div style="margin-top: 20px;">
+                <h2>Task Queue (Callbacks, setTimeout, Eventos)</h2>
+                <div id="task-queue" class="panel-content">(Vacía en este ejemplo)</div>
+            </div>
+            <div style="margin-top: 20px;">
+                <h2>Log / Consola Simulada</h2>
+                <div id="console-log" class="panel-content"></div>
+            </div>
+        </div>
+    </div> <!-- Cierre de async-simulator -->
+
+
+    <!-- Sección de Información -->
+    <div class="info-container">
+        <h2>Información sobre Fetch y Procesos Asíncronos en JavaScript</h2>
+
+        <!-- ============================================== -->
+        <!-- == INICIO: SECCIÓN REESTRUCTURADA           == -->
+        <!-- ============================================== -->
+
+        <h3>0. La Necesidad de Asincronía y Fetch</h3>
+        <p>
+            Las páginas web modernas necesitan comunicarse con servidores para obtener o enviar datos sin recargar la página. Estas operaciones de red toman tiempo. Si JavaScript esperara bloqueando la página, la interfaz se congelaría.
+        </p>
+        <p>
+            <strong><code>fetch</code></strong> es la API moderna del navegador para realizar estas peticiones de red de forma <strong>asíncrona</strong>. Inicia la petición pero no espera, devolviendo inmediatamente una <strong><code>Promise</code> (Promesa)</strong>, que representa el resultado futuro de esa petición.
+        </p>
+
+        <h3>1. Manejo de Promesas: <code>.then()</code> vs <code>async/await</code></h3>
+        <p>Existen dos formas principales de trabajar con las Promesas que devuelve <code>fetch</code>:</p>
+        <ul>
+            <li>
+                <strong>Método <code>.then().catch()</code> (Forma Tradicional):</strong> Encadenas llamadas a <code>.then()</code> para registrar funciones (callbacks) que se ejecutarán cuando la Promesa se resuelva con éxito. Usas <code>.catch()</code> para registrar un callback que se ejecutará si la Promesa es rechazada (error). Esto puede llevar a anidamiento si hay muchas operaciones consecutivas.
+                <pre><code>fetch(url)
+  .then(response => response.json()) // Primer .then para procesar respuesta
+  .then(data => { /* Usar datos */ }) // Segundo .then para usar datos
+  .catch(error => { /* Manejar error */ });</code></pre>
+            </li>
+            <li>
+                <strong>Sintaxis <code>async/await</code> (Forma Moderna):</strong> Permite escribir código asíncrono que se parece más al código síncrono.
+                <ul>
+                    <li>Marcas la función contenedora con <code>async</code>.</li>
+                    <li>Usas <code>await</code> delante de la llamada a <code>fetch</code> (y otras operaciones que devuelvan Promesas, como <code>response.json()</code>) para pausar la ejecución de la función <code>async</code> hasta que la Promesa se resuelva.</li>
+                    <li>Usas bloques <code>try...catch</code> para manejar errores de forma similar al código síncrono.</li>
+                </ul>
+                 <pre><code>async function getData(url) {
+  try {
+    const response = await fetch(url); // Pausa aquí
+    const data = await response.json(); // Pausa aquí de nuevo
+    // Usar datos
+  } catch (error) {
+    // Manejar error
+  }
+}</code></pre>
+            </li>
+        </ul>
+        <p>
+            <strong>¿Cuál aprender?:</strong> <strong>Prioriza <code>async/await</code></strong> para escribir código nuevo por su legibilidad y manejo de errores más sencillo. Sin embargo, <strong>entiende también <code>.then()</code></strong>, ya que es la base de las Promesas y lo encontrarás en código existente o librerías. Son dos formas de lograr lo mismo, pero <code>async/await</code> es generalmente preferido hoy en día.
+        </p>
+
+        <h3>2. El Flujo de Control con <code>async/await</code> (Detallado)</h3>
+        <p>
+            Cuando usas <code>await</code>, ¿dónde se queda "esperando" el programa? La clave es que <strong>la función <code>async</code> se pausa, pero JavaScript no se bloquea</strong>.
+        </p>
+        <ol>
+            <li><strong>Inicio:</strong> Tu función <code>async</code> (ej. <code>fetchData</code>) entra al Call Stack.</li>
+            <li><strong><code>await</code> encontrado:</strong> Al llegar a <code>await fetch(url)</code> (o <code>await response.json()</code>):
+                <ul>
+                    <li>Se inicia la operación asíncrona (<code>fetch</code> o <code>.json()</code>). La tarea se delega a las Web APIs.</li>
+                    <li>La ejecución de la función <code>async fetchData</code> <strong>se pausa</strong>.</li>
+                    <li><code>fetchData</code> <strong>sale del Call Stack</strong>. ¡El hilo principal queda libre!</li>
+                </ul>
+            </li>
+            <li><strong>Operación en Segundo Plano:</strong> La Web API maneja la petición de red o la lectura del cuerpo.</li>
+            <li><strong>Operación Completada:</strong> La Web API termina y tiene el resultado (el objeto <code>Response</code> o los datos finales). Coloca la tarea de "reanudar <code>fetchData</code>" en la <strong>Microtask Queue</strong>.</li>
+            <li><strong>Event Loop:</strong> Cuando el Call Stack está vacío, el Event Loop revisa la Microtask Queue.</li>
+            <li><strong>Reanudación:</strong> El Event Loop mueve la tarea de "reanudar <code>fetchData</code>" al Call Stack. La función <code>fetchData</code> <strong>continúa desde donde se pausó</strong> (justo después del <code>await</code>), y el valor de la Promesa resuelta se asigna a la variable (ej. <code>response</code> o <code>data</code>).</li>
+        </ol>
+         <p>
+             Este ciclo de pausa (saliendo del Call Stack) y reanudación (volviendo al Call Stack vía Microtask Queue) es lo que permite la asincronía sin bloqueo.
+         </p>
+
+         <h3>3. Parámetros vs. Uso de Variables (Aclaración sobre `url`)</h3>
+         <p>
+             En el código de ejemplo, podrías ver algo como <code>function miFuncion(url) { fetch(url); }</code>. ¿Por qué `url` aparece dos veces?
+         </p>
+         <div class="parameter-explanation">
+             <ul>
+                 <li><strong><code>function miFuncion(url)</code></strong>: Aquí, <code>url</code> es un <strong>PARÁMETRO</strong>. Es un nombre placeholder que la función espera recibir como entrada cuando sea llamada.</li>
+                 <li><strong><code>fetch(url)</code></strong>: Aquí, <code>url</code> se refiere al <strong>VALOR</strong> que se pasó a la función a través de ese parámetro. La función <code>fetch</code> necesita ese valor (la dirección real) para hacer la petición.</li>
+             </ul>
+             <p>Ejemplo: Si llamas <code>miFuncion("http://...")</code>, dentro de la función, el parámetro <code>url</code> contendrá el valor <code>"http://..."</code>, y eso es lo que se usará en <code>fetch(url)</code>.</p>
+         </div>
+
+        <h3>4. Manejo de Datos: Formatos de Respuesta</h3>
+        <p>
+            <code>fetch</code> no solo sirve para JSON. Una vez que tienes el objeto <code>Response</code> (después del primer <code>await fetch()</code>), puedes leer el cuerpo en varios formatos usando métodos que también devuelven Promesas:
+        </p>
+        <ul>
+            <li><strong><code>await response.json()</code>:</strong> Para datos JSON.</li>
+            <li><strong><code>await response.text()</code>:</strong> Para texto plano (HTML, texto, CSV, etc.).</li>
+            <li><strong><code>await response.blob()</code>:</strong> Para datos binarios (imágenes, ficheros).</li>
+            <li><strong><code>await response.arrayBuffer()</code>:</strong> Para manipulación binaria de bajo nivel.</li>
+        </ul>
+
+        <h3>5. Entendiendo los Paneles del Simulador</h3>
+        <p>El simulador visualiza los componentes internos que gestionan este flujo:</p>
+        <dl class="panel-explanation">
+             <dt>Call Stack (Pila de Llamadas)</dt>
+            <dd>Muestra la función JS activa en cada momento. Las funciones `async` entran y salen durante las pausas de `await`.</dd>
+            <dt>Web APIs / Background</dt>
+            <dd>Muestra las tareas asíncronas (como `fetch`) ejecutándose en segundo plano, fuera del hilo principal de JS.</dd>
+            <dt>Microtask Queue</dt>
+            <dd>Cola de alta prioridad donde esperan los callbacks de Promesas (incluyendo la continuación de `await`) antes de volver al Call Stack.</dd>
+             <dt>Task Queue</dt>
+            <dd>Cola de baja prioridad para otros callbacks (<code>setTimeout</code>, eventos DOM). Generalmente vacía en este ejemplo.</dd>
+             <dt>Log / Consola Simulada</dt>
+            <dd>Registro cronológico que muestra el orden real de ejecución, revelando el impacto de la asincronía.</dd>
+        </dl>
+        <p><strong>El Event Loop</strong> (no visible como panel, pero es el director de orquesta) es quien mueve las tareas de las Queues al Call Stack cuando este está vacío, respetando la prioridad (Microtasks primero).</p>
+        <p>El programador <strong>no interactúa directamente</strong> con las colas o el Event Loop, pero nuestras acciones (llamar a `fetch`, usar `await`, etc.) determinan qué tareas se encolan y cuándo.</p>
+
+        <h3>6. Glosario Rápido</h3>
+        <dl>
+            <dt>Fetch</dt><dd>API para realizar peticiones de red asíncronas; devuelve una Promesa.</dd>
+            <dt>Promise (Promesa)</dt><dd>Objeto que representa el resultado futuro (éxito/error) de una operación asíncrona.</dd>
+            <dt>Async/Await</dt><dd>Sintaxis para trabajar con Promesas de forma más legible, pausando y reanudando funciones <code>async</code>.</dd>
+            <dt>Call Stack</dt><dd>Pila de ejecución de funciones síncronas del motor JS.</dd>
+            <dt>Web APIs</dt><dd>Funcionalidades asíncronas del navegador/entorno ejecutadas en segundo plano.</dd>
+            <dt>Microtask Queue</dt><dd>Cola de alta prioridad para callbacks de Promesas.</dd>
+            <dt>Task Queue</dt><dd>Cola de baja prioridad para otros callbacks (setTimeout, eventos).</dd>
+            <dt>Event Loop</dt><dd>Mecanismo que orquesta el movimiento de callbacks de las colas al Call Stack.</dd>
+        </dl>
+
+         <h3>7. Código del Simulador (`simulateFetch`)</h3>
+        <p>
+            La función <code>simulateFetch</code> imita a <code>fetch</code> usando <code>setTimeout</code> para el retraso, pero crucialmente, <strong>resuelve una Promesa</strong>. Esto asegura que la continuación del código que usa <code>await simulateFetch()</code> vaya a la <strong>Microtask Queue</strong>, simulando el comportamiento real de <code>fetch</code>.
+        </p>
+
+         <h3>8. Otros Aspectos Importantes</h3>
+        <ul>
+            <li><strong>Errores HTTP en Fetch:</strong> Recuerda comprobar <code>response.ok</code> o <code>response.status</code>, ya que `fetch` no rechaza la promesa por errores 4xx o 5xx.</li>
+            <li><strong>Bloqueo del Hilo:</strong> Evita código síncrono muy largo que pueda congelar la UI.</li>
+            <li><strong>Manejo de Errores:</strong> Usa siempre <code>.catch()</code> o <code>try...catch</code> para manejar posibles fallos en operaciones asíncronas.</li>
+        </ul>
+
+        <!-- ============================================== -->
+        <!-- == FIN: SECCIÓN REESTRUCTURADA              == -->
+        <!-- ============================================== -->
+
+    </div> <!-- Cierre de info-container -->
+
+</div> <!-- Cierre de page-container -->
+
+    <script>
+        // --- DOM Elements ---
+        const fetchButton = document.getElementById('fetch-button');
+        const resultsDiv = document.getElementById('results');
+        const callStackDiv = document.getElementById('call-stack');
+        const webApisDiv = document.getElementById('web-apis');
+        const microtaskQueueDiv = document.getElementById('microtask-queue');
+        const taskQueueDiv = document.getElementById('task-queue'); // Optional
+        const consoleLogDiv = document.getElementById('console-log');
+
+        let isRunning = false; // Prevent multiple simultaneous runs
+        let stepDelay = 750; // Milliseconds between visualization steps (slightly slower for clarity)
+
+        // --- Visualization Helper Functions ---
+
+        // Clears all visualization panels and results
+        function clearVisualizations() {
+            resultsDiv.textContent = 'Esperando inicio...';
+            resultsDiv.className = ''; // Remove success/error classes
+            resultsDiv.style.fontStyle = 'italic';
+            resultsDiv.style.color = '#495057';
+            callStackDiv.innerHTML = '';
+            webApisDiv.innerHTML = '';
+            microtaskQueueDiv.innerHTML = '';
+            taskQueueDiv.innerHTML = '(Vacía en este ejemplo)'; // Reset optional queue
+            consoleLogDiv.innerHTML = '';
+        }
+
+        // Adds an item to a specific panel with optional animation
+        function addItem(panelDiv, text, id, className = '') {
+            // Avoid adding duplicate IDs if animation is still running
+             if (document.getElementById(id)) return;
+
+            const item = document.createElement('div');
+            item.textContent = text;
+            item.id = id;
+            if (className) item.classList.add(className);
+            item.classList.add('entering'); // Animation class
+
+             // Clear placeholder if it exists (like in task queue)
+             if (panelDiv.textContent.startsWith('(')) {
+                 panelDiv.innerHTML = '';
+             }
+
+            panelDiv.prepend(item); // Add to the top
+             // Remove animation class after animation ends
+            setTimeout(() => {
+                // Check if item still exists before removing class
+                const currentItem = document.getElementById(id);
+                if (currentItem) {
+                    currentItem.classList.remove('entering');
+                }
+             } , 400);
+        }
+
+        // Removes an item from a specific panel with optional animation
+        function removeItem(panelDiv, id) {
+            const item = document.getElementById(id);
+            if (item) {
+                 // Add leaving animation
+                item.classList.add('leaving');
+                 // Actually remove after animation
+                setTimeout(() => {
+                    // Check if still exists before removing
+                    const parent = item.parentElement;
+                    if(parent && parent.contains(item)) {
+                       parent.removeChild(item);
+                    }
+                     // Restore placeholder if panel is empty and it's the task queue
+                    if (parent && parent.childElementCount === 0 && parent.id === 'task-queue') {
+                        parent.textContent = '(Vacía en este ejemplo)';
+                    }
+                 }, 400);
+            }
+        }
+
+
+        // Logs a message to the simulated console with a type for styling
+        function logToConsole(message, type = 'sync') {
+            // Types: sync, event, api, microtask, task, result, error
+            const logEntry = document.createElement('p');
+            logEntry.textContent = message;
+            logEntry.className = `log-entry log-${type}`;
+            consoleLogDiv.appendChild(logEntry);
+            consoleLogDiv.scrollTop = consoleLogDiv.scrollHeight; // Scroll to bottom
+        }
+
+        // Updates the results panel
+        function updateResults(message, isError = false) {
+            resultsDiv.textContent = message;
+            resultsDiv.style.fontStyle = 'normal';
+            resultsDiv.className = isError ? 'error' : 'success'; // Add class for styling
+        }
+
+        // --- Simulation Logic ---
+
+        // Simulates a network request using fetch (returns a Promise)
+        function simulateFetch(url, fail = false) {
+            const fetchId = `fetch-${Date.now()}`;
+            const callbackId = `callback-${fetchId}`;
+            const webApiDesc = `Petición fetch('${url}') en progreso...`;
+            const microtaskDesc = `Callback de Promesa fetch ('${url}')`;
+
+            return new Promise(async (resolve, reject) => {
+                 // Step: Delegate to Web API
+                await delay(stepDelay / 2); // Short delay before showing in Web APIs
+                addItem(webApisDiv, webApiDesc, fetchId);
+                logToConsole(`Fetch('${url}') delegado a Web APIs.`, 'api');
+
+                // Simulate network delay
+                const networkDelay = 2000 + Math.random() * 1500; // 2-3.5 seconds delay
+                logToConsole(`(Simulando retraso de red: ${Math.round(networkDelay/1000)}s)`, 'api');
+
+                setTimeout(async () => {
+                    // Step: Network request finished in background
+                    // Use requestAnimationFrame to slightly delay removal visual after network delay log
+                    requestAnimationFrame(async () => {
+                        removeItem(webApisDiv, fetchId); // Remove from Web APIs
+                        logToConsole(`Fetch('${url}') completado en background.`, 'api');
+
+                        // Step: Add callback to Microtask Queue
+                        await delay(stepDelay / 2);
+                         addItem(microtaskQueueDiv, microtaskDesc, callbackId);
+                         logToConsole(`Callback de Fetch añadido a Microtask Queue.`, 'event');
+
+                         // Simulate Event Loop Check (simplified)
+                         await delay(stepDelay);
+                         logToConsole("Event Loop: Call Stack vacío. Comprobando Microtask Queue...", 'event');
+
+                         // Step: Move callback from Microtask Queue to Call Stack
+                         removeItem(microtaskQueueDiv, callbackId);
+                         logToConsole(`Event Loop: Moviendo '${microtaskDesc}' a Call Stack.`, 'event');
+                         await delay(stepDelay / 2);
+                         addItem(callStackDiv, microtaskDesc, callbackId, 'microtask-item'); // Identify as microtask visually
+                         logToConsole(`Ejecutando ${microtaskDesc}...`, 'microtask');
+
+                         // Step: Execute the callback (resolve/reject the promise)
+                         await delay(stepDelay);
+                         if (fail) {
+                             logToConsole("Fetch simulado falló.", 'error');
+                             reject(new Error("Simulated Network Error"));
+                         } else {
+                             // In a real fetch, this step would resolve with the Response object.
+                             // Our simulation resolves directly with the final data for simplicity.
+                             logToConsole("Fetch simulado exitoso.", 'microtask');
+                             resolve({ success: true, message: "Datos simulados OK!" });
+                         }
+
+                         // Step: Callback finished, remove from Call Stack
+                         await delay(stepDelay / 2);
+                         logToConsole(`'${microtaskDesc}' finalizado. Saliendo de Call Stack.`, 'microtask');
+                         removeItem(callStackDiv, callbackId);
+                    });
+
+                }, networkDelay);
+            });
+        }
+
+        // Utility function for delays using Promises
+        function delay(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
+
+        // --- Main Async Function (triggered by button) ---
+        // Note: This function implicitly uses '/api/data' when called by the button.
+        async function fetchData(url = '/api/data') { // Added url parameter with default
+            if (isRunning) return; // Don't run if already running
+            isRunning = true;
+            fetchButton.disabled = true;
+            fetchButton.textContent = 'Procesando...';
+
+            clearVisualizations();
+            await delay(200); // Small pause before starting
+
+            const mainFuncId = 'fetchData';
+            const log1Id = 'log1';
+            const log2Id = 'log2';
+            const log3Id = 'log3';
+            const logAwaitId = 'logAwait';
+            const simulateFetchId = 'simFetch';
+            // IDs for post-await logs (will be added later)
+            const log6Id = 'log6';
+            const logDataId = 'logData';
+            const log7Id = 'log7';
+
+
+            try {
+                // Step 1: Add fetchData to Call Stack
+                logToConsole("Click detectado. Ejecutando handleFetchClick -> fetchData()", 'event');
+                await delay(stepDelay);
+                addItem(callStackDiv, `handleFetchClick() / fetchData('${url}')`, mainFuncId); // Show url used
+
+                // Step 2: Execute first console.log
+                await delay(stepDelay);
+                logToConsole("1. Iniciando fetchData...", 'sync');
+                addItem(callStackDiv, "console.log('1...')", log1Id);
+                await delay(stepDelay / 2);
+                removeItem(callStackDiv, log1Id);
+
+                // Step 3: Execute console.log before fetch
+                await delay(stepDelay);
+                logToConsole("2. Antes de llamar a fetch...", 'sync');
+                addItem(callStackDiv, "console.log('2...')", log2Id);
+                 await delay(stepDelay / 2);
+                removeItem(callStackDiv, log2Id);
+
+                // Step 4: Call simulateFetch (synchronous part: initiates the process)
+                await delay(stepDelay);
+                logToConsole(`Llamando a simulateFetch('${url}')...`, 'sync'); // Show url used
+                addItem(callStackDiv, `simulateFetch('${url}')`, simulateFetchId); // Show url used
+                const responsePromise = simulateFetch(url); // Initiates background task using the passed url
+                 await delay(stepDelay); // Show simulateFetch call briefly
+                 removeItem(callStackDiv, simulateFetchId); // The *call* finishes, promise is returned
+
+                // Step 5: Execute console.log after fetch call
+                await delay(stepDelay);
+                logToConsole("3. Después de llamar a fetch (promesa creada)", 'sync');
+                 addItem(callStackDiv, "console.log('3...')", log3Id);
+                 await delay(stepDelay / 2);
+                 removeItem(callStackDiv, log3Id);
+
+                // Step 6: Await the promise
+                await delay(stepDelay);
+                logToConsole("await responsePromise - Pausando fetchData(). Sale de Call Stack.", 'event');
+                 addItem(callStackDiv, "await ...", logAwaitId); // Show 'await' briefly
+                 await delay(stepDelay/2);
+                // Function effectively leaves the stack here while waiting
+                removeItem(callStackDiv, logAwaitId);
+                removeItem(callStackDiv, mainFuncId); // <<-- fetchData leaves the stack here
+
+                // --- Code execution pauses here ---
+                // --- Web API handles fetch, then puts callback in Microtask Queue ---
+                // --- Event Loop moves callback to Call Stack when Stack is empty ---
+                // --- simulateFetch's internal logic handles the visualization for WebAPI -> Microtask -> Call Stack ---
+
+                // await internally waits for the promise and the callback execution *initiated by simulateFetch*
+                const data = await responsePromise; // <<-- Value assigned when fetchData resumes
+
+                // --- Execution Resumes Here (after microtask callback finished) ---
+                await delay(stepDelay / 2); // Delay before showing fetchData resuming
+                 logToConsole("Continuando ejecución de fetchData() tras await.", 'event');
+                addItem(callStackDiv, `fetchData('${url}') (continuación)`, mainFuncId); // <<-- fetchData re-enters the stack
+
+                // Step 7: Execute log after await
+                await delay(stepDelay);
+                logToConsole("6. Promesa resuelta, continuando fetchData...", 'sync');
+                addItem(callStackDiv, "console.log('6...')", log6Id);
+                await delay(stepDelay / 2);
+                removeItem(callStackDiv, log6Id);
+
+                // Step 8: Log and display data
+                await delay(stepDelay);
+                 // In a real scenario with a second await for response.json(), this part would also be after a pause/resume cycle.
+                logToConsole(`Mostrando datos: ${JSON.stringify(data)}`, 'result');
+                addItem(callStackDiv, "Actualizando UI...", logDataId); // Simplified log
+                 await delay(stepDelay / 2);
+                 removeItem(callStackDiv, logDataId);
+                updateResults(`Datos recibidos: ${data.message}`);
+
+
+                // Step 9: Final log
+                 await delay(stepDelay);
+                logToConsole("7. fetchData completado.", 'sync');
+                 addItem(callStackDiv, "console.log('7...')", log7Id);
+                 await delay(stepDelay / 2);
+                 removeItem(callStackDiv, log7Id);
+
+
+            } catch (error) {
+                 // Error handling if promise rejects
+                 logToConsole(`ERROR en fetchData: ${error.message}`, 'error');
+                 updateResults(`Error: ${error.message}`, true);
+                 // Ensure main function is removed from stack on error after await
+                  const errorMainFuncElement = document.getElementById(mainFuncId);
+                  if (errorMainFuncElement) {
+                       removeItem(callStackDiv, mainFuncId);
+                  }
+            } finally {
+                // Step 10: fetchData finishes, remove from Call Stack
+                await delay(stepDelay / 2);
+                 // Check if the function element still exists before logging/removing
+                 const finalMainFuncElement = document.getElementById(mainFuncId);
+                 if (finalMainFuncElement) {
+                    logToConsole("fetchData() finalizado completamente. Saliendo de Call Stack.", 'event');
+                    removeItem(callStackDiv, mainFuncId); // Remove continuation
+                 } else {
+                     // If it was removed due to error before finally, log slightly differently
+                     logToConsole("Limpieza final de fetchData() completada.", 'event');
+                 }
+
+
+                // Re-enable button
+                await delay(stepDelay /2);
+                fetchButton.disabled = false;
+                fetchButton.textContent = 'Iniciar Fetch de Datos';
+                isRunning = false;
+                logToConsole("=== Simulación Completa ===", 'event');
+            }
+        }
+
+        // --- Event Listener ---
+        // Pass the specific URL needed for the simulation when the button is clicked
+        fetchButton.addEventListener('click', () => fetchData('/api/data'));
+
+    </script>
+
+</body>
+</html>
