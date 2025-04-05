@@ -1,0 +1,19 @@
+Simulador de Cascada y Especificidad CSS:
+
+Objetivo: Desmitificar por qué una regla CSS prevalece sobre otra.
+
+Actores: Parser HTML, Parser CSS, Motor de Estilos/Resolvedor de Cascada.
+
+Ejemplo: Un párrafo simple con un ID y una clase (<p id="texto-ejemplo" class="destacado importante">Párrafo</p>). Varias reglas CSS que lo apuntan con diferente especificidad (tipo, clase, ID, !important, estilos en línea) y en diferente orden en la hoja de estilos.
+
+Visualización:
+
+- Panel Izquierdo: Código HTML del ejemplo.
+
+- Panel Central (Superior): Código CSS con las distintas reglas.
+
+- Panel Central (Inferior): "Cálculo de Especificidad": A medida que se "procesa" cada regla CSS relevante para el párrafo, este panel muestra cómo se calcula su puntuación de especificidad (ej. Inline:1, ID:1, Class:2, Type:1 -> 1,1,2,1).
+
+- Panel Derecho: "Estilos Aplicados y Resolución": Muestra el párrafo renderizado. Debajo, una tabla o lista que indica, para cada propiedad (ej. color, font-size), qué regla CSS ganó, su especificidad y por qué ganó (mayor especificidad, !important, último declarado con igual especificidad).
+
+Pasos Simulados: Leer HTML -> Leer reglas CSS -> Identificar reglas que coinciden -> Calcular especificidad de cada una -> Comparar reglas según cascada (origen, !important, especificidad, orden) -> Mostrar regla ganadora por propiedad -> Renderizar el elemento con los estilos finales.

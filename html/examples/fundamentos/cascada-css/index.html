@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulador de Cascada y Especificidad CSS</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="top-bar">
+        <div class="controls">
+             <div>
+                <button id="prevStepBtn" disabled>« Paso Anterior</button>
+                <button id="nextStepBtn">Siguiente Paso »</button>
+                <button id="resetBtn">Resetear</button>
+                <button id="goToExplanationBtn">Ver Explicación ⇩</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="content-wrapper">
+         <div class="explanation-area">
+             <p id="explanation-text">Haz clic en "Siguiente Paso" para iniciar la simulación y ver cómo se aplican las reglas CSS.</p>
+         </div>
+
+        <div class="panels-container">
+
+            <div class="left-column-wrapper">
+                <div class="panel" id="html-panel">
+                    <h2>Código HTML</h2>
+                    <pre><code id="html-code" class="language-html">
+&lt;p
+  id="texto-ejemplo"
+  class="destacado importante"
+  style="text-decoration: underline;"
+&gt;
+  Párrafo de ejemplo
+&lt;/p&gt;
+                    </code></pre>
+                </div>
+
+                <div class="panel" id="css-panel"> 
+                    <h2>Reglas CSS (style.css)</h2>
+                    <pre><code id="css-code" class="language-css">
+/* Regla 1: Tipo */
+p {
+  color: black;
+  font-size: 16px; /* Ganará si no hay más */
+}
+
+/* Regla 2: Clase */
+.destacado {
+  background-color: yellow;
+  color: purple; /* Más específico que p */
+}
+
+/* Regla 3: Múltiples Clases */
+.destacado.importante {
+  font-size: 20px; /* Más específico que .destacado */
+  text-decoration: none; /* Conflicto con inline */
+}
+
+/* Regla 4: ID */
+#texto-ejemplo {
+  color: red !important; /* Muy específico + !important */
+  background-color: lightblue; /* Muy específico */
+}
+
+/* Regla 5: Clase Importante */
+.importante {
+    font-size: 18px; /* Menos específico que .d.i */
+}
+                    </code></pre>
+                     <div id="css-highlight"></div>
+                </div>
+            </div>
+           <div class="middle-column-wrapper" id="middle-column-wrapper">
+ 
+                <div class="panel" id="specificity-panel"> 
+                    <h2>Cálculo y Comparación</h2>
+                    <pre id="specificity-log">[Esperando simulación...]</pre>
+                </div>
+            </div>
+            <div class="panel" id="resolution-panel">
+                <h2>Renderizado y Resolución Final</h2>
+                <div class="rendered-area">
+                    <h3>Elemento Renderizado:</h3>
+                    <p id="rendered-paragraph" class="destacado importante" style="text-decoration: underline;">
+                        Párrafo de ejemplo
+                    </p>
+                </div>
+                <hr>
+                <div class="resolution-details-area">
+                    <h3>Resolución por Propiedad:</h3>
+                    <div id="resolution-details">
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+
+    <section id="explanation-section" class="explanation-details">
+        <h2>Explicación Detallada del Proceso</h2>
+
+
+        <h3>Proceso General de Asignación de Estilos (La Cascada CSS)</h3>
+        <p>
+            Cuando un navegador necesita determinar el valor final de cada propiedad CSS para un elemento HTML, sigue un algoritmo llamado <strong>Cascada CSS</strong>. Este proceso resuelve conflictos cuando múltiples reglas CSS intentan aplicar un estilo a la misma propiedad del mismo elemento. Los pasos principales son:
+        </p>
+        <ol>
+            <li><strong>Relevancia:</strong> Primero, el navegador encuentra todas las reglas CSS cuyos selectores coinciden con el elemento en cuestión, considerando su posición en el árbol DOM, sus IDs, clases, atributos, etc.</li>
+            <li><strong>Origen e Importancia:</strong> Las reglas se ordenan según su origen (navegador, usuario, autor) y si tienen la marca <code>!important</code>. Generalmente, los estilos del autor (tus CSS) tienen prioridad sobre los del navegador, y las declaraciones con <code>!important</code> del autor superan a las normales del autor. Los estilos inline (atributo <code>style=""</code>) se consideran como estilos del autor con alta especificidad.</li>
+            <li><strong>Especificidad:</strong> Si varias reglas en conflicto tienen la misma importancia y origen, gana la que tenga el selector <strong>más específico</strong>. La especificidad se calcula dando "puntos": los IDs valen más que las clases/atributos/pseudoclases, que a su vez valen más que los elementos/pseudoelementos. Los estilos inline tienen la máxima especificidad (excepto frente a <code>!important</code>).</li>
+            <li><strong>Orden en el Código Fuente:</strong> Si las reglas aún empatan en importancia y especificidad, la regla que aparece <strong>más tarde</strong> en el código CSS (o en las hojas de estilo importadas) es la que se aplica.</li>
+            <li><strong>Herencia:</strong> Si una propiedad no obtiene un valor a través de los pasos anteriores, puede heredar el valor calculado de su elemento padre en el árbol DOM, pero solo si la propiedad es <em>heredable</em> (como <code>color</code> o <code>font-family</code>). Si no es heredable o no hay valor que heredar, se usa el valor inicial por defecto de la propiedad.</li>
+        </ol>
+
+        <h3>Proceso Específico en Este Ejemplo</h3>
+        <p>
+            Para nuestro elemento <code><p id="texto-ejemplo" class="destacado importante" style="text-decoration: underline;"></code>, el navegador realiza lo siguiente para cada propiedad que queremos resolver:
+        </p>
+        <ul>
+            <li>
+                <strong><code>color</code>:</strong>
+                <ul>
+                    <li>Reglas aplicables: <code>p</code> (negro), <code>.destacado</code> (púrpura), <code>#texto-ejemplo</code> (rojo <code>!important</code>).</li>
+                    <li>Resolución: La regla con <code>#texto-ejemplo</code> tiene <code>!important</code> en la propiedad `color`, lo que le da la máxima prioridad entre las declaraciones del autor para esta propiedad. Gana <code>color: red !important;</code>.</li>
+                </ul>
+            </li>
+            <li>
+                <strong><code>font-size</code>:</strong>
+                <ul>
+                    <li>Reglas aplicables: <code>p</code> (16px), <code>.destacado.importante</code> (20px), <code>.importante</code> (18px).</li>
+                    <li>Resolución: Ninguna tiene <code>!important</code>. Comparamos especificidad: <code>p</code> [0,0,0,1], <code>.importante</code> [0,0,1,0], <code>.destacado.importante</code> [0,0,2,0]. La regla con dos clases (<code>.destacado.importante</code>) es la más específica. Gana <code>font-size: 20px;</code>.</li>
+                </ul>
+            </li>
+            <li>
+                <strong><code>background-color</code>:</strong>
+                <ul>
+                    <li>Reglas aplicables: <code>.destacado</code> (amarillo), <code>#texto-ejemplo</code> (lightblue).</li>
+                    <li>Resolución: Ninguna tiene <code>!important</code>. Comparamos especificidad: <code>.destacado</code> [0,0,1,0] vs <code>#texto-ejemplo</code> [0,1,0,0]. El ID es más específico que la clase. Gana <code>background-color: lightblue;</code>.</li>
+                </ul>
+            </li>
+            <li>
+                <strong><code>text-decoration</code>:</strong>
+                <ul>
+                    <li>Reglas aplicables: Estilo inline (<code>underline</code>), <code>.destacado.importante</code> (<code>none</code>).</li>
+                    <li>Resolución: Ninguna tiene <code>!important</code>. Comparamos especificidad: Estilo inline [1,0,0,0] vs <code>.destacado.importante</code> [0,0,2,0]. El estilo inline tiene la mayor especificidad. Gana <code>text-decoration: underline;</code>.</li>
+                </ul>
+            </li>
+        </ul>
+        <p>
+            Estos valores ganadores son los que finalmente se aplican al párrafo renderizado que ves en la simulación.
+        </p>
+
+        <hr style="margin: 30px 0;"> 
+
+
+
+
+        <h3>Mensajes Iniciales del Simulador</h3>
+        <p>Al iniciar la simulación, verás mensajes como los siguientes, que establecen el contexto:</p>
+        <ul>
+            <li>
+                <code>Elemento objetivo: p#texto-ejemplo.destacado.importante con estilo inline.</code>
+                <ul style="margin-top: 5px;">
+                    <li>Esto identifica el elemento HTML exacto que se está analizando:</li>
+                    <li><strong><code>p</code></strong>: Es una etiqueta de párrafo (<code><p></code>).</li>
+                    <li><strong><code>#texto-ejemplo</code></strong>: Tiene el ID "texto-ejemplo".</li>
+                    <li><strong><code>.destacado</code></strong> y <strong><code>.importante</code></strong>: Tiene ambas clases CSS.</li>
+                    <li><strong><code>con estilo inline</code></strong>: Posee un atributo <code>style="..."</code> directamente en la etiqueta.</li>
+                </ul>
+            </li>
+            <li style="margin-top: 10px;">
+                 <code>Estilo Inline: {"text-decoration":{"value":"underline", "important":false, "sourceOrder":Infinity}}</code>
+                 <ul style="margin-top: 5px;">
+                    <li>Esto detalla el contenido del atributo <code>style</code> de ese elemento:</li>
+                    <li><strong><code>"text-decoration"</code></strong>: Es la propiedad CSS definida inline.</li>
+                    <li><strong><code>"value": "underline"</code></strong>: Su valor es "underline".</li>
+                    <li><strong><code>"important": false</code></strong>: No se usó <code>!important</code> en esta declaración inline.</li>
+                    <li><strong><code>"sourceOrder": Infinity</code></strong>: Representa que los estilos inline se consideran "los últimos" en el orden del código fuente para desempatar especificidades iguales.</li>
+                 </ul>
+            </li>
+        </ul>
+
+
+        <h3>Entendiendo la Especificidad CSS</h3>
+        <p>
+            La <strong>Especificidad</strong> es el algoritmo que usan los navegadores para decidir qué declaración de propiedad CSS es más relevante (y por lo tanto, se aplicará) cuando varias reglas apuntan al mismo elemento y tienen el mismo origen e importancia (por ejemplo, ninguna tiene <code>!important</code>, o ambas lo tienen). Una regla con mayor especificidad "gana" a una con menor especificidad.
+        </p>
+        <p>
+            Se calcula asignando un valor numérico (generalmente representado en base alta o como componentes separados) a cada selector. La estructura común para visualizarla es de cuatro componentes, a menudo denotados como <code>[A, B, C, D]</code>:
+        </p>
+        <ul>
+            <li><strong>A (Estilos Inline):</strong> Vale 1 si la declaración proviene de un atributo <code>style="..."</code> en el HTML, 0 si no. Es el componente de mayor peso.</li>
+            <li><strong>B (IDs):</strong> Cuenta el número de selectores de ID (ej: <code>#miId</code>) en el selector compuesto.</li>
+            <li><strong>C (Clases, Atributos y Pseudo-clases):</strong> Cuenta el número total de selectores de clase (ej: <code>.miClase</code>), selectores de atributo (ej: <code>[type="text"]</code>) y pseudo-clases (ej: <code>:hover</code>, <code>:nth-child()</code>).</li>
+            <li><strong>D (Elementos y Pseudo-elementos):</strong> Cuenta el número de selectores de tipo de elemento (ej: <code>p</code>, <code>div</code>) y pseudo-elementos (ej: <code>::before</code>, <code>::after</code>).</li>
+        </ul>
+        <p>
+            <strong>¿Cómo se comparan?</strong> La comparación se hace de izquierda a derecha (A, luego B, luego C, luego D). El selector con el valor más alto en el primer componente donde haya diferencia, gana. Por ejemplo, <code>[0,1,0,0]</code> (un ID) es más específico que <code>[0,0,10,5]</code> (diez clases y cinco elementos) porque el valor en B (1) es mayor que el valor en B del segundo (0). Solo si los componentes son idénticos se pasa al siguiente criterio de la cascada: el orden en el código fuente.
+        </p>
+        <p><em>Nota:</em> El selector universal (<code>*</code>), los combinadores (<code>></code>, <code>+</code>, <code>~</code>) y la pseudo-clase <code>:where()</code> no añaden especificidad.</p>
+
+
+
+        <h3>Tabla de Procesamiento de Reglas y Especificidad (Este Ejemplo)</h3>
+        <p>A continuación se muestra cómo el simulador procesa cada regla para nuestro elemento objetivo y calcula su especificidad:</p>
+        <table class="styled-table">
+             <thead>
+                <tr>
+                    <th>Regla #</th>
+                    <th>Selector CSS</th>
+                    <th>¿Coincide? (Match)</th>
+                    <th>Especificidad Calculada [A,B,C,D]</th>
+                    <th>Explicación de la Especificidad</th>
+                </tr>
+             </thead>
+             <tbody>
+                 <tr>
+                     <td>1</td>
+                     <td><code>p</code></td>
+                     <td>Sí</td>
+                     <td><code>[0, 0, 0, 1]</code></td>
+                     <td>1 selector de tipo de elemento (<code>p</code>).</td>
+                 </tr>
+                 <tr>
+                     <td>2</td>
+                     <td><code>.destacado</code></td>
+                     <td>Sí</td>
+                     <td><code>[0, 0, 1, 0]</code></td>
+                     <td>1 selector de clase (<code>.destacado</code>).</td>
+                 </tr>
+                 <tr>
+                     <td>3</td>
+                     <td><code>.destacado.importante</code></td>
+                     <td>Sí</td>
+                     <td><code>[0, 0, 2, 0]</code></td>
+                     <td>2 selectores de clase (<code>.destacado</code>, <code>.importante</code>).</td>
+                 </tr>
+                 <tr>
+                     <td>4</td>
+                     <td><code>#texto-ejemplo</code></td>
+                     <td>Sí</td>
+                     <td><code>[0, 1, 0, 0]</code></td>
+                     <td>1 selector de ID (<code>#texto-ejemplo</code>).</td>
+                 </tr>
+                 <tr>
+                     <td>5</td>
+                     <td><code>.importante</code></td>
+                     <td>Sí</td>
+                     <td><code>[0, 0, 1, 0]</code></td>
+                     <td>1 selector de clase (<code>.importante</code>).</td>
+                 </tr>
+                 <tr>
+                     <td>Inline</td>
+                     <td><code>style="..."</code></td>
+                     <td>Sí (Siempre)</td>
+                     <td><code>[1, 0, 0, 0]</code></td>
+                     <td>La declaración proviene de un atributo <code>style</code>.</td>
+                 </tr>
+             </tbody>
+        </table>
+
+
+        <h3>Consideraciones Adicionales</h3>
+        <ul>
+            <li><strong>Resumen de la Cascada:</strong> Recuerda el orden completo para resolver conflictos:
+                <ol>
+                    <li>Origen e Importancia (<code>!important</code> tiene prioridad, luego autor > usuario > navegador).</li>
+                    <li>Especificidad (calculada como se explicó arriba).</li>
+                    <li>Orden en el Código Fuente (la última regla definida gana si todo lo demás empata).</li>
+                </ol>
+            </li>
+            <li><strong>Herencia:</strong> Si después de aplicar la cascada una propiedad no tiene valor definido para el elemento, y si esa propiedad es <em>heredable</em> (como <code>color</code>, <code>font-family</code>, <code>font-size</code>, <code>text-align</code>, etc.), el elemento tomará el valor <em>calculado</em> de su elemento padre. Si no es heredable (como <code>border</code>, <code>padding</code>, <code>margin</code>, <code>background</code>) o ningún ancestro define un valor, se usará el valor inicial por defecto de la propiedad según la especificación CSS. Se puede forzar con palabras clave como <code>inherit</code>, <code>initial</code>, <code>unset</code>, <code>revert</code>.</li>
+            <li><strong>Valor Calculado vs. Valor Usado:</strong> El valor que "gana" la cascada (o se hereda) es el <em>valor calculado</em>. El navegador luego puede necesitar convertirlo en un <em>valor usado</em> para el renderizado final (por ejemplo, convirtiendo porcentajes o unidades relativas como `em` a píxeles absolutos basados en el contexto).</li>
+        </ul>
+
+
+
+    </section>
+
+    <script src="script.js"></script>
+</body>
+</html>

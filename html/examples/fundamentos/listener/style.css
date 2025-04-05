@@ -1,0 +1,325 @@
+/* --- Reset básico y configuración global --- */
+* {
+    box-sizing: border-box;
+}
+html {
+    font-size: 16px;
+    /* Añadido para que scrollIntoView sea suave */
+    scroll-behavior: smooth;
+}
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+    margin: 0;
+    background-color: #f0f2f5;
+    color: #333;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+/* --- Barra Superior --- */
+.top-bar {
+    background-color: #4a5568;
+    padding: 12px 20px;
+    border-bottom: 1px solid #2d3748;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+.controls {
+    display: flex;
+    justify-content: center; /* Centra el grupo de botones */
+    align-items: center;
+    gap: 15px; /* Espacio entre elementos dentro del div */
+    max-width: 1200px;
+    margin: 0 auto;
+}
+/* Aseguramos que el div interno también use flex si es necesario */
+.controls > div {
+    display: flex;
+    gap: 15px; /* Espacio entre botones */
+}
+
+.controls button {
+    padding: 8px 18px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    border-radius: 5px;
+    background-color: #4299e1; /* Azul por defecto para botones */
+    color: white;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+}
+.controls button:hover:not(:disabled) {
+    background-color: #2b6cb0;
+    transform: translateY(-1px);
+}
+.controls button:active:not(:disabled) {
+    transform: translateY(0px);
+}
+.controls button:disabled {
+    background-color: #a0aec0;
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
+/* --- Colores específicos para botones --- */
+#registerBtn {
+     background-color: #48bb78; /* Verde */
+}
+#registerBtn:hover:not(:disabled) {
+    background-color: #38a169;
+}
+#resetBtn {
+    background-color: #f56565; /* Rojo */
+}
+#resetBtn:hover:not(:disabled) {
+    background-color: #c53030;
+}
+/* === ESTILO PARA EL NUEVO BOTÓN DE INFO === */
+#infoBtn {
+    background-color: #63b3ed; /* Azul más claro o diferente */
+}
+#infoBtn:hover:not(:disabled) {
+    background-color: #4299e1; /* Azul primario al hacer hover */
+}
+/* ========================================== */
+
+
+/* --- Contenedor Principal --- */
+.content-wrapper {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    gap: 20px;
+    max-width: 1400px; /* Ancho máximo para el contenido principal */
+    width: 100%;
+    margin: 0 auto; /* Centrar el contenedor */
+}
+
+/* --- Paneles --- */
+.panels-container {
+    display: flex;
+    flex-grow: 1;
+    gap: 20px;
+    min-height: 500px; /* Aumentar altura mínima si es necesario */
+    flex-wrap: wrap; /* Permitir que los paneles se envuelvan en pantallas pequeñas */
+}
+.panel {
+    flex: 1 1 300px; /* Flex-grow, flex-shrink, flex-basis (permite wrapping) */
+    background-color: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden; /* Importante para que el padding del h2 no se salga */
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    min-width: 300px; /* Ancho mínimo para cada panel */
+}
+.panel h2 {
+    margin: 0;
+    padding: 12px 15px;
+    font-size: 1.05rem;
+    color: #4a5568;
+    border-bottom: 1px solid #e2e8f0;
+    background-color: #f7fafc;
+    flex-shrink: 0;
+    font-weight: 600;
+}
+
+/* --- Panel Interactivo --- */
+#interactive-panel .interactive-content {
+    padding: 20px;
+    flex-grow: 1;
+    overflow-y: auto;
+}
+#interactive-panel button#miBoton {
+    padding: 10px 20px;
+    font-size: 1rem;
+    background-color: #ed8936; /* Naranja para diferenciarlo */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    margin: 10px 0;
+}
+#interactive-panel button#miBoton:hover:not(:disabled) {
+    background-color: #dd6b20; /* Naranja oscuro */
+}
+#interactive-panel button#miBoton:disabled {
+     background-color: #fbd38d;
+     cursor: not-allowed;
+     opacity: 0.8;
+}
+
+#interactive-panel p#mensaje {
+    margin-top: 15px;
+    padding: 10px;
+    background-color: #ebf8ff;
+    border: 1px solid #bee3f8;
+    border-radius: 4px;
+    font-weight: bold;
+    min-height: 2.5em;
+    line-height: 1.4;
+    word-wrap: break-word; /* Para mensajes largos */
+}
+
+/* --- Panel de Código --- */
+#code-panel {
+    position: relative;
+}
+#code-panel pre {
+    flex-grow: 1;
+    overflow: auto;
+    margin: 0;
+    padding: 15px;
+    background-color: #fdfdfe;
+    font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace;
+    font-size: 0.9rem;
+    line-height: 1.6;
+    color: #2d3748;
+    white-space: pre;
+    position: relative; /* Para que el ::before no se salga */
+}
+#code-highlight {
+    position: absolute;
+    left: 0;
+    right: 0;
+    background-color: rgba(255, 235, 59, 0.4);
+    height: 1.6em; /* Debe coincidir con line-height del pre/code */
+    z-index: 1;
+    display: none;
+    transition: top 0.15s ease-in-out; /* Transición más rápida */
+    border-left: 4px solid #f59e0b;
+    pointer-events: none;
+}
+#listener-code {
+    display: block; /* Asegura que tome el ancho completo */
+    position: relative;
+    z-index: 2; /* Por encima del resaltado */
+    padding: 0;
+    margin: 0;
+}
+
+
+/* --- Panel de Log --- */
+#log-panel pre#event-log {
+    flex-grow: 1;
+    overflow: auto;
+    margin: 0;
+    padding: 15px;
+    background-color: #1a202c; /* Más oscuro */
+    color: #e2e8f0;
+    font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace;
+    font-size: 0.85rem;
+    line-height: 1.5;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+#log-panel pre#event-log span {
+    font-weight: bold;
+    color: #90cdf4;
+    margin-right: 5px; /* Pequeño espacio después del actor */
+}
+#log-panel pre#event-log span::before { content: '['; } /* Añadir corchetes visualmente */
+#log-panel pre#event-log span::after { content: ']'; }
+
+
+/* === ESTILOS PARA LA NUEVA SECCIÓN Y TABLA === */
+.info-section {
+    max-width: 1200px; /* Ancho similar a controls */
+    margin: 30px auto 40px auto; /* Márgenes arriba/abajo y centrado horizontal */
+    background: #ffffff;
+    padding: 25px 30px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    border: 1px solid #e2e8f0;
+    border-top: 4px solid #63b3ed; /* Borde superior con el color del botón info */
+}
+
+.info-section h2 {
+    color: #2b6cb0; /* Azul oscuro para el título */
+    text-align: left;
+    border-bottom: 1px solid #e2e8f0;
+    padding-bottom: 10px;
+    margin-top: 0;
+    margin-bottom: 20px;
+    font-size: 1.4rem;
+    font-weight: 600;
+}
+.info-section p {
+    margin-bottom: 20px;
+    line-height: 1.6;
+    color: #4a5568;
+}
+
+.info-section table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+    font-size: 0.9em;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05); /* Sombra sutil a la tabla */
+}
+
+.info-section th,
+.info-section td {
+    border: 1px solid #e2e8f0; /* Bordes suaves */
+    padding: 12px 15px; /* Más padding */
+    text-align: left;
+    vertical-align: top;
+    line-height: 1.5;
+}
+
+.info-section th {
+    background-color: #f7fafc; /* Fondo muy claro para encabezados */
+    font-weight: 600;
+    color: #4a5568;
+    position: sticky; /* Encabezados fijos si la tabla es muy larga y tiene scroll */
+    top: 0; /* Requiere que el contenedor tenga overflow */
+}
+
+/* Mejorar estilo del código dentro de la tabla */
+.info-section td code {
+    background-color: #ebf8ff; /* Fondo azul claro */
+    color: #2c5282; /* Texto azul oscuro */
+    padding: 3px 6px;
+    border-radius: 4px;
+    font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace;
+    font-size: 0.95em; /* Ligeramente más grande */
+    border: 1px solid #bee3f8; /* Borde sutil */
+}
+
+.info-section strong {
+    color: #2b6cb0; /* Azul oscuro para los nombres de grupo */
+}
+
+/* Responsive (opcional, para mejorar en pantallas pequeñas) */
+@media (max-width: 768px) {
+    .panels-container {
+        flex-direction: column; /* Apilar paneles */
+    }
+    .panel {
+        min-width: 0; /* Resetear min-width */
+        flex-basis: auto; /* Dejar que la altura se ajuste */
+    }
+    .controls > div {
+        flex-wrap: wrap; /* Permitir que los botones se envuelvan */
+        justify-content: center;
+    }
+    .info-section {
+        margin-left: 15px;
+        margin-right: 15px;
+        padding: 20px;
+    }
+     /* Hacer la tabla scrolleable horizontalmente en móviles */
+    .info-section div.table-wrapper { /* Necesitarás envolver la tabla en un div */
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch; /* Scroll suave en iOS */
+    }
+    /* Nota: Para que el wrapper funcione, envuelve la <table> en <div class="table-wrapper">...</div> en el HTML */
+}

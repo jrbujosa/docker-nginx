@@ -1,0 +1,17 @@
+Simulador del Ciclo Petición/Respuesta HTTP (Cliente-Servidor):
+
+Objetivo: Ilustrar el flujo completo de una solicitud desde el navegador a un servidor backend simple (ej. Node.js/Express simulado) y la vuelta de la respuesta.
+
+Actores: Navegador (Interfaz Usuario, JS, Capa de Red), Red (simulada), Servidor Web (ej. Node.js/Express simulado), Lógica Backend (simulada).
+
+Ejemplo: Un formulario HTML simple (<form action="/enviar-datos" method="POST">) o un botón que dispara un fetch (POST o GET) a una ruta del servidor simulado. El servidor responde con un JSON o un mensaje simple.
+
+Visualización:
+
+- Panel Izquierdo: "Cliente (Navegador)": Muestra el formulario o botón. Debajo, un área para mostrar la respuesta recibida y el código JS (si usa fetch).
+
+- Panel Central: "Red (Tráfico HTTP Simulado)": Muestra flechas y mensajes indicando el envío de la Petición HTTP (Método, URL, Cabeceras, Cuerpo - simplificado) y luego la recepción de la Respuesta HTTP (Código de Estado, Cabeceras, Cuerpo - simplificado).
+
+- Panel Derecho: "Servidor (Backend Simulado)": Muestra un log simulado del servidor: "Petición POST /enviar-datos recibida", "Procesando datos...", "Enviando respuesta JSON: { status: 'ok' }".
+
+Pasos Simulados: Usuario envía formulario/pulsa botón -> JS/Navegador crea la Petición HTTP -> Navegador envía por la "Red" -> Servidor recibe petición -> Servidor procesa (lógica simulada) -> Servidor crea Respuesta HTTP -> Servidor envía por la "Red" -> Navegador recibe respuesta -> Navegador/JS procesa respuesta -> Actualiza DOM/muestra mensaje en el Panel Izquierdo.

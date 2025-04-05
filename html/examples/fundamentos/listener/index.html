@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulador de Event Listeners</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- Barra superior Fija para Controles -->
+    <div class="top-bar">
+        <div class="controls">
+             <div>
+                <button id="registerBtn">Registrar Listener</button>
+                <button id="resetBtn" disabled>Resetear Ejemplo</button>
+                <!-- === BOTÓN NUEVO AÑADIDO AQUÍ === -->
+                <button id="infoBtn">Ver Info Listeners</button>
+            </div>
+        </div>
+    </div>
+    <!-- Fin Barra superior -->
+
+    <!-- Envoltura para el contenido principal -->
+    <div class="content-wrapper">
+
+        <!-- Contenedor de Paneles Principales -->
+        <div class="panels-container">
+
+            <!-- Panel Izquierdo: Ejemplo Interactivo -->
+            <div class="panel" id="interactive-panel">
+                <h2>Ejemplo Interactivo</h2>
+                <div class="interactive-content">
+                    <p>Haz clic en el botón después de registrar el listener:</p>
+                    <button id="miBoton">Haz Clic Aquí</button>
+                    <hr>
+                    <p><strong>Resultado:</strong></p>
+                    <p id="mensaje">Esperando evento...</p>
+                </div>
+            </div>
+
+            <!-- Panel Central: Código JavaScript -->
+            <div class="panel" id="code-panel">
+                <h2>Código JavaScript (Listeners)</h2>
+                <pre><code id="listener-code">
+// 1. Obtener referencias a los elementos DOM
+const boton = document.getElementById('miBoton');
+const parrafo = document.getElementById('mensaje');
+
+// 2. Definir la función que manejará el evento (listener/callback)
+function miListener(evento) {
+  console.log('[JS] Ejecutando miListener...');
+  console.log('[JS] Tipo de evento:', evento.type);
+  console.log('[JS] Elemento objetivo:', evento.target.tagName);
+  parrafo.textContent = '¡Evento "' + evento.type + '" recibido!';
+  console.log('[JS] Texto del párrafo actualizado.');
+}
+
+// 3. Registrar el listener en el botón para el evento 'click'
+boton.addEventListener('click', miListener);
+
+console.log('[JS] Listener para "click" registrado en el botón.');
+                </code></pre>
+                <!-- Div para superponer el resaltado -->
+                <div id="code-highlight"></div>
+            </div>
+
+            <!-- Panel Derecho: Registro de Eventos / Log -->
+            <div class="panel" id="log-panel">
+                <h2>Registro de Eventos y Actores (Log)</h2>
+                <pre id="event-log">[Sistema] Página cargada. Esperando acciones.</pre>
+            </div>
+
+        </div> <!-- Fin panels-container -->
+
+    </div> <!-- Fin content-wrapper -->
+
+    <!-- === NUEVA SECCIÓN CON LA TABLA DE LISTENERS === -->
+    <section id="listenerInfoSection" class="info-section">
+        <h2>Listeners Comunes en el Cliente Web</h2>
+        <p>Aquí tienes una tabla resumen de los event listeners más utilizados en JavaScript para interactuar con el usuario en una página web:</p>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Grupo</th>
+                    <th>Listener (Tipo de Evento)</th>
+                    <th>Descripción</th>
+                    <th>Casos de Uso Comunes</th>
+                    <th>Elementos Típicos</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Eventos de Ratón -->
+                <tr>
+                    <td rowspan="8"><strong>Ratón (Mouse)</strong></td>
+                    <td><code>click</code></td>
+                    <td>Se dispara al hacer clic (botón principal).</td>
+                    <td>Activar botones, seguir enlaces, mostrar/ocultar elementos.</td>
+                    <td>&lt;button&gt;, &lt;a&gt;, &lt;div&gt;, casi cualquier elemento.</td>
+                </tr>
+                <tr>
+                    <td><code>dblclick</code></td>
+                    <td>Se dispara al hacer doble clic rápido.</td>
+                    <td>Abrir editor, seleccionar palabra, acciones especiales.</td>
+                    <td>Elementos interactivos, texto.</td>
+                </tr>
+                <tr>
+                    <td><code>mouseover</code></td>
+                    <td>Se dispara cuando el puntero entra en el área del elemento.</td>
+                    <td>Mostrar tooltips, resaltar elemento (hover).</td>
+                    <td>Menús, botones, imágenes.</td>
+                </tr>
+                <tr>
+                    <td><code>mouseout</code></td>
+                    <td>Se dispara cuando el puntero sale del área del elemento.</td>
+                    <td>Ocultar tooltips, restaurar estilos post-hover.</td>
+                    <td>Elementos que usan <code>mouseover</code>.</td>
+                </tr>
+                <tr>
+                    <td><code>mousedown</code></td>
+                    <td>Se dispara al presionar un botón del ratón.</td>
+                    <td>Iniciar arrastre (drag), efectos visuales al presionar.</td>
+                    <td>Elementos arrastrables, botones.</td>
+                </tr>
+                <tr>
+                    <td><code>mouseup</code></td>
+                    <td>Se dispara al soltar un botón del ratón.</td>
+                    <td>Finalizar arrastre, confirmar selección.</td>
+                    <td>Elementos arrastrables, botones.</td>
+                </tr>
+                <tr>
+                    <td><code>mousemove</code></td>
+                    <td>Se dispara continuamente al mover el ratón sobre el elemento.</td>
+                    <td>Seguir cursor, efectos parallax, dibujar en canvas.</td>
+                    <td><code>document</code>, <code>body</code>, &lt;canvas&gt;.</td>
+                </tr>
+                <tr>
+                    <td><code>contextmenu</code></td>
+                    <td>Se dispara al intentar abrir el menú contextual (clic derecho).</td>
+                    <td>Mostrar menú contextual propio, prevenir menú por defecto.</td>
+                    <td><code>document</code>, elementos específicos.</td>
+                </tr>
+                <!-- Eventos de Teclado -->
+                <tr>
+                    <td rowspan="3"><strong>Teclado (Keyboard)</strong></td>
+                    <td><code>keydown</code></td>
+                    <td>Se dispara cuando una tecla es presionada (se mantiene).</td>
+                    <td>Detectar atajos, controlar juegos, validación (a veces).</td>
+                    <td><code>document</code>, campos de entrada.</td>
+                </tr>
+                <tr>
+                    <td><code>keyup</code></td>
+                    <td>Se dispara cuando una tecla presionada es liberada.</td>
+                    <td>Acciones post-escritura (buscar), confirmar entrada.</td>
+                    <td><code>document</code>, campos de entrada.</td>
+                </tr>
+                <tr>
+                    <td><code>keypress</code></td>
+                    <td><em>(Obsoleto)</em> Disparado por tecla que produce carácter.</td>
+                    <td>Detectar entrada de caracteres. <strong>Preferir <code>input</code> o <code>keydown</code></strong>.</td>
+                    <td><code>document</code>, campos de entrada.</td>
+                </tr>
+                <!-- Eventos de Formulario -->
+                <tr>
+                    <td rowspan="5"><strong>Formulario (Form)</strong></td>
+                    <td><code>submit</code></td>
+                    <td>Se dispara al intentar enviar un formulario.</td>
+                    <td>Validar antes de enviar, enviar con AJAX.</td>
+                    <td>&lt;form&gt;.</td>
+                </tr>
+                <tr>
+                    <td><code>change</code></td>
+                    <td>Disparado al cambiar valor y perder foco (inputs) o cambiar estado (select, checkbox).</td>
+                    <td>Reaccionar a selección, activar/desactivar, validar al salir.</td>
+                    <td>&lt;input&gt;, &lt;select&gt;, &lt;textarea&gt;.</td>
+                </tr>
+                <tr>
+                    <td><code>input</code></td>
+                    <td>Se dispara inmediatamente al cambiar valor de &lt;input&gt;/&lt;textarea&gt;.</td>
+                    <td>Validación en tiempo real, contadores, autocompletado. <strong>Muy útil</strong>.</td>
+                    <td>&lt;input&gt;, &lt;textarea&gt;.</td>
+                </tr>
+                <tr>
+                    <td><code>focus</code></td>
+                    <td>Se dispara cuando un elemento recibe el foco.</td>
+                    <td>Resaltar campo activo, mostrar ayuda contextual.</td>
+                    <td>Campos de formulario, enlaces, botones.</td>
+                </tr>
+                 <tr>
+                    <td><code>blur</code></td>
+                    <td>Se dispara cuando un elemento pierde el foco.</td>
+                    <td>Validar al salir, ocultar ayuda contextual.</td>
+                    <td>Elementos enfocables.</td>
+                </tr>
+                <!-- Eventos de Ventana/Documento -->
+                 <tr>
+                    <td rowspan="4"><strong>Ventana/Documento (Window/Document)</strong></td>
+                    <td><code>load</code></td>
+                    <td>Se dispara cuando toda la página y recursos (imágenes, CSS) han cargado.</td>
+                    <td>Ejecutar código que depende de todo cargado.</td>
+                    <td><code>window</code>.</td>
+                </tr>
+                 <tr>
+                    <td><code>DOMContentLoaded</code></td>
+                    <td>Se dispara al cargar y parsear el HTML, sin esperar recursos externos.</td>
+                    <td>Ejecutar JS que manipula el DOM tan pronto como sea seguro.</td>
+                    <td><code>document</code>.</td>
+                </tr>
+                 <tr>
+                    <td><code>resize</code></td>
+                    <td>Se dispara al cambiar tamaño de la ventana.</td>
+                    <td>Ajustar layouts (responsive JS), recalcular posiciones.</td>
+                    <td><code>window</code>.</td>
+                </tr>
+                 <tr>
+                    <td><code>scroll</code></td>
+                    <td>Se dispara al hacer scroll en ventana o elemento.</td>
+                    <td>Lazy loading, parallax, botón "volver arriba".</td>
+                    <td><code>window</code>, <code>document</code>, elementos con scroll.</td>
+                </tr>
+                 <!-- Eventos Táctiles -->
+                 <tr>
+                    <td rowspan="4"><strong>Táctiles (Touch)</strong></td>
+                    <td><code>touchstart</code></td>
+                    <td>Se dispara al tocar la pantalla sobre un elemento.</td>
+                    <td>Inicio de gesto táctil, alternativa a <code>mousedown</code>.</td>
+                    <td>Elementos interactivos táctiles.</td>
+                </tr>
+                <tr>
+                    <td><code>touchmove</code></td>
+                    <td>Se dispara al mover el dedo por la pantalla mientras toca.</td>
+                    <td>Gestos de deslizamiento (swipe), arrastrar en móvil.</td>
+                    <td>Elementos interactivos táctiles.</td>
+                </tr>
+                <tr>
+                    <td><code>touchend</code></td>
+                    <td>Se dispara al levantar el dedo de la pantalla.</td>
+                    <td>Fin de gesto táctil, alternativa a <code>mouseup</code>/<code>click</code>.</td>
+                    <td>Elementos interactivos táctiles.</td>
+                </tr>
+                <tr>
+                    <td><code>touchcancel</code></td>
+                    <td>Se dispara si el sistema interrumpe el evento táctil.</td>
+                    <td>Cancelar acción iniciada con <code>touchstart</code>.</td>
+                    <td>Elementos interactivos táctiles.</td>
+                </tr>
+            </tbody>
+        </table>
+    </section>
+    <!-- === FIN DE LA NUEVA SECCIÓN === -->
+
+    <script src="script.js"></script>
+</body>
+</html>

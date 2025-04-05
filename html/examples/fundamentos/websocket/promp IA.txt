@@ -1,0 +1,17 @@
+Simulador Básico de WebSockets:
+
+Objetivo: Demostrar la comunicación bidireccional y persistente entre cliente y servidor.
+
+Actores: Cliente JS, API WebSocket del Navegador, Red (simulada), Servidor WebSocket (simulado).
+
+Ejemplo: Dos áreas de texto, una para enviar mensajes desde el cliente y otra para mostrar mensajes recibidos. Un botón "Conectar/Desconectar". Un log de eventos.
+
+Visualización:
+
+- Panel Izquierdo: "Cliente": Input para escribir mensajes, botón "Enviar", área de mensajes recibidos, botón "Conectar/Desconectar", Indicador de estado (Conectado/Desconectado). Código JS del cliente.
+
+- Panel Central: "Comunicación WebSocket": Muestra flechas o mensajes indicando "Cliente -> Servidor: [mensaje]" y "Servidor -> Cliente: [mensaje]".
+
+- Panel Derecho: "Servidor (Simulado)": Un log simple que muestra "Cliente conectado", "Mensaje recibido: [mensaje]", "Enviando mensaje a todos: [mensaje]". (Podría simular que el servidor reenvía los mensajes a todos los clientes conectados).
+
+Pasos Simulados: Conectar -> Handshake (simulado) -> Estado: Conectado (onopen) -> Cliente escribe y envía -> Mensaje viaja -> Servidor recibe (onmessage) -> Servidor procesa/reenvía -> Mensaje viaja -> Cliente recibe (onmessage) -> Muestra mensaje -> Desconectar (onclose).

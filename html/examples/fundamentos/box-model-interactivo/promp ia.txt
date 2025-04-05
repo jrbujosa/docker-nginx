@@ -1,0 +1,17 @@
+Simulador del Modelo de Caja (Box Model) Interactivo:
+
+Objetivo: Ayudar a entender visualmente las partes del Box Model (contenido, padding, borde, margen) y cómo afectan al tamaño y espaciado del elemento.
+
+Actores: Motor de Layout/Renderizado.
+
+Ejemplo: Un div simple con algo de texto. Controles (sliders, inputs numéricos) para modificar dinámicamente width, height, padding, border, margin, y box-sizing.
+
+Visualización:
+
+- Panel Izquierdo: Controles para modificar las propiedades CSS. Código CSS resultante.
+
+- Panel Central: Una representación visual ampliada del div, donde cada parte (margen, borde, padding, contenido) está claramente delimitada y coloreada, con sus dimensiones indicadas. Se actualiza en tiempo real al cambiar los controles.
+
+- Panel Derecho: El div renderizado normalmente en la página, mostrando el efecto final en el layout junto a otros elementos (opcionalmente).
+
+Pasos Simulados (implícitos): Usuario cambia un valor -> JS actualiza el estilo del div -> El panel central recalcula y redibuja la visualización ampliada del Box Model -> El panel derecho muestra el renderizado normal actualizado. El foco está en la visualización interactiva más que en pasos discretos.
