@@ -9,349 +9,232 @@
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
             margin: 0;
-            padding: 0; /* Remove body padding */
+            padding: 0;
             background-color: #f0f2f5;
             color: #333;
-            line-height: 1.6; /* Improved readability */
+            line-height: 1.6;
         }
 
         .page-container {
-            max-width: 1400px; /* Limit overall width */
-            margin: 20px auto; /* Center container */
+            max-width: 1400px;
+            margin: 20px auto;
             padding: 20px;
         }
 
 
-        h1, h2 {
+        h1 {
             text-align: center;
             color: #1a253c;
-            margin-bottom: 15px;
-        }
-        h1 {
             margin-bottom: 30px;
         }
+        /* General H2 for page sections */
         h2 {
-            font-size: 1.2em; /* Slightly larger section titles */
+            font-size: 1.2em;
             margin-top: 0;
             padding-bottom: 8px;
             border-bottom: 1px solid #d9dee3;
-            color: #343a40; /* Darker heading color */
+            color: #343a40;
         }
-        /* Adjust heading margin within panels */
-         .panel h2, .panel h3 {
+        /* H2 specifically within panels */
+         .panel h2.panel-title {
             margin-top: 0;
-            margin-bottom: 10px; /* Consistent spacing below headings */
-            padding-bottom: 5px; /* Less padding below panel headings */
-            font-size: 1.1em; /* Slightly smaller panel headings */
-             text-align: left; /* Align panel headings left */
+            margin-bottom: 10px;
+            padding: 6px 12px; /* Added padding for background */
+            font-size: 1.1em;
+             text-align: left;
+             color: #212529; /* Darker text for better contrast on light backgrounds */
+             border-radius: 4px 4px 0 0; /* Rounded top corners */
+             border: 1px solid #d9dee3; /* Add border around title */
+             border-bottom: none; /* Remove bottom border if panel content has top border */
+             /* Default background if specific color not set */
+             background-color: #f8f9fa;
         }
-         .panel h3 {
-             font-size: 1em; /* Even smaller for sub-headings */
-             border-bottom: none; /* No border for h3 */
-             color: #495057;
-             margin-top: 15px;
+
+         .panel h3 { /* Sub-headings within left panel */
+            margin-top: 15px;
+            margin-bottom: 10px;
+            padding-bottom: 5px;
+            font-size: 1em;
+            border-bottom: none;
+            color: #495057;
+             text-align: left;
+         }
+
+         .log-legend h3 { /* Heading for the legend */
+             margin-top: 0;
+             margin-bottom: 15px;
+             padding-bottom: 5px;
+             font-size: 1.1em;
+             text-align: left;
+             color: #343a40;
+             border-bottom: 1px solid #e9ecef;
          }
 
 
         /* --- Estilos Simulador --- */
         .async-simulator {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); /* Responsive columns, slightly wider min */
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
             gap: 20px;
             background-color: #fff;
-            padding: 25px; /* More padding */
+            padding: 25px;
             border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); /* Softer shadow */
-            margin-bottom: 40px; /* Space below simulator */
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            margin-bottom: 20px;
         }
 
         .panel {
-            border: 1px solid #d9dee3;
+            border: 1px solid #d9dee3; /* Keep main panel border */
             border-radius: 6px;
-            padding: 15px;
-            background-color: #ffffff; /* White panel background */
+            padding: 0; /* Remove padding from panel itself */
+            background-color: #ffffff;
             display: flex;
-            flex-direction: column; /* Stack title and content */
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05); /* Subtle shadow on panels */
+            flex-direction: column;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            overflow: hidden; /* Ensure rounded corners contain title background */
+        }
+        /* Add padding back to the container *inside* the panel, below the title */
+        .panel > div:not(:first-child) { margin-top: 0px; } /* Adjust spacing if needed */
+        .panel-content-container {
+             padding: 0 15px 15px 15px; /* Padding for content below title (No top padding needed) */
         }
 
         .panel-content {
-            flex-grow: 1; /* Take remaining space */
-            min-height: 180px; /* Ensure panels have some height */
-            background-color: #f8f9fa; /* Lighter background for content area */
-            padding: 12px; /* More padding */
-            border-radius: 4px;
-            font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace; /* Monospace font */
-            font-size: 0.88em; /* Slightly adjusted font size */
-            overflow-y: auto; /* Scroll if content overflows */
-            white-space: pre-wrap; /* Respect whitespace and wrap */
-            word-break: break-word;
-            margin-top: 10px; /* Space below title */
+            flex-grow: 1;
+            min-height: 180px;
+            background-color: #f8f9fa;
+            padding: 12px;
+            border-radius: 0 0 4px 4px; /* Rounded bottom corners */
+            font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace;
+            font-size: 0.88em;
+            overflow-y: auto;
+            /* margin-top: 0; Removed margin-top as title provides separation */
             box-shadow: inset 0 1px 3px rgba(0,0,0,0.06);
-            color: #495057; /* Text color inside panels */
+            color: #495057;
+             border: 1px solid #d9dee3; /* Add border to content area */
+             border-top: none; /* Remove top border as title has bottom border */
         }
 
         .panel-content > div,
-        .panel-content > p {
-            padding: 6px 10px; /* Adjusted padding */
+        .panel-content > p:not(.log-entry) {
+            padding: 6px 10px;
             margin-bottom: 6px;
-            border-radius: 4px; /* Slightly more rounded */
+            border-radius: 4px;
             background-color: #fff;
             border: 1px solid #ced4da;
-            transition: background-color 0.3s ease, transform 0.2s ease; /* Added transform transition */
+            transition: background-color 0.3s ease, transform 0.2s ease;
             box-shadow: 0 1px 2px rgba(0,0,0,0.05);
         }
         .panel-content > div:hover {
-             transform: scale(1.01); /* Slight scale on hover */
+             transform: scale(1.01);
         }
 
 
-        /* Specific Panel Styles & Colors */
-        #call-stack .panel-content > div { background-color: #e0fbfc; border-color: #a6d8d4;} /* Cyan light */
-        #web-apis .panel-content > div { background-color: #fff3cd; border-color: #ffe69c;} /* Yellow light */
-        #microtask-queue .panel-content > div { background-color: #d1e7dd; border-color: #a3cfbb;} /* Green light */
-        #task-queue .panel-content > div { background-color: #f8d7da; border-color: #f5c2c7;} /* Red light */
+        /* Specific Panel Content Item Styles & Title Backgrounds */
+        #call-stack-panel .panel-title { background-color: #e0fbfc; border-color: #a6d8d4; border-bottom: 1px solid #a6d8d4;}
+        #call-stack .panel-content > div { background-color: #e0fbfc; border-color: #a6d8d4;}
+        #web-apis-panel .panel-title { background-color: #fff3cd; border-color: #ffe69c; border-bottom: 1px solid #ffe69c;}
+        #web-apis .panel-content > div { background-color: #fff3cd; border-color: #ffe69c;}
+        #microtask-queue-panel .panel-title { background-color: #d1e7dd; border-color: #a3cfbb; border-bottom: 1px solid #a3cfbb;}
+        #microtask-queue .panel-content > div { background-color: #d1e7dd; border-color: #a3cfbb;}
+        #task-queue-panel .panel-title { background-color: #f8d7da; border-color: #f5c2c7; border-bottom: 1px solid #f5c2c7;}
+        #task-queue .panel-content > div { background-color: #f8d7da; border-color: #f5c2c7;}
+        #console-log-panel .panel-title { background-color: #e9ecef; border-color: #ced4da; border-bottom: 1px solid #ced4da; }
 
-        #console-log .log-entry {
-            border-left: 4px solid; /* Thicker border */
-            padding: 4px 10px; /* Adjusted padding */
-            margin-bottom: 5px;
-            background-color: #f8f9fa; /* Keep log background light */
-            font-size: 0.95em; /* Slightly larger log font */
-            border-radius: 3px;
-        }
-        #console-log .log-sync { border-left-color: #0d6efd; } /* Blue */
-        #console-log .log-event { border-left-color: #6f42c1; } /* Purple */
-        #console-log .log-api { border-left-color: #fd7e14; } /* Orange */
-        #console-log .log-microtask { border-left-color: #198754;} /* Green */
-        #console-log .log-task { border-left-color: #dc3545;} /* Red */
-        #console-log .log-result { border-left-color: #0dcaf0; font-weight: bold; background-color: #e0fbfc;} /* Cyan */
-        #console-log .log-error { border-left-color: #dc3545; color: #dc3545; font-weight: bold; background-color: #f8d7da;} /* Red */
+
+        /* Log Colors */
+        #console-log .log-entry { border-left: 4px solid; padding: 4px 10px; margin-bottom: 5px; background-color: #f8f9fa; font-size: 0.95em; border-radius: 3px; }
+        #console-log .log-sync { border-left-color: #0d6efd; }
+        #console-log .log-event { border-left-color: #6f42c1; }
+        #console-log .log-api { border-left-color: #fd7e14; }
+        #console-log .log-microtask { border-left-color: #198754;}
+        #console-log .log-task { border-left-color: #dc3545;}
+        #console-log .log-result { border-left-color: #0dcaf0; font-weight: bold; background-color: #e0fbfc;}
+        #console-log .log-error { border-left-color: #dc3545; color: #ae2a36; font-weight: bold; background-color: #f8d7da;}
 
 
         /* Left Panel Specifics */
-        .left-panel button {
-            display: block;
-            width: 100%;
-            padding: 12px 18px; /* More padding */
-            font-size: 1.05em; /* Larger font */
-            font-weight: 500;
-            background-color: #0d6efd;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            margin-bottom: 20px; /* More space */
-            transition: background-color 0.2s ease, transform 0.1s ease;
-        }
-        .left-panel button:hover:not(:disabled) {
-            background-color: #0b5ed7;
-            transform: translateY(-1px); /* Slight lift on hover */
-        }
-         .left-panel button:disabled {
-            background-color: #6c757d;
-            cursor: not-allowed;
-            opacity: 0.7;
-        }
-
-        #results {
-            min-height: 60px; /* Taller results area */
-            background-color: #e9ecef;
-            padding: 12px;
-            border-radius: 4px;
-            margin-bottom: 15px; /* Adjusted space */
-            font-style: italic;
-            color: #495057;
-            font-size: 0.95em;
-             border: 1px solid #ced4da;
-        }
-         #results.success {
-             background-color: #d1e7dd; /* Green background on success */
-             color: #0f5132;
-             border-color: #a3cfbb;
-             font-style: normal;
-             font-weight: 500;
-         }
-          #results.error {
-             background-color: #f8d7da; /* Red background on error */
-             color: #842029;
-             border-color: #f5c2c7;
-             font-style: normal;
-             font-weight: 500;
-         }
-
-        /* Styles for code blocks in left panel */
-        .left-panel pre {
-             background-color: #282c34; /* Dark background for code */
-             color: #abb2bf; /* Light text */
-             padding: 15px;
-             border-radius: 5px;
-             font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace;
-             font-size: 0.87em; /* Slightly smaller code font */
-             white-space: pre;
-             overflow-x: auto;
-             line-height: 1.4;
-             margin-bottom: 15px; /* Space below code blocks */
-             max-height: 250px; /* Limit height */
-             overflow-y: auto; /* Add scroll if too tall */
-        }
-        .left-panel pre code {
-            background: none; /* Inherit background */
-            padding: 0;
-            color: inherit; /* Inherit color */
-            border: none;
-            font-size: inherit;
-        }
-
-        .clarification-note {
-            font-size: 0.85em;
-            margin-top: -10px; /* Pull note up slightly */
-            margin-bottom: 15px;
-            padding: 8px;
-            background-color: #fff3cd; /* Yellow note background */
-            border: 1px solid #ffe69c;
-            border-radius: 4px;
-            color: #664d03;
-        }
+        .left-panel-content { padding: 15px; }
+        .left-panel-content button { display: block; width: 100%; padding: 12px 18px; font-size: 1.05em; font-weight: 500; background-color: #0d6efd; color: white; border: none; border-radius: 5px; cursor: pointer; margin-bottom: 20px; transition: background-color 0.2s ease, transform 0.1s ease; }
+        .left-panel-content button:hover:not(:disabled) { background-color: #0b5ed7; transform: translateY(-1px); }
+        .left-panel-content button:disabled { background-color: #6c757d; cursor: not-allowed; opacity: 0.7; }
+        #results { min-height: 60px; background-color: #e9ecef; padding: 12px; border-radius: 4px; margin-bottom: 15px; font-style: italic; color: #495057; font-size: 0.95em; border: 1px solid #ced4da; }
+        #results.success { background-color: #d1e7dd; color: #0f5132; border-color: #a3cfbb; font-style: normal; font-weight: 500; }
+        #results.error { background-color: #f8d7da; color: #842029; border-color: #f5c2c7; font-style: normal; font-weight: 500; }
+        .left-panel-content pre { background-color: #282c34; color: #abb2bf; padding: 15px; border-radius: 5px; font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace; font-size: 0.87em; white-space: pre; overflow-x: auto; line-height: 1.4; margin-bottom: 15px; max-height: 250px; overflow-y: auto; }
+        .left-panel-content pre code { background: none; padding: 0; color: inherit; border: none; font-size: inherit; }
+        .clarification-note { font-size: 0.85em; margin-top: -10px; margin-bottom: 15px; padding: 8px; background-color: #fff3cd; border: 1px solid #ffe69c; border-radius: 4px; color: #664d03; }
 
 
         /* Animation for items entering/leaving */
-        .panel-content > div.entering {
-             animation: fadeIn 0.4s ease-out;
-        }
-         .panel-content > div.leaving {
-             animation: fadeOut 0.4s ease-in forwards;
-         }
+        .panel-content > div.entering { animation: fadeIn 0.4s ease-out; }
+        .panel-content > div.leaving { animation: fadeOut 0.4s ease-in forwards; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(-8px) scale(0.98); } to { opacity: 1; transform: translateY(0) scale(1); } }
+        @keyframes fadeOut { from { opacity: 1; transform: translateY(0) scale(1); } to { opacity: 0; transform: translateY(8px) scale(0.98); } }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-8px) scale(0.98); }
-            to { opacity: 1; transform: translateY(0) scale(1); }
-        }
-        @keyframes fadeOut {
-            from { opacity: 1; transform: translateY(0) scale(1); }
-            to { opacity: 0; transform: translateY(8px) scale(0.98); }
-        }
+        /* --- Estilos Leyenda Colores --- */
+        .log-legend { background-color: #fff; padding: 20px 25px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); margin-bottom: 40px; }
+        .log-legend ul { list-style: none; padding: 0; margin: 0; display: flex; flex-wrap: wrap; gap: 15px 25px; }
+        .log-legend li { display: flex; align-items: center; font-size: 0.9em; }
+        .log-legend .color-swatch { display: inline-block; width: 16px; height: 16px; border-left-width: 4px; border-left-style: solid; margin-right: 8px; vertical-align: middle; border-radius: 2px; background-color: #f8f9fa; }
+        .log-legend .swatch-sync { border-left-color: #0d6efd; }
+        .log-legend .swatch-event { border-left-color: #6f42c1; }
+        .log-legend .swatch-api { border-left-color: #fd7e14; }
+        .log-legend .swatch-microtask { border-left-color: #198754; }
+        .log-legend .swatch-task { border-left-color: #dc3545; }
+        .log-legend .swatch-result { border-left-color: #0dcaf0; }
+        .log-legend .swatch-error { border-left-color: #dc3545; background-color: #f8d7da;}
 
 
         /* --- Estilos Sección Información --- */
-        .info-container {
-            background-color: #fff;
-            padding: 30px 40px; /* More horizontal padding */
-            border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-        }
+        .info-container { background-color: #fff; padding: 30px 40px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); }
+        .info-container h2 { text-align: left; border-bottom: 2px solid #0d6efd; margin-bottom: 25px; padding-bottom: 10px; color: #1a253c; }
+        .info-container h3 { font-size: 1.3em; color: #0d6efd; margin-top: 30px; margin-bottom: 15px; padding-bottom: 5px; border-bottom: 1px solid #e9ecef; }
+        .info-container p, .info-container li, .info-container dd { font-size: 1em; color: #343a40; margin-bottom: 12px; }
+        .info-container ul, .info-container ol { list-style: disc; margin-left: 20px; padding-left: 15px; margin-bottom: 15px; }
+        .info-container ol { list-style: decimal; }
+        .info-container code { background-color: #e9ecef; padding: 0.2em 0.5em; border-radius: 4px; font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace; font-size: 0.95em; color: #d63384; border: 1px solid #ced4da; }
+        .info-container pre { background-color: #282c34; color: #abb2bf; padding: 15px; border-radius: 5px; overflow-x: auto; font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace; font-size: 0.9em; margin: 15px 0; }
+        .info-container pre code { background-color: transparent; padding: 0; border: none; color: inherit; }
+        .info-container strong { color: #212529; font-weight: 600; }
+        .info-container dl { margin-bottom: 20px; }
+        .info-container dt { font-weight: bold; font-size: 1.05em; color: #0d6efd; margin-top: 15px; }
+        .info-container dd { margin-left: 25px; margin-bottom: 10px; padding-left: 15px; border-left: 3px solid #e9ecef; }
+        .info-container .panel-explanation dt { font-weight: bold; margin-top: 10px; }
+        .info-container .panel-explanation .dt-call-stack { color: #087990; }
+        .info-container .panel-explanation .dt-web-apis { color: #fd7e14; }
+        .info-container .panel-explanation .dt-microtask { color: #198754;}
+        .info-container .panel-explanation .dt-task { color: #dc3545; }
+        .info-container .panel-explanation .dt-log { color: #6c757d; }
+        .info-container .panel-explanation dd { margin-left: 25px; margin-bottom: 10px; padding-left: 10px; border-left: 2px solid #e9ecef; }
+        .parameter-explanation { background-color: #e9ecef; padding: 10px 15px; border-radius: 4px; border: 1px solid #ced4da; margin-top: 5px; font-size: 0.95em; }
+        .parameter-explanation code { background-color: #d6e9ff; border-color: #a8cfff; color: #0a58ca; }
 
-        .info-container h2 {
-            text-align: left; /* Align heading left */
-            border-bottom: 2px solid #0d6efd; /* Blue underline */
-            margin-bottom: 25px;
-            padding-bottom: 10px;
-            color: #1a253c; /* Darker blue */
+        /* Styles for DevTools Table */
+        .devtools-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 0.95em;
         }
-
-        .info-container h3 {
-            font-size: 1.3em; /* Larger sub-headings */
-            color: #0d6efd; /* Blue sub-headings */
-            margin-top: 30px;
-            margin-bottom: 15px;
-            padding-bottom: 5px;
-            border-bottom: 1px solid #e9ecef; /* Light separator */
+        .devtools-table th, .devtools-table td {
+            border: 1px solid #dee2e6;
+            padding: 10px 12px;
+            text-align: left;
+            vertical-align: top;
         }
-
-        .info-container p,
-        .info-container li,
-        .info-container dd { /* Apply base style to dd as well */
-            font-size: 1em; /* Standard text size */
-            color: #343a40; /* Slightly darker text */
-            margin-bottom: 12px; /* Space between paragraphs/items */
+        .devtools-table th {
+            background-color: #e9ecef;
+            font-weight: 600;
+            color: #495057;
         }
-
-        .info-container ul, .info-container ol { /* Style ordered lists too */
-            list-style: disc;
-            margin-left: 20px;
-            padding-left: 15px;
-            margin-bottom: 15px;
+        .devtools-table tbody tr:nth-child(odd) {
+            background-color: #f8f9fa;
         }
-        .info-container ol {
-            list-style: decimal; /* Use numbers for ordered lists */
+        .devtools-table code {
+            font-size: 0.9em; /* Slightly smaller code in table */
+            white-space: nowrap;
         }
-
-         .info-container code {
-            background-color: #e9ecef; /* Light grey background for code */
-            padding: 0.2em 0.5em; /* Padding */
-            border-radius: 4px;
-            font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace;
-            font-size: 0.95em; /* Consistent code size */
-            color: #d63384; /* Pinkish color for inline code */
-            border: 1px solid #ced4da; /* Subtle border */
-         }
-
-         .info-container pre {
-             background-color: #282c34;
-             color: #abb2bf;
-             padding: 15px;
-             border-radius: 5px;
-             overflow-x: auto;
-             font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace;
-             font-size: 0.9em;
-             margin: 15px 0;
-         }
-          .info-container pre code {
-              background-color: transparent;
-              padding: 0;
-              border: none;
-              color: inherit; /* Inherit color from pre */
-          }
-
-        .info-container strong {
-             color: #212529; /* Darker color for strong text */
-             font-weight: 600;
-        }
-
-        /* Specific styles for definition lists (dl) */
-        .info-container dl {
-            margin-bottom: 20px;
-        }
-         .info-container dt {
-            font-weight: bold;
-            font-size: 1.05em; /* Slightly larger term */
-            color: #0d6efd; /* Blue term */
-            margin-top: 15px;
-         }
-         .info-container dd {
-             margin-left: 25px; /* Indent definition */
-             margin-bottom: 10px;
-             padding-left: 15px; /* Space from border */
-             border-left: 3px solid #e9ecef; /* Subtle left border */
-         }
-
-         /* Styles for the panel explanations */
-        .info-container .panel-explanation dt {
-            font-weight: bold;
-            color: #198754; /* Green for panel names */
-            margin-top: 10px;
-        }
-        .info-container .panel-explanation dd {
-            margin-left: 25px;
-            margin-bottom: 10px;
-            padding-left: 10px;
-            border-left: 2px solid #e9ecef;
-        }
-
-        /* Style for the parameter explanation */
-        .parameter-explanation {
-             background-color: #e9ecef;
-             padding: 10px 15px;
-             border-radius: 4px;
-             border: 1px solid #ced4da;
-             margin-top: 5px;
-             font-size: 0.95em;
-         }
-        .parameter-explanation code {
-             background-color: #d6e9ff; /* Light blue background for code */
-             border-color: #a8cfff;
-             color: #0a58ca; /* Dark blue text */
-         }
 
     </style>
 </head>
@@ -363,96 +246,101 @@
     <div class="async-simulator">
         <!-- Panel Izquierdo: Controles, Resultados, Código -->
         <div class="panel left-panel">
-            <h2>Controles y Código</h2>
-            <button id="fetch-button">Iniciar Fetch de Datos</button>
+             <div class="left-panel-content">
+                <button id="fetch-button">Iniciar Fetch de Datos</button>
 
-            <h3>Resultado:</h3>
-            <div id="results">Esperando inicio...</div>
+                <h3>Resultado:</h3>
+                <div id="results">Esperando inicio...</div>
 
-            <!-- == INICIO: Código Fetch con .then/.catch == -->
-            <h3>Código JavaScript (Fetch con .then/.catch):</h3>
-            <pre id="js-code-then"><code>
-function fetchDataWithThen(url) { // <-- 'url' aquí es PARÁMETRO
+                <h3>Código JavaScript (Fetch con .then/.catch):</h3>
+                <pre id="js-code-then"><code>
+function fetchDataWithThen(url) {
   console.log("Iniciando con .then...");
-  simulateFetch(url) // <-- 'url' aquí USA el valor del parámetro
-    .then(response => {
-      console.log("Fetch Promise resuelta (then)");
-      return response; // Simulación: 'response' ya son los datos
-    })
-    .then(data => {
-      console.log("Datos finales recibidos (then)");
-      updateResults(`Datos recibidos: ${data.message}`);
-      console.log("Completado con .then");
-    })
-    .catch(error => {
-      console.error("ERROR con .then:", error);
-      updateResults(`Error: ${error.message}`, true);
-    });
+  simulateFetch(url)
+    .then(response => { /* Process response */ return response; })
+    .then(data => { /* Use data */ updateResults(...); })
+    .catch(error => { /* Handle error */ updateResults(...); });
   console.log("Llamada a fetch con .then realizada.");
 }
-// Ejemplo de llamada: fetchDataWithThen('/api/data');
-            </code></pre>
-            <!-- == FIN: Código Fetch con .then/.catch == -->
+                </code></pre>
 
-            <!-- == INICIO: Código Fetch con Async/Await == -->
-            <h3>Código JavaScript (Async/Await - Usado en Simulación):</h3>
-            <pre id="js-code-async"><code>
-async function fetchData(url) { // <-- 'url' aquí es PARÁMETRO
-  logToConsole("console.log('1. Iniciando fetchData...')");
+                <h3>Código JavaScript (Async/Await - Usado en Simulación):</h3>
+                <pre id="js-code-async"><code>
+async function fetchData(url) {
+  logToConsole("1. Iniciando fetchData...");
   try {
-    logToConsole("console.log('2. Antes de llamar a fetch...')");
-    const responsePromise = simulateFetch(url); // <-- 'url' aquí USA el valor
-    logToConsole("console.log('3. Después de llamar a fetch')");
+    logToConsole("2. Antes de llamar a fetch...");
+    const responsePromise = simulateFetch(url);
+    logToConsole("3. Después de llamar a fetch");
 
-    logToConsole("await responsePromise - Pausando fetchData...");
-    const data = await responsePromise; // <-- Pausa aquí
+    logToConsole("await responsePromise - Pausando...");
+    const data = await responsePromise; // Pausa
 
-    logToConsole("console.log('6. Reanudando fetchData...')");
-    updateResults(`Datos recibidos: ${data.message}`);
-    logToConsole("console.log('7. fetchData completado.')");
-
-  } catch (error) {
-    logToConsole(`ERROR: ${error.message}`, 'error');
-    updateResults(`Error: ${error.message}`, true);
-  }
+    logToConsole("6. Reanudando fetchData...");
+    updateResults(`Datos: ${data.message}`);
+    logToConsole("7. fetchData completado.");
+  } catch (error) { /* Handle error */ }
 }
-// El botón llama a fetchData('/api/data') al hacer clic
-            </code></pre>
-             <p class="clarification-note">
-                <strong>Nota:</strong> La simulación visual sigue el flujo del código <strong>Async/Await</strong>. Ambos ejemplos usan <code>simulateFetch</code> que simula el retraso de red y el comportamiento de la Promesa.
-             </p>
-             <!-- == FIN: Código Fetch con Async/Await == -->
+                </code></pre>
+                 <p class="clarification-note">
+                    <strong>Nota:</strong> La simulación visual sigue el flujo <strong>Async/Await</strong>.
+                 </p>
+             </div>
         </div>
 
         <!-- Panel Central: Call Stack y Web APIs -->
         <div class="panel center-panel">
-            <div>
-                <h2>Call Stack (Motor JS)</h2>
-                <div id="call-stack" class="panel-content"></div>
+            <div id="call-stack-panel">
+                <h2 class="panel-title">Call Stack (Motor JS)</h2>
+                 <div class="panel-content-container">
+                    <div id="call-stack" class="panel-content"></div>
+                </div>
             </div>
-            <div style="margin-top: 20px;">
-                <h2>Web APIs / Background (Navegador)</h2>
-                <div id="web-apis" class="panel-content"></div>
+            <div id="web-apis-panel" style="margin-top: 20px;">
+                <h2 class="panel-title">Web APIs / Background (Navegador)</h2>
+                 <div class="panel-content-container">
+                    <div id="web-apis" class="panel-content"></div>
+                </div>
             </div>
         </div>
 
         <!-- Panel Derecho: Queues y Consola -->
         <div class="panel right-panel">
-             <div>
-                <h2>Microtask Queue (Promesas)</h2>
-                <div id="microtask-queue" class="panel-content"></div>
+             <div id="microtask-queue-panel">
+                <h2 class="panel-title">Microtask Queue (Promesas)</h2>
+                 <div class="panel-content-container">
+                    <div id="microtask-queue" class="panel-content"></div>
+                </div>
             </div>
-             <div style="margin-top: 20px;">
-                <h2>Task Queue (Callbacks, setTimeout, Eventos)</h2>
-                <div id="task-queue" class="panel-content">(Vacía en este ejemplo)</div>
+             <div id="task-queue-panel" style="margin-top: 20px;">
+                <h2 class="panel-title">Task Queue (Callbacks, setTimeout, Eventos)</h2>
+                 <div class="panel-content-container">
+                    <div id="task-queue" class="panel-content">(Vacía en este ejemplo)</div>
+                </div>
             </div>
-            <div style="margin-top: 20px;">
-                <h2>Log / Consola Simulada</h2>
-                <div id="console-log" class="panel-content"></div>
+             <div id="console-log-panel" style="margin-top: 20px;">
+                <h2 class="panel-title">Log / Consola Simulada</h2>
+                 <div class="panel-content-container">
+                    <div id="console-log" class="panel-content"></div>
+                </div>
             </div>
         </div>
     </div> <!-- Cierre de async-simulator -->
 
+    <!-- == INICIO: Leyenda de Colores == -->
+    <div class="log-legend">
+        <h3>Leyenda de Colores (Consola Simulada):</h3>
+        <ul>
+            <li><span class="color-swatch swatch-sync"></span> Código Síncrono</li>
+            <li><span class="color-swatch swatch-event"></span> Evento / Event Loop</li>
+            <li><span class="color-swatch swatch-api"></span> Web API (Segundo Plano)</li>
+            <li><span class="color-swatch swatch-microtask"></span> Microtask (Promesa Callback)</li>
+            <li><span class="color-swatch swatch-task"></span> Task (setTimeout Callback, etc.)</li>
+            <li><span class="color-swatch swatch-result"></span> Resultado Final</li>
+            <li><span class="color-swatch swatch-error"></span> Error</li>
+        </ul>
+    </div>
+    <!-- == FIN: Leyenda de Colores == -->
 
     <!-- Sección de Información -->
     <div class="info-container">
@@ -463,129 +351,202 @@ async function fetchData(url) { // <-- 'url' aquí es PARÁMETRO
         <!-- ============================================== -->
 
         <h3>0. La Necesidad de Asincronía y Fetch</h3>
-        <p>
-            Las páginas web modernas necesitan comunicarse con servidores para obtener o enviar datos sin recargar la página. Estas operaciones de red toman tiempo. Si JavaScript esperara bloqueando la página, la interfaz se congelaría.
-        </p>
-        <p>
-            <strong><code>fetch</code></strong> es la API moderna del navegador para realizar estas peticiones de red de forma <strong>asíncrona</strong>. Inicia la petición pero no espera, devolviendo inmediatamente una <strong><code>Promise</code> (Promesa)</strong>, que representa el resultado futuro de esa petición.
-        </p>
+        <p>Las páginas web se comunican con servidores de forma asíncrona para no congelar la interfaz. <strong><code>fetch</code></strong> es la API moderna para esto, devolviendo una <strong><code>Promise</code></strong> (promesa de un resultado futuro).</p>
 
         <h3>1. Manejo de Promesas: <code>.then()</code> vs <code>async/await</code></h3>
-        <p>Existen dos formas principales de trabajar con las Promesas que devuelve <code>fetch</code>:</p>
-        <ul>
-            <li>
-                <strong>Método <code>.then().catch()</code> (Forma Tradicional):</strong> Encadenas llamadas a <code>.then()</code> para registrar funciones (callbacks) que se ejecutarán cuando la Promesa se resuelva con éxito. Usas <code>.catch()</code> para registrar un callback que se ejecutará si la Promesa es rechazada (error). Esto puede llevar a anidamiento si hay muchas operaciones consecutivas.
-                <pre><code>fetch(url)
-  .then(response => response.json()) // Primer .then para procesar respuesta
-  .then(data => { /* Usar datos */ }) // Segundo .then para usar datos
-  .catch(error => { /* Manejar error */ });</code></pre>
-            </li>
-            <li>
-                <strong>Sintaxis <code>async/await</code> (Forma Moderna):</strong> Permite escribir código asíncrono que se parece más al código síncrono.
-                <ul>
-                    <li>Marcas la función contenedora con <code>async</code>.</li>
-                    <li>Usas <code>await</code> delante de la llamada a <code>fetch</code> (y otras operaciones que devuelvan Promesas, como <code>response.json()</code>) para pausar la ejecución de la función <code>async</code> hasta que la Promesa se resuelva.</li>
-                    <li>Usas bloques <code>try...catch</code> para manejar errores de forma similar al código síncrono.</li>
-                </ul>
-                 <pre><code>async function getData(url) {
-  try {
-    const response = await fetch(url); // Pausa aquí
-    const data = await response.json(); // Pausa aquí de nuevo
-    // Usar datos
-  } catch (error) {
-    // Manejar error
-  }
-}</code></pre>
-            </li>
-        </ul>
-        <p>
-            <strong>¿Cuál aprender?:</strong> <strong>Prioriza <code>async/await</code></strong> para escribir código nuevo por su legibilidad y manejo de errores más sencillo. Sin embargo, <strong>entiende también <code>.then()</code></strong>, ya que es la base de las Promesas y lo encontrarás en código existente o librerías. Son dos formas de lograr lo mismo, pero <code>async/await</code> es generalmente preferido hoy en día.
-        </p>
+        <p>Usamos <strong><code>async/await</code></strong> (preferido por legibilidad) o <strong><code>.then().catch()</code></strong> (base conceptual) para manejar la Promesa de `fetch`.</p>
 
         <h3>2. El Flujo de Control con <code>async/await</code> (Detallado)</h3>
-        <p>
-            Cuando usas <code>await</code>, ¿dónde se queda "esperando" el programa? La clave es que <strong>la función <code>async</code> se pausa, pero JavaScript no se bloquea</strong>.
-        </p>
-        <ol>
-            <li><strong>Inicio:</strong> Tu función <code>async</code> (ej. <code>fetchData</code>) entra al Call Stack.</li>
-            <li><strong><code>await</code> encontrado:</strong> Al llegar a <code>await fetch(url)</code> (o <code>await response.json()</code>):
-                <ul>
-                    <li>Se inicia la operación asíncrona (<code>fetch</code> o <code>.json()</code>). La tarea se delega a las Web APIs.</li>
-                    <li>La ejecución de la función <code>async fetchData</code> <strong>se pausa</strong>.</li>
-                    <li><code>fetchData</code> <strong>sale del Call Stack</strong>. ¡El hilo principal queda libre!</li>
-                </ul>
-            </li>
-            <li><strong>Operación en Segundo Plano:</strong> La Web API maneja la petición de red o la lectura del cuerpo.</li>
-            <li><strong>Operación Completada:</strong> La Web API termina y tiene el resultado (el objeto <code>Response</code> o los datos finales). Coloca la tarea de "reanudar <code>fetchData</code>" en la <strong>Microtask Queue</strong>.</li>
-            <li><strong>Event Loop:</strong> Cuando el Call Stack está vacío, el Event Loop revisa la Microtask Queue.</li>
-            <li><strong>Reanudación:</strong> El Event Loop mueve la tarea de "reanudar <code>fetchData</code>" al Call Stack. La función <code>fetchData</code> <strong>continúa desde donde se pausó</strong> (justo después del <code>await</code>), y el valor de la Promesa resuelta se asigna a la variable (ej. <code>response</code> o <code>data</code>).</li>
-        </ol>
-         <p>
-             Este ciclo de pausa (saliendo del Call Stack) y reanudación (volviendo al Call Stack vía Microtask Queue) es lo que permite la asincronía sin bloqueo.
-         </p>
+        <p><code>await</code> pausa la función <code>async</code> (sale del Call Stack), libera el hilo, y la ejecución se reanuda vía Microtask Queue y Event Loop cuando la Promesa se resuelve.</p>
 
-         <h3>3. Parámetros vs. Uso de Variables (Aclaración sobre `url`)</h3>
-         <p>
-             En el código de ejemplo, podrías ver algo como <code>function miFuncion(url) { fetch(url); }</code>. ¿Por qué `url` aparece dos veces?
-         </p>
+        <h3>3. Parámetros vs. Uso de Variables (Aclaración sobre `url`)</h3>
          <div class="parameter-explanation">
-             <ul>
-                 <li><strong><code>function miFuncion(url)</code></strong>: Aquí, <code>url</code> es un <strong>PARÁMETRO</strong>. Es un nombre placeholder que la función espera recibir como entrada cuando sea llamada.</li>
-                 <li><strong><code>fetch(url)</code></strong>: Aquí, <code>url</code> se refiere al <strong>VALOR</strong> que se pasó a la función a través de ese parámetro. La función <code>fetch</code> necesita ese valor (la dirección real) para hacer la petición.</li>
-             </ul>
-             <p>Ejemplo: Si llamas <code>miFuncion("http://...")</code>, dentro de la función, el parámetro <code>url</code> contendrá el valor <code>"http://..."</code>, y eso es lo que se usará en <code>fetch(url)</code>.</p>
+             En <code>function miFuncion(url) { fetch(url); }</code>: el primer <code>url</code> es el parámetro (entrada esperada), el segundo usa el valor recibido.
          </div>
 
         <h3>4. Manejo de Datos: Formatos de Respuesta</h3>
+        <p><code>fetch</code> permite leer respuestas como <code>.json()</code>, <code>.text()</code>, <code>.blob()</code>, etc.</p>
+
+        <h3>5. Entendiendo los Paneles del Simulador y sus Colores</h3>
+        <p>Los paneles visualizan el flujo. Sus títulos ahora usan colores relacionados con el contenido o la leyenda del log:</p>
+         <dl class="panel-explanation">
+             <dt class="dt-call-stack">Call Stack (Pila de Llamadas)</dt>
+             <dd>Título cyan claro. Muestra función activa.</dd>
+             <dt class="dt-web-apis">Web APIs / Background</dt>
+             <dd>Título ámbar claro. Muestra tareas delegadas.</dd>
+             <dt class="dt-microtask">Microtask Queue</dt>
+             <dd>Título verde claro. Callbacks de Promesas esperando (coincide con log).</dd>
+              <dt class="dt-task">Task Queue</dt>
+             <dd>Título rojo claro. Otros callbacks esperando (coincide con log).</dd>
+              <dt class="dt-log">Log / Consola Simulada</dt>
+             <dd>Título gris claro. Registro cronológico; los colores de <strong>borde</strong> indican origen.</dd>
+        </dl>
+        <p>El <strong>Event Loop</strong> (invisible) orquesta todo.</p>
+
+        <!-- == INICIO: Sección Chrome DevTools == -->
+        <h3>6. Observando el Flujo en el Mundo Real: Chrome DevTools</h3>
         <p>
-            <code>fetch</code> no solo sirve para JSON. Una vez que tienes el objeto <code>Response</code> (después del primer <code>await fetch()</code>), puedes leer el cuerpo en varios formatos usando métodos que también devuelven Promesas:
+            Aunque el simulador ayuda a visualizar los conceptos, en un proyecto real usamos las <strong>Herramientas de Desarrollo del Navegador</strong> (accesibles con F12 o clic derecho -> Inspeccionar en Chrome/Edge/Firefox) para depurar. Estas no muestran las "colas" como paneles separados, pero nos permiten inferir su comportamiento y ver detalles cruciales:
         </p>
+        <table class="devtools-table">
+            <thead>
+                <tr>
+                    <th>Pestaña DevTools</th>
+                    <th>Información Relevante para Fetch/Async</th>
+                    <th>Utilidad para Depuración</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>Network (Red)</strong></td>
+                    <td>
+                        - Lista de todas las peticiones de red (incluyendo <code>fetch</code>).<br>
+                        - Estado HTTP (200 OK, 404 No Encontrado, 500 Error Servidor, etc.).<br>
+                        - Tiempos de respuesta (latencia, descarga).<br>
+                        - Cabeceras (Request y Response).<br>
+                        - Payload (datos enviados en POST/PUT).<br>
+                        - Pestaña "Response" o "Preview" para ver el cuerpo de la respuesta recibida (JSON, HTML, texto...).
+                    </td>
+                    <td>
+                        - <strong>Verificar si la petición <code>fetch</code> se está realizando.</strong><br>
+                        - <strong>Confirmar si el servidor responde correctamente (estado 2xx).</strong><br>
+                        - <strong>Inspeccionar los datos exactos enviados y recibidos.</strong><br>
+                        - Diagnosticar errores de red o problemas de CORS.<br>
+                        - Comprobar si la respuesta es el JSON esperado.
+                    </td>
+                </tr>
+                <tr>
+                    <td><strong>Console (Consola)</strong></td>
+                    <td>
+                        - Salida de <code>console.log()</code>.<br>
+                        - Errores de JavaScript (incluyendo los lanzados en <code>.catch()</code> o <code>try...catch</code>).<br>
+                        - Mensajes de error si una Promesa es rechazada y no se captura.<br>
+                        - Advertencias del navegador.
+                    </td>
+                    <td>
+                        - <strong>Seguir el flujo de ejecución con logs estratégicos.</strong><br>
+                        - <strong>Ver mensajes de error detallados.</strong><br>
+                        - Inspeccionar el contenido de variables y objetos en puntos clave.
+                    </td>
+                </tr>
+                <tr>
+                    <td><strong>Sources (Fuentes)</strong></td>
+                    <td>
+                        - Código fuente JavaScript.<br>
+                        - <strong>Breakpoints (puntos de interrupción):</strong> Pausar la ejecución en líneas específicas.<br>
+                        - <strong>Step Over/Into/Out:</strong> Ejecutar código línea por línea.<br>
+                        - Inspección de variables y "Scope" (alcance).<br>
+                        - <strong>Call Stack (en el momento de la pausa).</strong><br>
+                        - Sección "Async" en el Call Stack (a veces) para rastrear el origen de callbacks asíncronos.
+                    </td>
+                    <td>
+                        - <strong>Pausar justo antes o después de <code>await fetch()</code> o <code>await response.json()</code></strong> para ver el estado de las variables.<br>
+                        - Entrar dentro de los callbacks <code>.then()</code> o bloques <code>catch</code>.<br>
+                        - <strong>Ver el Call Stack en diferentes momentos</strong> para entender cómo entran y salen las funciones (aunque no veas las colas explícitamente).<br>
+                        - Identificar en qué línea exacta ocurre un error.
+                    </td>
+                </tr>
+                 <tr>
+                    <td><strong>Performance (Rendimiento)</strong></td>
+                    <td>
+                        - Grabación detallada de la actividad del navegador (CPU, red, renderizado) en el tiempo.<br>
+                        - Visualización de "Tareas Largas" que pueden bloquear el hilo.<br>
+                        - Tiempos de ejecución de funciones JavaScript.<br>
+                        - Cascada de peticiones de red.
+                    </td>
+                    <td>
+                        - Identificar si el código asíncrono (o síncrono) está causando bloqueos o lentitud.<br>
+                        - Analizar cuellos de botella en el rendimiento general de la página.<br>
+                        - (Avanzado) Visualizar la secuencia de eventos y tareas en una línea de tiempo.
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <p>
+            <strong>Importante:</strong> Las DevTools son esenciales, pero no reemplazan la comprensión conceptual. No verás paneles llamados "Microtask Queue" o "Task Queue", pero usando las pestañas Network, Console y Sources (con breakpoints), puedes deducir cuándo una tarea se delega, cuándo se completa y cuándo se ejecuta su callback.
+        </p>
+        <!-- == FIN: Sección Chrome DevTools == -->
+
+        <!-- == INICIO: Sección Debugging Tips == -->
+        <h3>7. Consejos para Depurar Fetch y Código Asíncrono</h3>
         <ul>
-            <li><strong><code>await response.json()</code>:</strong> Para datos JSON.</li>
-            <li><strong><code>await response.text()</code>:</strong> Para texto plano (HTML, texto, CSV, etc.).</li>
-            <li><strong><code>await response.blob()</code>:</strong> Para datos binarios (imágenes, ficheros).</li>
-            <li><strong><code>await response.arrayBuffer()</code>:</strong> Para manipulación binaria de bajo nivel.</li>
+            <li>
+                <strong><code>console.log</code> Estratégico:</strong> Es tu primera línea de defensa. Añade logs:
+                <ul>
+                    <li>Antes y después de llamar a <code>fetch</code>.</li>
+                    <li>Dentro del primer <code>.then()</code> o justo después del primer <code>await fetch()</code> para inspeccionar el objeto <code>Response</code>.</li>
+                    <li>Dentro del segundo <code>.then()</code> o después del <code>await response.json()</code> para ver los datos finales.</li>
+                    <li>Dentro de los bloques <code>.catch()</code> o <code>catch(error)</code> para ver el objeto de error completo (<code>console.error('Error:', error);</code>).</li>
+                </ul>
+            </li>
+            <li>
+                <strong>¡Comprueba <code>response.ok</code> SIEMPRE!</strong> Antes de intentar leer el cuerpo (<code>.json()</code>, <code>.text()</code>), verifica si la respuesta HTTP fue exitosa:
+                <pre><code>const response = await fetch(url);
+if (!response.ok) {
+  // Lanza un error para que sea capturado por el catch
+  throw new Error(`Error HTTP ${response.status}: ${response.statusText}`);
+}
+const data = await response.json(); // Solo si response.ok es true
+                </code></pre>
+            </li>
+            <li>
+                <strong>Usa la Pestaña Network:</strong> Verifica el estado HTTP, si la URL es correcta, si enviaste los datos correctos (Payload), y qué devuelve exactamente el servidor (Response/Preview). A menudo el problema está en la comunicación con el servidor, no en el código JS.
+            </li>
+             <li>
+                <strong>Manejo de Errores Explícito:</strong> Envuelve siempre tus llamadas <code>await</code> dentro de un bloque <code>try...catch</code>, o asegúrate de tener un <code>.catch()</code> al final de tu cadena <code>.then()</code>.
+            </li>
+            <li>
+                <strong>Breakpoints Inteligentes:</strong> Coloca breakpoints en la línea del <code>await</code>, en la línea siguiente, y dentro del bloque <code>catch</code>. Usa "Step Over" (F10) para avanzar línea a línea y "Step Into" (F11) para entrar en funciones.
+            </li>
+             <li>
+                <strong>Simula Condiciones de Red Lentas/Offline:</strong> La pestaña Network de Chrome DevTools permite simular conexiones lentas o sin conexión para probar cómo se comporta tu código en esas situaciones.
+            </li>
+             <li>
+                <strong>Entiende las Promesas:</strong> Muchos errores vienen de no entender bien cómo y cuándo se resuelven/rechazan las promesas o cómo se encadenan.
+            </li>
         </ul>
+         <!-- == FIN: Sección Debugging Tips == -->
 
-        <h3>5. Entendiendo los Paneles del Simulador</h3>
-        <p>El simulador visualiza los componentes internos que gestionan este flujo:</p>
-        <dl class="panel-explanation">
-             <dt>Call Stack (Pila de Llamadas)</dt>
-            <dd>Muestra la función JS activa en cada momento. Las funciones `async` entran y salen durante las pausas de `await`.</dd>
-            <dt>Web APIs / Background</dt>
-            <dd>Muestra las tareas asíncronas (como `fetch`) ejecutándose en segundo plano, fuera del hilo principal de JS.</dd>
-            <dt>Microtask Queue</dt>
-            <dd>Cola de alta prioridad donde esperan los callbacks de Promesas (incluyendo la continuación de `await`) antes de volver al Call Stack.</dd>
-             <dt>Task Queue</dt>
-            <dd>Cola de baja prioridad para otros callbacks (<code>setTimeout</code>, eventos DOM). Generalmente vacía en este ejemplo.</dd>
-             <dt>Log / Consola Simulada</dt>
-            <dd>Registro cronológico que muestra el orden real de ejecución, revelando el impacto de la asincronía.</dd>
-        </dl>
-        <p><strong>El Event Loop</strong> (no visible como panel, pero es el director de orquesta) es quien mueve las tareas de las Queues al Call Stack cuando este está vacío, respetando la prioridad (Microtasks primero).</p>
-        <p>El programador <strong>no interactúa directamente</strong> con las colas o el Event Loop, pero nuestras acciones (llamar a `fetch`, usar `await`, etc.) determinan qué tareas se encolan y cuándo.</p>
-
-        <h3>6. Glosario Rápido</h3>
+        <h3>8. Glosario Rápido</h3>
         <dl>
-            <dt>Fetch</dt><dd>API para realizar peticiones de red asíncronas; devuelve una Promesa.</dd>
-            <dt>Promise (Promesa)</dt><dd>Objeto que representa el resultado futuro (éxito/error) de una operación asíncrona.</dd>
-            <dt>Async/Await</dt><dd>Sintaxis para trabajar con Promesas de forma más legible, pausando y reanudando funciones <code>async</code>.</dd>
-            <dt>Call Stack</dt><dd>Pila de ejecución de funciones síncronas del motor JS.</dd>
-            <dt>Web APIs</dt><dd>Funcionalidades asíncronas del navegador/entorno ejecutadas en segundo plano.</dd>
-            <dt>Microtask Queue</dt><dd>Cola de alta prioridad para callbacks de Promesas.</dd>
-            <dt>Task Queue</dt><dd>Cola de baja prioridad para otros callbacks (setTimeout, eventos).</dd>
-            <dt>Event Loop</dt><dd>Mecanismo que orquesta el movimiento de callbacks de las colas al Call Stack.</dd>
+            <dt>Fetch</dt><dd>API para peticiones de red asíncronas; devuelve Promesa.</dd>
+            <dt>Promise</dt><dd>Objeto que representa resultado futuro de operación asíncrona.</dd>
+            <dt>Async/Await</dt><dd>Sintaxis para manejar Promesas de forma legible.</dd>
+            <dt>Call Stack</dt><dd>Pila de ejecución síncrona del motor JS.</dd>
+            <dt>Web APIs</dt><dd>Funcionalidades asíncronas del entorno (navegador/Node).</dd>
+            <dt>Microtask Queue</dt><dd>Cola de alta prioridad (Promesas).</dd>
+            <dt>Task Queue</dt><dd>Cola de baja prioridad (setTimeout, eventos).</dd>
+            <dt>Event Loop</dt><dd>Mecanismo que orquesta Call Stack y Queues.</dd>
         </dl>
 
-         <h3>7. Código del Simulador (`simulateFetch`)</h3>
+        <h3>9. Sintaxis de <code>fetch</code> (Resumen Comparativo)</h3>
+         <p>Forma tradicional con <code>.then().catch()</code>:</p>
+        <pre><code>function getDataThen(url) {
+  fetch(url)
+    .then(response => { /* Check response.ok */ return response.json(); })
+    .then(data => { /* Use data */ })
+    .catch(e => { /* Handle error */ });
+}</code></pre>
+        <p>Forma moderna con <code>async/await</code>:</p>
+        <pre><code>async function getDataAsync(url) {
+  try {
+    const response = await fetch(url);
+    /* Check response.ok */
+    const data = await response.json();
+    /* Use data */
+  } catch (e) { /* Handle error */ }
+}</code></pre>
+
+         <h3>10. Código del Simulador (`simulateFetch`)</h3>
         <p>
-            La función <code>simulateFetch</code> imita a <code>fetch</code> usando <code>setTimeout</code> para el retraso, pero crucialmente, <strong>resuelve una Promesa</strong>. Esto asegura que la continuación del código que usa <code>await simulateFetch()</code> vaya a la <strong>Microtask Queue</strong>, simulando el comportamiento real de <code>fetch</code>.
+            <code>simulateFetch</code> imita a <code>fetch</code>: usa <code>setTimeout</code> para el retraso pero resuelve una Promesa, asegurando que la continuación vaya a la Microtask Queue.
         </p>
 
-         <h3>8. Otros Aspectos Importantes</h3>
+         <h3>11. Otros Aspectos Importantes</h3>
         <ul>
-            <li><strong>Errores HTTP en Fetch:</strong> Recuerda comprobar <code>response.ok</code> o <code>response.status</code>, ya que `fetch` no rechaza la promesa por errores 4xx o 5xx.</li>
-            <li><strong>Bloqueo del Hilo:</strong> Evita código síncrono muy largo que pueda congelar la UI.</li>
-            <li><strong>Manejo de Errores:</strong> Usa siempre <code>.catch()</code> o <code>try...catch</code> para manejar posibles fallos en operaciones asíncronas.</li>
+            <li><strong>Errores HTTP en Fetch:</strong> Comprueba siempre <code>response.ok</code>.</li>
+            <li><strong>Bloqueo del Hilo:</strong> Evita código síncrono largo.</li>
+            <li><strong>Manejo de Errores:</strong> Usa siempre <code>.catch()</code> / <code>try...catch</code>.</li>
         </ul>
 
         <!-- ============================================== -->
@@ -711,45 +672,36 @@ async function fetchData(url) { // <-- 'url' aquí es PARÁMETRO
 
                 setTimeout(async () => {
                     // Step: Network request finished in background
-                    // Use requestAnimationFrame to slightly delay removal visual after network delay log
-                    requestAnimationFrame(async () => {
-                        removeItem(webApisDiv, fetchId); // Remove from Web APIs
+                    requestAnimationFrame(async () => { // Use rAF for smoother visual transition
+                        removeItem(webApisDiv, fetchId);
                         logToConsole(`Fetch('${url}') completado en background.`, 'api');
 
-                        // Step: Add callback to Microtask Queue
                         await delay(stepDelay / 2);
                          addItem(microtaskQueueDiv, microtaskDesc, callbackId);
                          logToConsole(`Callback de Fetch añadido a Microtask Queue.`, 'event');
 
-                         // Simulate Event Loop Check (simplified)
                          await delay(stepDelay);
                          logToConsole("Event Loop: Call Stack vacío. Comprobando Microtask Queue...", 'event');
 
-                         // Step: Move callback from Microtask Queue to Call Stack
                          removeItem(microtaskQueueDiv, callbackId);
                          logToConsole(`Event Loop: Moviendo '${microtaskDesc}' a Call Stack.`, 'event');
                          await delay(stepDelay / 2);
-                         addItem(callStackDiv, microtaskDesc, callbackId, 'microtask-item'); // Identify as microtask visually
+                         addItem(callStackDiv, microtaskDesc, callbackId, 'microtask-item');
                          logToConsole(`Ejecutando ${microtaskDesc}...`, 'microtask');
 
-                         // Step: Execute the callback (resolve/reject the promise)
                          await delay(stepDelay);
                          if (fail) {
                              logToConsole("Fetch simulado falló.", 'error');
                              reject(new Error("Simulated Network Error"));
                          } else {
-                             // In a real fetch, this step would resolve with the Response object.
-                             // Our simulation resolves directly with the final data for simplicity.
                              logToConsole("Fetch simulado exitoso.", 'microtask');
                              resolve({ success: true, message: "Datos simulados OK!" });
                          }
 
-                         // Step: Callback finished, remove from Call Stack
                          await delay(stepDelay / 2);
                          logToConsole(`'${microtaskDesc}' finalizado. Saliendo de Call Stack.`, 'microtask');
                          removeItem(callStackDiv, callbackId);
                     });
-
                 }, networkDelay);
             });
         }
@@ -760,134 +712,96 @@ async function fetchData(url) { // <-- 'url' aquí es PARÁMETRO
         }
 
         // --- Main Async Function (triggered by button) ---
-        // Note: This function implicitly uses '/api/data' when called by the button.
-        async function fetchData(url = '/api/data') { // Added url parameter with default
-            if (isRunning) return; // Don't run if already running
+        async function fetchData(url = '/api/data') {
+            if (isRunning) return;
             isRunning = true;
             fetchButton.disabled = true;
             fetchButton.textContent = 'Procesando...';
 
             clearVisualizations();
-            await delay(200); // Small pause before starting
+            await delay(200);
 
-            const mainFuncId = 'fetchData';
-            const log1Id = 'log1';
-            const log2Id = 'log2';
-            const log3Id = 'log3';
-            const logAwaitId = 'logAwait';
-            const simulateFetchId = 'simFetch';
-            // IDs for post-await logs (will be added later)
-            const log6Id = 'log6';
-            const logDataId = 'logData';
-            const log7Id = 'log7';
-
+            const mainFuncId = 'fetchData'; // Simplified ID
+            const ids = {}; // Store dynamic IDs
+            const getId = (name) => ids[name] || (ids[name] = `${name}-${Date.now()}`); // Helper for unique IDs per run
 
             try {
-                // Step 1: Add fetchData to Call Stack
                 logToConsole("Click detectado. Ejecutando handleFetchClick -> fetchData()", 'event');
                 await delay(stepDelay);
-                addItem(callStackDiv, `handleFetchClick() / fetchData('${url}')`, mainFuncId); // Show url used
+                addItem(callStackDiv, `handleFetchClick() / fetchData('${url}')`, mainFuncId);
 
-                // Step 2: Execute first console.log
                 await delay(stepDelay);
                 logToConsole("1. Iniciando fetchData...", 'sync');
-                addItem(callStackDiv, "console.log('1...')", log1Id);
+                addItem(callStackDiv, "console.log('1...')", getId('log1'));
                 await delay(stepDelay / 2);
-                removeItem(callStackDiv, log1Id);
+                removeItem(callStackDiv, getId('log1'));
 
-                // Step 3: Execute console.log before fetch
                 await delay(stepDelay);
                 logToConsole("2. Antes de llamar a fetch...", 'sync');
-                addItem(callStackDiv, "console.log('2...')", log2Id);
+                addItem(callStackDiv, "console.log('2...')", getId('log2'));
                  await delay(stepDelay / 2);
-                removeItem(callStackDiv, log2Id);
+                removeItem(callStackDiv, getId('log2'));
 
-                // Step 4: Call simulateFetch (synchronous part: initiates the process)
                 await delay(stepDelay);
-                logToConsole(`Llamando a simulateFetch('${url}')...`, 'sync'); // Show url used
-                addItem(callStackDiv, `simulateFetch('${url}')`, simulateFetchId); // Show url used
-                const responsePromise = simulateFetch(url); // Initiates background task using the passed url
-                 await delay(stepDelay); // Show simulateFetch call briefly
-                 removeItem(callStackDiv, simulateFetchId); // The *call* finishes, promise is returned
+                logToConsole(`Llamando a simulateFetch('${url}')...`, 'sync');
+                addItem(callStackDiv, `simulateFetch('${url}')`, getId('simFetch'));
+                const responsePromise = simulateFetch(url);
+                 await delay(stepDelay);
+                 removeItem(callStackDiv, getId('simFetch'));
 
-                // Step 5: Execute console.log after fetch call
                 await delay(stepDelay);
                 logToConsole("3. Después de llamar a fetch (promesa creada)", 'sync');
-                 addItem(callStackDiv, "console.log('3...')", log3Id);
+                 addItem(callStackDiv, "console.log('3...')", getId('log3'));
                  await delay(stepDelay / 2);
-                 removeItem(callStackDiv, log3Id);
+                 removeItem(callStackDiv, getId('log3'));
 
-                // Step 6: Await the promise
                 await delay(stepDelay);
                 logToConsole("await responsePromise - Pausando fetchData(). Sale de Call Stack.", 'event');
-                 addItem(callStackDiv, "await ...", logAwaitId); // Show 'await' briefly
+                 addItem(callStackDiv, "await ...", getId('logAwait'));
                  await delay(stepDelay/2);
-                // Function effectively leaves the stack here while waiting
-                removeItem(callStackDiv, logAwaitId);
-                removeItem(callStackDiv, mainFuncId); // <<-- fetchData leaves the stack here
+                removeItem(callStackDiv, getId('logAwait'));
+                removeItem(callStackDiv, mainFuncId); // <<-- fetchData leaves stack
 
-                // --- Code execution pauses here ---
-                // --- Web API handles fetch, then puts callback in Microtask Queue ---
-                // --- Event Loop moves callback to Call Stack when Stack is empty ---
-                // --- simulateFetch's internal logic handles the visualization for WebAPI -> Microtask -> Call Stack ---
+                const data = await responsePromise; // <<-- Pause happens here
 
-                // await internally waits for the promise and the callback execution *initiated by simulateFetch*
-                const data = await responsePromise; // <<-- Value assigned when fetchData resumes
-
-                // --- Execution Resumes Here (after microtask callback finished) ---
-                await delay(stepDelay / 2); // Delay before showing fetchData resuming
+                await delay(stepDelay / 2);
                  logToConsole("Continuando ejecución de fetchData() tras await.", 'event');
-                addItem(callStackDiv, `fetchData('${url}') (continuación)`, mainFuncId); // <<-- fetchData re-enters the stack
+                addItem(callStackDiv, `fetchData('${url}') (continuación)`, mainFuncId); // <<-- fetchData re-enters stack
 
-                // Step 7: Execute log after await
                 await delay(stepDelay);
                 logToConsole("6. Promesa resuelta, continuando fetchData...", 'sync');
-                addItem(callStackDiv, "console.log('6...')", log6Id);
+                addItem(callStackDiv, "console.log('6...')", getId('log6'));
                 await delay(stepDelay / 2);
-                removeItem(callStackDiv, log6Id);
+                removeItem(callStackDiv, getId('log6'));
 
-                // Step 8: Log and display data
                 await delay(stepDelay);
-                 // In a real scenario with a second await for response.json(), this part would also be after a pause/resume cycle.
                 logToConsole(`Mostrando datos: ${JSON.stringify(data)}`, 'result');
-                addItem(callStackDiv, "Actualizando UI...", logDataId); // Simplified log
+                addItem(callStackDiv, "Actualizando UI...", getId('logData'));
                  await delay(stepDelay / 2);
-                 removeItem(callStackDiv, logDataId);
+                 removeItem(callStackDiv, getId('logData'));
                 updateResults(`Datos recibidos: ${data.message}`);
 
-
-                // Step 9: Final log
-                 await delay(stepDelay);
+                await delay(stepDelay);
                 logToConsole("7. fetchData completado.", 'sync');
-                 addItem(callStackDiv, "console.log('7...')", log7Id);
+                 addItem(callStackDiv, "console.log('7...')", getId('log7'));
                  await delay(stepDelay / 2);
-                 removeItem(callStackDiv, log7Id);
-
+                 removeItem(callStackDiv, getId('log7'));
 
             } catch (error) {
-                 // Error handling if promise rejects
                  logToConsole(`ERROR en fetchData: ${error.message}`, 'error');
                  updateResults(`Error: ${error.message}`, true);
-                 // Ensure main function is removed from stack on error after await
-                  const errorMainFuncElement = document.getElementById(mainFuncId);
-                  if (errorMainFuncElement) {
-                       removeItem(callStackDiv, mainFuncId);
-                  }
+                 const errorMainFuncElement = document.getElementById(mainFuncId);
+                 if (errorMainFuncElement) removeItem(callStackDiv, mainFuncId);
             } finally {
-                // Step 10: fetchData finishes, remove from Call Stack
                 await delay(stepDelay / 2);
-                 // Check if the function element still exists before logging/removing
                  const finalMainFuncElement = document.getElementById(mainFuncId);
                  if (finalMainFuncElement) {
                     logToConsole("fetchData() finalizado completamente. Saliendo de Call Stack.", 'event');
-                    removeItem(callStackDiv, mainFuncId); // Remove continuation
+                    removeItem(callStackDiv, mainFuncId);
                  } else {
-                     // If it was removed due to error before finally, log slightly differently
                      logToConsole("Limpieza final de fetchData() completada.", 'event');
                  }
 
-
-                // Re-enable button
                 await delay(stepDelay /2);
                 fetchButton.disabled = false;
                 fetchButton.textContent = 'Iniciar Fetch de Datos';
@@ -897,7 +811,6 @@ async function fetchData(url) { // <-- 'url' aquí es PARÁMETRO
         }
 
         // --- Event Listener ---
-        // Pass the specific URL needed for the simulation when the button is clicked
         fetchButton.addEventListener('click', () => fetchData('/api/data'));
 
     </script>
