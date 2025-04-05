@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulador de Renderizado del Navegador</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- Barra superior Fija para Controles -->
+    <div class="top-bar">
+        <div class="controls" style="display: flex; justify-content: space-between; align-items: center;">
+            <div style="display:flex; justify-content:center; align-items: center;">
+                <button id="prev-step" disabled>« Anterior</button>
+                <button id="next-step">Siguiente »</button>
+            </div>
+            <button onclick="location.href='#prompt-anchor'">Prompt a la IA para generar esta página</button>
+        </div>
+
+    </div>
+
+    <!-- Fin Barra superior -->
+
+    <!-- Envoltura para el resto del contenido -->
+    <div class="content-wrapper">
+
+        <!-- Contenedor Explicación -->
+        <div class="control-explanation-container">
+            <div id="explanation-panel">
+                <h2>Explicación del Paso Actual</h2>
+                <p id="explanation-text">Haz clic en "Siguiente Paso" para iniciar la simulación.</p>
+            </div>
+        </div>
+
+        <!-- Contenedor de Paneles Principales -->
+        <div class="panels-container">
+
+            <!-- Panel Izquierdo: Código Fuente -->
+            <div class="panel" id="source-panel">
+                <h2>Código Fuente HTML</h2>
+                <pre><code id="source-code" data-language="html">
+&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+    &lt;title&gt;Página Simulada&lt;/title&gt;
+    &lt;link rel="stylesheet" href="sim-style.css"&gt; &lt;!-- CSS Simulado --&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;h1 id="main-heading"&gt;Título Principal&lt;/h1&gt;
+    &lt;p class="intro"&gt;Este es el primer párrafo.&lt;/p&gt;
+    &lt;button id="action-button"&gt;Haz Clic&lt;/button&gt;
+    &lt;script src="sim-script.js"&gt;&lt;/script&gt; &lt;!-- JS Simulado --&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+                </code></pre>
+                <!-- *** LÍNEA ELIMINADA *** -->
+                <!-- <div id="source-highlight"></div> -->
+            </div>
+
+            <!-- Contenedor para Paneles Centrales (DOM y CSSOM) -->
+            <div class="center-panels-wrapper">
+                <!-- Panel Central Superior: Árbol DOM -->
+                <div class="panel sub-panel" id="dom-panel">
+                    <h2>Árbol DOM</h2>
+                    <pre id="dom-tree"><!-- DOM se generará aquí --></pre>
+                </div>
+
+                <!-- Panel Central Inferior: Árbol CSSOM -->
+                <div class="panel sub-panel" id="cssom-panel">
+                    <h2>CSSOM (Simulado)</h2>
+                    <pre id="cssom-tree"><!-- CSSOM se generará aquí --></pre>
+                </div>
+            </div>
+
+            <!-- Panel Derecho: Renderizado Visual -->
+            <div class="panel" id="render-panel">
+                <h2>Renderizado Visual (Simulado)</h2>
+                <div id="render-output">
+                    <!-- El contenido renderizado aparecerá aquí -->
+                </div>
+            </div>
+        </div> <!-- Fin panels-container -->
+    </div> <!-- Fin content-wrapper -->
+
+
+    <div class="prompt-section" id="prompt-anchor">
+        <h2>Prompt a la IA para generar esta página</h2>
+        <pre class="prompt-text">
+Quiero que crees una pagina web (con tres ficheros. html, js, y cc) para que pueda enseñar a los alumnos  como un "navegador web simulado" va leyendo PASO a PASO un código HTML ejemplo, va creando el DOM correspondiente y como el navegador web simulado va visualizando en la pantalla el código  HTML correspondiente.
+
+La pagina web que crees tiene que tener tres paneles, alineados horizontalmente: Panel de la izquierda, panel central y panel de la derecha.
+
+En el panel de la izquierda,  titulado  "Código Fuente HTML", debe aparece un texto HTML ejemplo del que se va a simulador que un navegador lo va a recorrer line por linea.
+
+Este es el codigo HTML ejemplo que el navegador web simulado va recorrer paso a paso:
+
+&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+    &lt;title&gt;Página Simulada&lt;/title&gt;
+    &lt;link rel="stylesheet" href="sim-style.css"&gt; &lt;!-- CSS Simulado --&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;h1 id="main-heading"&gt;Título Principal&lt;/h1&gt;
+    &lt;p class="intro"&gt;Este es el primer párrafo.&lt;/p&gt;
+    &lt;button id="action-button"&gt;Haz Clic&lt;/button&gt;
+    &lt;script src="sim-script.js"&gt;&lt;/script&gt; &lt;!-- JS Simulado --&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+
+Nota he remplazado  < y > por < y > para que se visualice correctamente.
+
+En el panel de la izquierda "Código Fuente HTML" deja el codigo fijo desde el principio. El contenido del panel no debe cambiar cada vez que se pulse el boton "Siguiente paso"
+
+En el panel del medio, titulado  "Árbol DOM", deben de aparecen los sucesivos objetos DOM que el navegador web simulado va creando, cada vez que lee una nueva linea del HTML ejemplo, y va añadiendo al objeto "document". En este panel pon escribe el tipo de objeto que se va creando y dentro de que objeto ya creado lo incluye.
+
+En el panel de la izquierda, titulado "Renderizado Visual (Simulado)" aparece la visualización progresiva  que haría un navegador simulado según va recorriendo  linea a linea el HTML de ejemplo.
+
+En la parte de arriba del programa que debes crear, deben de aparecer dos botones: Boton "Siguiente paso" y botón "Paso anterior". Estos botones deben controlar, paso a paso, la lectura linea a linea que realiza el navegador simulado del codigo HTML ejemplo. Estos botones deben de estar en la parte más arriba de la página.
+
+Tamicen, en la parte superior de la pagina del programa, debe aparecer un panel con el texto: "Explicación del Paso Actual" en el que se explique, cada uno de las tareas que va realizando el navegador simulado al leer linea a linea el código HTML de ejemplo. 
+
+Estos son ejemplos de los textos que deben aparecer en el "panel de explicación" cada vez que se pulsa el botón "Siguiente paso":
+
+Al arrancar el programa:
+ - Haz clic en "Siguiente Paso" para iniciar la simulación.
+
+Textos que aparecerán cada vez que se pulse el botón "siguiente paso" y que corresponden a leer una linea del código HTML ejemplo:
+1. El navegador lee la declaración &lt;!DOCTYPE html&gt; y comienza a procesar la etiqueta raíz &lt;html&gt;.
+2. Procesa la etiqueta &lt;head&gt;. El contenido dentro de &lt;head&gt; generalmente no es visible, pero contiene metadatos importantes, enlaces a CSS y el título.
+3. Encuentra y procesa la etiqueta &lt;title&gt;. El texto ("Página Simulada") se establece como título de la pestaña/ventana del navegador.
+4. Encuentra una etiqueta &lt;link&gt; que referencia una hoja de estilos (`sim-style.css`). El navegador inicia la *descarga* del archivo CSS de forma asíncrona (sin bloquear el análisis del HTML por ahora).
+5. Procesa la etiqueta &lt;body&gt;. Aquí comienza el contenido principal y visible de la página.
+6. Encuentra un &lt;h1&gt; con id "main-heading". Se añade al árbol DOM y se renderiza visualmente el texto "Título Principal". Aún no se aplican los estilos del CSS externo.
+7. (Simulado) El archivo CSS (`sim-style.css`) termina de descargarse. El navegador lo analiza, crea el CSSOM (CSS Object Model) y lo combina con el DOM para aplicar los estilos. El &lt;h1&gt; ahora recibe sus estilos (color, fuente, borde inferior).
+8. Encuentra un &lt;p&gt; con clase "intro". Se añade al DOM y se renderiza. Los estilos del CSS (cursiva, fondo, padding) se aplican inmediatamente porque el CSSOM ya está disponible.
+9. Encuentra un &lt;button&gt; con id "action-button". Se añade al DOM y se renderiza con sus estilos CSS (fondo verde, etc.). Aún no tiene funcionalidad asociada.
+10. Encuentra una etiqueta &lt;script&gt; con un atributo `src`. El análisis del HTML se *detiene* (pausa síncrona por defecto). El navegador inicia la descarga y posterior ejecución del archivo `sim-script.js`.
+11. (Simulado) El archivo `sim-script.js` se descarga y ejecuta. El código busca elementos en el DOM (renderizado) por ID, añade un `event listener` (para `click`) al botón y modifica el texto del &lt;h1&gt; cuando se hace clic.
+
+Mejora el  texto explicativo para que sea más detallado sobre cómo tareas como la descarga de CSS y JS ocurren a menudo en paralelo con el análisis del HTML (hasta que se encuentra un &lt;script&gt; sin async o defer).
+
+Piensa bien la estructura de este programa antes de escribirlo  para que este bien estructurado y sea facil modificarlo. 
+
+Añade otros aspectos que no haya considerado para que los alumnos y que mejore su entendimiento de como es la interacción entre un navegador web, las liineas de código HTML y la creación del DOM correspondiente a dicho codigo HTML.
+        </pre>
+    </div>
+    <!-- *** FIN SECCIÓN: Prompt a la IA *** -->
+
+    <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,88 @@
+Quiero que crees una pagina web (con tres ficheros. html, js, y cc) para que pueda enseñar a los alumnos  como un "navegador web simulado" va leyendo PASO a PASO un código HTML ejemplo, va creando el DOM correspondiente y como el navegador web simulado va visualizando en la pantalla el código  HTML correspondiente. 
+
+La pagina web que crees tiene que tener tres paneles, alineados horizontalmente: Panel de la izquierda, panel central y panel de la derecha.
+
+En el panel de la izquierda,  titulado  "Código Fuente HTML", debe aparece un texto HTML ejemplo del que se va a simulador que un navegador lo va a recorrer line por linea.
+
+Este es el codigo HTML ejemplo que el navegador web simulado va recorrer paso a paso:
+
+&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+    &lt;title&gt;Página Simulada&lt;/title&gt;
+    &lt;link rel="stylesheet" href="sim-style.css"&gt; &lt;!-- CSS Simulado --&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;h1 id="main-heading"&gt;Título Principal&lt;/h1&gt;
+    &lt;p class="intro"&gt;Este es el primer párrafo.&lt;/p&gt;
+    &lt;button id="action-button"&gt;Haz Clic&lt;/button&gt;
+    &lt;script src="sim-script.js"&gt;&lt;/script&gt; &lt;!-- JS Simulado --&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+
+Nota he remplazado  < y > por &lt; y &gt; para que se visualice correctamente.
+
+En el panel de la izquierda "Código Fuente HTML" deja el codigo fijo desde el principio. El contenido del panel no debe cambiar cada vez que se pulse el boton "Siguiente paso"
+
+En el panel del medio, titulado  "Árbol DOM", deben de aparecen los sucesivos objetos DOM que el navegador web simulado va creando, cada vez que lee una nueva linea del HTML ejemplo, y va añadiendo al objeto "document". En este panel pon escribe el tipo de objeto que se va creando y dentro de que objeto ya creado lo incluye.
+
+En el panel de la izquierda, titulado "Renderizado Visual (Simulado)" aparece la visualización progresiva  que haría un navegador simulado según va recorriendo  linea a linea el HTML de ejemplo.
+
+En la parte de arriba del programa que debes crear, deben de aparecer dos botones: Boton "Siguiente paso" y botón "Paso anterior". Estos botones deben controlar, paso a paso, la lectura linea a linea que realiza el navegador simulado del codigo HTML ejemplo. Estos botones deben de estar en la parte más arriba de la página.
+
+Tamicen, en la parte superior de la pagina del programa, debe aparecer un panel con el texto: "Explicación del Paso Actual" en el que se explique, cada uno de las tareas que va realizando el navegador simulado al leer linea a linea el código HTML de ejemplo. 
+
+Estos son ejemplos de los textos que deben aparecer en el "panel de explicación" cada vez que se pulsa el botón "Siguiente paso":
+
+Al arrancar el programa:
+ - Haz clic en "Siguiente Paso" para iniciar la simulación.
+
+Textos que aparecerán cada vez que se pulse el botón "siguiente paso" y que corresponden a leer una linea del código HTML ejemplo:
+1. El navegador lee la declaración <!DOCTYPE html> y comienza a procesar la etiqueta raíz <html>.
+2. Procesa la etiqueta <head>. El contenido dentro de <head> generalmente no es visible, pero contiene metadatos importantes, enlaces a CSS y el título.
+3. Encuentra y procesa la etiqueta <title>. El texto ("Página Simulada") se establece como título de la pestaña/ventana del navegador.
+4. Encuentra una etiqueta <link> que referencia una hoja de estilos (`sim-style.css`). El navegador inicia la *descarga* del archivo CSS de forma asíncrona (sin bloquear el análisis del HTML por ahora).
+5. Procesa la etiqueta <body>. Aquí comienza el contenido principal y visible de la página.
+6. Encuentra un <h1> con id "main-heading". Se añade al árbol DOM y se renderiza visualmente el texto "Título Principal". Aún no se aplican los estilos del CSS externo.
+7. (Simulado) El archivo CSS (`sim-style.css`) termina de descargarse. El navegador lo analiza, crea el CSSOM (CSS Object Model) y lo combina con el DOM para aplicar los estilos. El <h1> ahora recibe sus estilos (color, fuente, borde inferior).
+8. Encuentra un <p> con clase "intro". Se añade al DOM y se renderiza. Los estilos del CSS (cursiva, fondo, padding) se aplican inmediatamente porque el CSSOM ya está disponible.
+9. Encuentra un <button> con id "action-button". Se añade al DOM y se renderiza con sus estilos CSS (fondo verde, etc.). Aún no tiene funcionalidad asociada.
+10. Encuentra una etiqueta <script> con un atributo `src`. El análisis del HTML se *detiene* (pausa síncrona por defecto). El navegador inicia la descarga y posterior ejecución del archivo `sim-script.js`.
+11. (Simulado) El archivo `sim-script.js` se descarga y ejecuta. El código busca elementos en el DOM (renderizado) por ID, añade un `event listener` (para `click`) al botón y modifica el texto del <h1> cuando se hace clic.
+
+Mejora el  texto explicativo para que sea más detallado sobre cómo tareas como la descarga de CSS y JS ocurren a menudo en paralelo con el análisis del HTML (hasta que se encuentra un <script> sin async o defer).
+
+Piensa bien la estructura de este programa antes de escribirlo  para que este bien estructurado y sea facil modificarlo. 
+
+Añade otros aspectos que no haya considerado para que los alumnos y que mejore su entendimiento de como es la interacción entre un navegador web, las liineas de código HTML y la creación del DOM correspondiente a dicho codigo HTML.
+
+=============RESPUESTA DE LA IA============
+Cómo usarlo:
+
+Crea una carpeta para tu proyecto (ej., simulador-navegador).
+
+Dentro de esa carpeta, crea tres archivos: index.html, style.css, y script.js.
+
+Copia y pega el contenido correspondiente en cada archivo.
+
+Abre el archivo index.html en tu navegador web.
+
+Mejoras y Consideraciones Adicionales:
+
+Resaltado de Código Más Preciso: El resaltado actual cubre toda la línea. Podría mejorarse para resaltar solo la etiqueta específica que se está procesando en ese paso. Esto requeriría un análisis más complejo del HTML o el uso de una biblioteca de resaltado de sintaxis.
+
+Visualización del CSSOM: Se podría añadir otro panel (o una sección en el panel DOM) para mostrar una representación simplificada del CSSOM a medida que se construye y aplica.
+
+Simulación de Errores: Podrías añadir pasos que simulen errores comunes (ej., HTML mal formado, CSS no encontrado) y cómo el navegador podría intentar recuperarse o mostrar un error.
+
+Asincronía: La simulación actual es lineal. Se podría añadir texto explicativo más detallado sobre cómo tareas como la descarga de CSS y JS ocurren a menudo en paralelo con el análisis del HTML (hasta que se encuentra un <script> sin async o defer).
+
+Interactividad Simulada: Para el paso de ejecución de JS, podrías hacer que el botón en el panel de renderizado realmente cambie el texto del H1 dentro de ese panel al hacer clic, para demostrar el efecto del addEventListener. Esto requeriría añadir un pequeño script dentro del updateUI que se ejecute solo en ese paso para añadir el listener al botón renderizado.
+
+Reflow/Repaint: Explicar en los pasos cuándo un cambio (añadir un elemento, aplicar CSS) probablemente causaría un reflow (recalcular diseño) y un repaint (volver a dibujar) en un navegador real.
+
+Línea de Tiempo Visual: Podría añadirse una barra de progreso o una línea de tiempo simple que muestre en qué paso se encuentra el usuario.
+
+====NUEVOS PROMPTS===
+
+Divide horizontalmente el panel central para que en la parte superior aparezca la construcción del DOM y en la parte inferios se visualice igualmente de CSSOM 
