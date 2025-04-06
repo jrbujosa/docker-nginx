@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulador de Almacenamiento Web</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="storage-simulator">
+        <h1>Simulador de Almacenamiento Web: Cookies vs LocalStorage vs SessionStorage</h1>
+
+        <div class="panels-wrapper">
+            <!-- Panel de Controles -->
+            <div class="panel" id="controls-panel">
+                <h2>Controles</h2>
+                <div class="control-group">
+                    <label for="key-input">Clave:</label>
+                    <input type="text" id="key-input" placeholder="Nombre de la clave">
+                </div>
+                <div class="control-group">
+                    <label for="value-input">Valor:</label>
+                    <input type="text" id="value-input" placeholder="Valor a almacenar">
+                </div>
+                <div class="button-group">
+                    <button id="save-cookie-btn" title="Guardar como cookie (expira en 1 día)">Guardar Cookie</button>
+                    <button id="save-local-btn">Guardar LocalStorage</button>
+                    <button id="save-session-btn">Guardar SessionStorage</button>
+                </div>
+                <hr>
+                <div class="button-group">
+                    <button id="read-all-btn" title="Actualizar manualmente las áreas de visualización leyendo el almacenamiento actual del navegador">Leer Todo</button>
+                    <button id="clear-all-btn" title="Borrar todos los datos de los tres almacenamientos accesibles desde esta página">Borrar Todo</button>
+                </div>
+                 <hr>
+                 <div class="button-group">
+                    <button id="simulate-close-btn" title="Simula cerrar y reabrir la pestaña/navegador. SessionStorage se borrará.">Simular Cierre Pestaña/Navegador</button>
+                </div>
+                <div id="status-message" class="status-message"></div>
+            </div>
+
+            <!-- Panel de Visualización -->
+            <div class="panel" id="display-panel">
+                 <h2>Visualización del Almacenamiento</h2>
+                <div class="display-areas">
+                    <!-- Cookies -->
+                    <div class="storage-area" id="cookies-display">
+                        <h3>Cookies</h3>
+                        <p class="description">Pequeños datos. <strong>Se envían al servidor</strong> con cada petición HTTP. Persistencia definida por 'expires'. Capacidad limitada (~4KB).</p>
+                        <pre class="storage-content" id="cookie-content">Cargando...</pre>
+                    </div>
+                    <!-- LocalStorage -->
+                    <div class="storage-area" id="localstorage-display">
+                        <h3>LocalStorage</h3>
+                        <p class="description">Almacenamiento clave-valor. <strong>Persistente</strong> hasta borrado manual o por código. No se envía al servidor automáticamente. Capacidad mayor (~5-10MB).</p>
+                        <pre class="storage-content" id="localstorage-content">Cargando...</pre>
+                    </div>
+                    <!-- SessionStorage -->
+                    <div class="storage-area" id="sessionstorage-display">
+                        <h3>SessionStorage</h3>
+                        <p class="description">Almacenamiento clave-valor. Persistente solo durante la <strong>sesión de la pestaña</strong>. Se borra al cerrar la pestaña/navegador. No se envía al servidor. Capacidad similar a LocalStorage.</p>
+                        <pre class="storage-content" id="sessionstorage-content">Cargando...</pre>
+                    </div>
+                </div>
+                 <hr>
+                 <!-- Panel Petición HTTP Simulada -->
+                 <div class="http-area" id="http-request-panel">
+                    <h3>Petición HTTP Saliente (Simulada)</h3>
+                    <p class="description">Las cookies (no marcadas como HttpOnly) se añadirían automáticamente a la cabecera <code>Cookie</code> de las peticiones al mismo dominio.</p>
+                    <pre class="http-content" id="http-content">Cookie: (ninguna)</pre>
+                </div>
+            </div>
+        </div> <!-- Fin panels-wrapper -->
+
+    </div> <!-- Fin storage-simulator -->
+
+    <!-- SECCIÓN: Tabla Comparativa y Explicaciones -->
+    <section class="info-section storage-simulator">
+        <h2>Comparativa y Detalles del Almacenamiento Web</h2>
+
+        <p class="important-note">
+            <strong>Aclaración Importante:</strong> Mientras que las <strong>Cookies</strong> son leídas y escritas tanto por el servidor (cabeceras HTTP) como por el cliente (JavaScript, si no son `HttpOnly`), <strong>LocalStorage</strong> y <strong>SessionStorage</strong> son mecanismos primordialmente del <strong>lado del cliente</strong>. El servidor no tiene acceso directo a ellos; el JavaScript de la página los gestiona.
+        </p>
+
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Característica</th>
+                        <th>Cookies</th>
+                        <th>LocalStorage</th>
+                        <th>SessionStorage</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Iniciado por</strong></td>
+                        <td>Servidor (<code>Set-Cookie</code>) o Cliente (<code>document.cookie</code>)</td>
+                        <td>Cliente (<code>localStorage.setItem</code>)</td>
+                        <td>Cliente (<code>sessionStorage.setItem</code>)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Persistencia</strong></td>
+                        <td>Hasta fecha de expiración definida (o fin de sesión si no hay expiración).</td>
+                        <td>Permanente, hasta borrado por el usuario, por la web (<code>localStorage.clear()</code>) o expiración del caché del navegador.</td>
+                        <td>Solo durante la sesión de la pestaña actual. Se borra al cerrar la pestaña o el navegador.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Accesible desde</strong></td>
+                        <td>Cualquier ventana/pestaña del navegador (dentro del mismo dominio/path).</td>
+                        <td>Cualquier ventana/pestaña del mismo origen (protocolo+dominio+puerto).</td>
+                        <td>Solo la ventana/pestaña que lo creó.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Límite de Almacenamiento</strong></td>
+                        <td>Pequeño (~4KB por cookie, ~20 cookies por dominio, varía por navegador).</td>
+                        <td>Grande (~5-10MB por origen, varía por navegador).</td>
+                        <td>Grande (~5-10MB por origen, varía por navegador).</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Enviado al Servidor</strong></td>
+                        <td>Sí, automáticamente con cada petición HTTP al mismo dominio.</td>
+                        <td>No, nunca automáticamente. Debe enviarse explícitamente por JS si es necesario.</td>
+                        <td>No, nunca automáticamente. Debe enviarse explícitamente por JS si es necesario.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Accesibilidad JS</strong></td>
+                        <td>Sí (<code>document.cookie</code>), a menos que tenga el atributo <code>HttpOnly</code>.</td>
+                        <td>Sí (objeto <code>localStorage</code>).</td>
+                        <td>Sí (objeto <code>sessionStorage</code>).</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Casos de Uso Típicos</strong></td>
+                        <td>IDs de sesión, seguimiento de usuarios, preferencias básicas que el servidor necesita conocer.</td>
+                        <td>Datos de aplicación offline, preferencias de usuario complejas (UI), datos que deben persistir entre sesiones.</td>
+                        <td>Datos temporales de la sesión actual (ej. estado de un formulario multi-paso, datos de usuario para una sola visita).</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Ventajas</strong></td>
+                        <td>Soportado universalmente, útil para gestión de sesión basada en servidor, atributo HttpOnly para seguridad.</td>
+                        <td>Mayor capacidad, API más simple (clave-valor), no sobrecarga las peticiones HTTP.</td>
+                        <td>Mayor capacidad, API simple, aislamiento por pestaña, se limpia automáticamente.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Inconvenientes</strong></td>
+                        <td>Baja capacidad, sobrecarga cada petición HTTP, API compleja (parsing de strings), riesgos de seguridad (CSRF si no se manejan bien).</td>
+                        <td>Solo almacena strings (requiere <code>JSON.stringify/parse</code> para objetos), síncrono (puede bloquear hilo principal en operaciones masivas - raro), vulnerable a XSS.</td>
+                        <td>Limitado a una sola pestaña/sesión, también almacena solo strings, síncrono, vulnerable a XSS.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <h3>Cómo Inspeccionar el Almacenamiento en tu Navegador</h3>
+        <p>Puedes ver y manipular fácilmente estos almacenamientos usando las Herramientas de Desarrollo (DevTools) de tu navegador:</p>
+        <ol>
+            <li>Abre DevTools (normalmente con la tecla `F12`).</li>
+            <li>Navega a la pestaña <strong>"Application"</strong> (en Chrome/Edge) o <strong>"Storage"</strong> (en Firefox).</li>
+            <li>En el panel izquierdo, busca las secciones "Local Storage", "Session Storage" y "Cookies".</li>
+            <li>Expande cada sección y selecciona el origen (la dirección de la página web) que te interese.</li>
+            <li>Verás tablas interactivas donde puedes inspeccionar, añadir, editar y borrar los datos almacenados.</li>
+        </ol>
+        <p>También puedes interactuar con ellos directamente desde la pestaña "Console" de DevTools escribiendo comandos como <code>localStorage.getItem('miClave')</code>, <code>sessionStorage</code>, o <code>document.cookie</code>.</p>
+
+    </section> <!-- Fin info-section -->
+
+    <!-- SECCIÓN: Casos de Uso Reales -->
+    <section class="info-section storage-simulator">
+        <h2>Casos de Uso Reales</h2>
+        <p>Aquí hay ejemplos concretos de cuándo podrías usar cada tipo de almacenamiento web:</p>
+
+        <h3>Cookies</h3>
+        <ul>
+            <li><strong>Autenticación y Gestión de Sesión:</strong> El servidor envía un ID de sesión en una cookie (`HttpOnly`, `Secure`) después del login. El navegador la devuelve automáticamente, permitiendo al servidor identificar al usuario en peticiones posteriores.</li>
+            <li><strong>Seguimiento y Personalización Básica:</strong> Recordar preferencias simples (como el idioma o el tema elegido) que el servidor necesita conocer para renderizar la página correctamente.</li>
+            <li><strong>Analíticas y Publicidad:</strong> Terceros (Google Analytics, redes publicitarias) usan cookies para rastrear usuarios a través de diferentes sitios (Third-party cookies, aunque están siendo restringidas).</li>
+            <li><strong>Carritos de Compra (Menos común ahora):</strong> Antes se usaban cookies para guardar el contenido del carrito, aunque LocalStorage es más adecuado hoy en día si no se requiere que el servidor lo sepa inmediatamente.</li>
+        </ul>
+
+        <h3>LocalStorage</h3>
+        <ul>
+            <li><strong>Preferencias de Interfaz de Usuario (UI):</strong> Guardar el estado de la UI (ej. modo oscuro/claro, paneles abiertos/cerrados, filtros seleccionados) para que persista incluso si el usuario cierra el navegador y vuelve más tarde.</li>
+            <li><strong>Datos de Aplicación Offline (PWAs):</strong> Almacenar datos esenciales (artículos descargados, borradores de mensajes) para que la aplicación funcione sin conexión a internet.</li>
+            <li><strong>Caching de Datos de API:</strong> Guardar respuestas de API que no cambian frecuentemente para evitar peticiones innecesarias y acelerar la carga de la aplicación.</li>
+            <li><strong>Tokens de Autenticación (JWT/OAuth):</strong> Almacenar el token recibido del servidor después del login para enviarlo manually en las cabeceras de las peticiones a APIs protegidas (aunque su seguridad en LocalStorage es debatida, se usa comúnmente).</li>
+            <li><strong>Progreso de Usuario en Aplicaciones Simples:</strong> Guardar el nivel actual en un juego web simple o el último punto leído en un lector online.</li>
+        </ul>
+
+        <h3>SessionStorage</h3>
+        <ul>
+            <li><strong>Estado Temporal de Formularios:</strong> Guardar los datos introducidos por el usuario en un formulario largo o multi-paso, para que no se pierdan si recarga accidentalmente la página o navega a otra sección y vuelve dentro de la misma sesión de pestaña.</li>
+            <li><strong>Datos de Usuario para una Sola Sesión:</strong> Almacenar información específica del usuario (ej. filtros aplicados en una búsqueda) que solo es relevante mientras la pestaña está abierta y no necesita persistir más allá.</li>
+            <li><strong>Evitar Mensajes Repetitivos por Sesión:</strong> Guardar un flag para indicar que un mensaje emergente o una notificación ya se ha mostrado en esa sesión de pestaña.</li>
+            <li><strong>Datos Temporales en Flujos de Trabajo:</strong> Guardar información intermedia mientras el usuario completa un proceso en varias vistas dentro de la misma pestaña (ej., configurando un producto).</li>
+        </ul>
+    </section> <!-- Fin use-cases-section -->
+
+    <!-- SECCIÓN: Borrado de Datos de Navegación -->
+    <section class="info-section storage-simulator">
+        <h2>Borrado de Datos de Navegación y Almacenamiento Web</h2>
+        <p>Los navegadores ofrecen una opción para "Borrar datos de navegación" (o similar) que permite a los usuarios eliminar información almacenada por los sitios web. Es importante entender qué se borra:</p>
+
+        <p>En navegadores como Google Chrome, las opciones relevantes suelen ser:</p>
+        <ul>
+            <li><strong>Cookies y otros datos de sitios:</strong> <strong>¡Esta es la opción principal!</strong> Al seleccionarla, se eliminan:
+                <ul>
+                    <li>Todas las <strong>Cookies</strong> (tanto persistentes como de sesión).</li>
+                    <li>Todo el contenido de <strong>LocalStorage</strong>.</li>
+                    <li>Todo el contenido de <strong>SessionStorage</strong> (aunque este se borraría igualmente al cerrar el navegador).</li>
+                    <li>Otros datos almacenados por los sitios, como bases de datos <strong>IndexedDB</strong>, contenido de la <strong>Cache API</strong> (usada por Service Workers), y datos de mecanismos obsoletos como Web SQL o Application Cache.</li>
+                </ul>
+            </li>
+            <li><strong>Archivos e imágenes almacenados en caché:</strong> Esto se refiere a la caché HTTP estándar del navegador (recursos como CSS, JS, imágenes), no directamente a LocalStorage, SessionStorage o Cookies.</li>
+            <li><strong>Datos de aplicaciones alojadas:</strong> Datos específicos guardados por Progressive Web Apps (PWAs) que hayas "instalado". Puede solaparse con "Cookies y otros datos de sitios" si la PWA usa esos mecanismos.</li>
+        </ul>
+
+        <h3>Relación con este Simulador</h3>
+        <p>
+            El botón <strong>"Borrar Todo"</strong> de este simulador limpia Cookies, LocalStorage y SessionStorage <strong>solo para esta página/origen</strong>, utilizando las APIs de JavaScript (`document.cookie`, `localStorage.clear()`, `sessionStorage.clear()`).
+        </p>
+        <p>
+            En cambio, usar la función <strong>"Borrar datos de navegación" del navegador</strong> (marcando "Cookies y otros datos de sitios") es una acción <strong>global</strong> que afectará a todos los sitios web que hayas visitado (o los del período de tiempo seleccionado), eliminando toda la información que hayan almacenado en tu navegador mediante estos mecanismos.
+        </p>
+        <p>
+            Comprender esta diferencia es crucial: el control programático (desde JS) es específico del sitio, mientras que la limpieza del navegador es general.
+        </p>
+         <h3>Otros Tipos de Almacenamiento</h3>
+         <p>Además de los tres tipos simulados aquí, los navegadores modernos ofrecen otros mecanismos de almacenamiento más avanzados:</p>
+         <ul>
+             <li><strong>IndexedDB:</strong> Una base de datos NoSQL completa del lado del cliente, asíncrona y basada en objetos. Ideal para grandes cantidades de datos estructurados, búsquedas complejas y aplicaciones offline robustas.</li>
+             <li><strong>Cache API:</strong> Utilizada principalmente junto con los Service Workers, permite almacenar pares de petición/respuesta de red. Es fundamental para crear Progressive Web Apps (PWAs) que funcionen offline sirviendo contenido desde esta caché.</li>
+         </ul>
+         <p>Estos almacenamientos más avanzados también suelen eliminarse al seleccionar "Cookies y otros datos de sitios" en la limpieza del navegador.</p>
+
+    </section> <!-- Fin clear-data-section -->
+
+
+    <script src="script.js"></script>
+</body>
+</html>

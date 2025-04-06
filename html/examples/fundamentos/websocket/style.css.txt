@@ -1,0 +1,318 @@
+/* Estilos generales */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f0f2f5; /* Un fondo ligeramente gris */
+    color: #333;
+    line-height: 1.6;
+}
+
+/* Contenedor principal del simulador */
+.simulator-container {
+    max-width: 1400px;
+    margin: 30px auto;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+    text-align: center;
+    color: #1a237e; /* Un azul más oscuro */
+    margin-bottom: 30px;
+    font-weight: 600;
+}
+
+/* Layout de los paneles */
+.panels-wrapper {
+    display: flex;
+    justify-content: space-between;
+    gap: 25px; /* Mayor espacio entre paneles */
+    margin-bottom: 40px; /* Espacio antes de la sección info */
+}
+
+.panel {
+    background-color: #ffffff;
+    border: 1px solid #dfe1e5; /* Borde sutil */
+    border-radius: 8px;
+    padding: 20px;
+    flex: 1; /* Paneles flexibles */
+    display: flex;
+    flex-direction: column;
+    min-width: 300px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05); /* Sombra suave */
+    transition: box-shadow 0.3s ease;
+}
+
+.panel:hover {
+     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
+}
+
+.panel h2 {
+    margin-top: 0;
+    color: #1a237e; /* Mismo azul que h1 */
+    border-bottom: 2px solid #e8eaf6; /* Borde inferior más suave */
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+    font-size: 1.3em;
+    font-weight: 500;
+}
+
+/* --- Estilos Panel Cliente --- */
+#client-panel label {
+    display: block;
+    margin-top: 15px;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: #555;
+    font-size: 0.95em;
+}
+
+#message-input {
+    width: calc(100% - 20px); /* Ajuste al padding */
+    padding: 10px;
+    margin-bottom: 12px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    resize: vertical;
+    font-size: 1em;
+    background-color: #f8f9fa;
+}
+
+#client-panel button {
+    padding: 10px 18px; /* Botones un poco más grandes */
+    cursor: pointer;
+    border: none;
+    border-radius: 5px;
+    background-color: #2962ff; /* Azul brillante */
+    color: white;
+    margin-right: 8px;
+    font-size: 0.95em;
+    transition: background-color 0.2s ease, box-shadow 0.2s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+#client-panel button:hover:not(:disabled) {
+    background-color: #0039cb;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15);
+}
+
+#client-panel button:disabled {
+    background-color: #b0bec5; /* Gris claro para deshabilitado */
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+#connect-button.connected {
+    background-color: #d32f2f; /* Rojo más intenso para desconectar */
+}
+#connect-button.connected:hover {
+    background-color: #b71c1c;
+}
+
+.status-bar {
+    margin-bottom: 15px;
+    padding: 8px 12px;
+    background-color: #eceff1; /* Fondo gris muy claro */
+    border-radius: 5px;
+    font-size: 0.9em;
+    border-left: 4px solid; /* Indicador lateral */
+}
+
+.status {
+    font-weight: bold;
+    padding: 3px 8px;
+    border-radius: 12px; /* Más redondeado */
+    color: white;
+    font-size: 0.9em;
+    margin-left: 5px;
+}
+
+.status.connected {
+    background-color: #388e3c; /* Verde */
+    border-left-color: #388e3c;
+}
+
+.status.disconnected {
+    background-color: #d32f2f; /* Rojo */
+    border-left-color: #d32f2f;
+}
+
+.status.connecting {
+    background-color: #ffa000; /* Naranja/amarillo */
+    color: #333;
+    border-left-color: #ffa000;
+}
+
+/* --- Estilos Áreas de Log --- */
+.log-area {
+    flex-grow: 1;
+    border: 1px solid #e0e0e0;
+    background-color: #f9f9f9; /* Fondo ligeramente distinto */
+    padding: 12px;
+    min-height: 250px; /* Altura mínima más generosa */
+    height: auto; /* Dejar que crezca */
+    overflow-y: auto;
+    font-family: 'Fira Code', 'Courier New', Courier, monospace; /* Mejor fuente monoespaciada */
+    font-size: 0.9em;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    margin-top: 10px;
+    border-radius: 5px;
+    line-height: 1.5; /* Mejor espaciado de línea */
+}
+
+/* Estilos específicos logs comunicación */
+.log-comm {
+    margin: 4px 0;
+    padding: 4px 8px;
+    border-radius: 4px;
+    display: block; /* Asegura que cada log ocupe su línea */
+}
+.log-comm .timestamp {
+    color: #777;
+    font-size: 0.85em;
+    margin-right: 8px;
+}
+.log-comm.client-to-server {
+    color: #0d47a1; /* Azul oscuro */
+    /* background-color: #e3f2fd; */
+    border-left: 3px solid #42a5f5; /* Borde azul */
+}
+.log-comm.server-to-client {
+    color: #bf360c; /* Naranja/Rojo oscuro */
+    /* background-color: #fff3e0; */
+    border-left: 3px solid #ffa726; /* Borde naranja */
+}
+.log-comm.event {
+    color: #455a64; /* Gris azulado */
+    font-style: italic;
+    /* background-color: #eceff1; */
+    border-left: 3px solid #78909c; /* Borde gris */
+}
+.log-comm.error {
+    color: #c62828; /* Rojo oscuro */
+    font-weight: bold;
+    /* background-color: #ffebee; */
+    border-left: 3px solid #ef5350; /* Borde rojo */
+}
+
+hr {
+    border: none;
+    border-top: 1px solid #e0e0e0;
+    margin: 20px 0;
+}
+
+details {
+    margin-top: 20px;
+    background-color: #f5f5f5;
+    border: 1px solid #e0e0e0;
+    border-radius: 5px;
+    padding: 10px 15px;
+}
+
+summary {
+    cursor: pointer;
+    font-weight: 600;
+    color: #37474f; /* Gris oscuro */
+    padding: 5px 0;
+}
+
+pre {
+    background-color: #e0e0e0; /* Fondo gris claro para código */
+    padding: 15px;
+    border-radius: 5px;
+    overflow-x: auto;
+    font-size: 0.9em;
+    color: #263238; /* Texto oscuro para código */
+}
+
+code {
+    font-family: 'Fira Code', 'Courier New', Courier, monospace;
+    background-color: rgba(27,31,35,.05); /* Fondo sutil para inline code */
+    padding: .2em .4em;
+    margin: 0;
+    font-size: 85%;
+    border-radius: 3px;
+}
+
+/* --- Sección de Información --- */
+#info-section {
+    margin-top: 40px;
+    padding: 30px;
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    border: 1px solid #dfe1e5;
+}
+
+#info-section h2 {
+    color: #1a237e;
+    border-bottom: 2px solid #e8eaf6;
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+    font-size: 1.5em;
+}
+
+#info-section h3 {
+    color: #2962ff; /* Azul brillante */
+    margin-top: 25px;
+    margin-bottom: 10px;
+    font-size: 1.2em;
+    border-left: 4px solid #2962ff;
+    padding-left: 10px;
+}
+
+#info-section p, #info-section li {
+    margin-bottom: 12px;
+    color: #444; /* Texto ligeramente más oscuro */
+}
+
+#info-section ul {
+    list-style: disc;
+    margin-left: 20px;
+}
+
+#info-section dl dt {
+    font-weight: bold;
+    color: #1a237e;
+    margin-top: 10px;
+}
+
+#info-section dl dd {
+    margin-left: 20px;
+    margin-bottom: 8px;
+}
+
+#info-section a {
+    color: #0039cb;
+    text-decoration: none;
+}
+
+#info-section a:hover {
+    text-decoration: underline;
+}
+
+/* --- Mejoras Adicionales --- */
+::selection {
+    background-color: #bbdefb; /* Color al seleccionar texto */
+    color: #1a237e;
+}
+
+/* Scrollbar (opcional, para navegadores WebKit) */
+::-webkit-scrollbar {
+    width: 8px;
+}
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+}
+::-webkit-scrollbar-thumb {
+    background: #bdbdbd;
+    border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: #888;
+}

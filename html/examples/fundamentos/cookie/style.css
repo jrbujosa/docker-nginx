@@ -1,0 +1,325 @@
+/* Estilos generales */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 20px;
+    background-color: #f4f7f6;
+    color: #333;
+    line-height: 1.6;
+}
+
+.storage-simulator {
+    max-width: 1200px;
+    margin: 20px auto;
+    background-color: #fff;
+    padding: 25px;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+    text-align: center;
+    color: #2c3e50;
+    margin-bottom: 30px;
+    font-size: 1.8em;
+}
+
+/* Layout de paneles */
+.panels-wrapper {
+    display: flex;
+    gap: 30px;
+    flex-wrap: wrap; /* Permitir que se envuelva en pantallas pequeñas */
+    margin-bottom: 30px; /* Espacio antes de la sección info */
+}
+
+.panel {
+    background-color: #ffffff;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+}
+
+#controls-panel {
+    flex: 1; /* Ocupa 1 parte */
+    min-width: 300px; /* Ancho mínimo */
+}
+
+#display-panel {
+    flex: 2; /* Ocupa 2 partes */
+    min-width: 400px;
+}
+
+.panel h2 {
+    margin-top: 0;
+    color: #34495e;
+    border-bottom: 2px solid #ecf0f1;
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+}
+
+/* --- Controles Panel --- */
+.control-group {
+    margin-bottom: 15px;
+}
+
+.control-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 600;
+    color: #555;
+}
+
+.control-group input[type="text"] {
+    width: calc(100% - 22px); /* Ajuste por padding y borde */
+    padding: 10px;
+    border: 1px solid #bdc3c7;
+    border-radius: 4px;
+    font-size: 1em;
+}
+
+.button-group {
+    margin-top: 15px;
+    display: flex;
+    flex-wrap: wrap; /* Para que los botones se ajusten */
+    gap: 10px; /* Espacio entre botones */
+}
+
+.button-group button {
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.95em;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+    color: white;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+.button-group button:hover:not(:disabled) {
+     opacity: 0.9;
+     box-shadow: 0 3px 6px rgba(0,0,0,0.15);
+}
+.button-group button:active:not(:disabled) {
+     transform: scale(0.98);
+     box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
+}
+.button-group button:disabled {
+    background-color: #bdc3c7;
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+
+/* Colores específicos botones */
+#save-cookie-btn { background-color: #1abc9c; }
+#save-cookie-btn:hover:not(:disabled) { background-color: #16a085; }
+
+#save-local-btn { background-color: #e67e22; }
+#save-local-btn:hover:not(:disabled) { background-color: #d35400; }
+
+#save-session-btn { background-color: #9b59b6; }
+#save-session-btn:hover:not(:disabled) { background-color: #8e44ad; }
+
+#read-all-btn { background-color: #2ecc71; }
+#read-all-btn:hover:not(:disabled) { background-color: #27ae60; }
+
+#clear-all-btn { background-color: #e74c3c; }
+#clear-all-btn:hover:not(:disabled) { background-color: #c0392b; }
+
+#simulate-close-btn { background-color: #f39c12; color: #333; }
+#simulate-close-btn:hover:not(:disabled) { background-color: #f1c40f; }
+
+
+/* --- Display Panel --- */
+.display-areas {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); /* Grid responsivo */
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+.storage-area, .http-area {
+    border: 1px solid #ecf0f1;
+    border-radius: 5px;
+    padding: 15px;
+    background-color: #f8f9f9;
+}
+
+.storage-area h3, .http-area h3 {
+    margin-top: 0;
+    color: #2c3e50;
+    font-size: 1.1em;
+    border-bottom: 1px solid #e0e0e0;
+    padding-bottom: 8px;
+}
+
+/* Colores específicos para cada área */
+#cookies-display { border-left: 4px solid #1abc9c; }
+#localstorage-display { border-left: 4px solid #e67e22; }
+#sessionstorage-display { border-left: 4px solid #9b59b6; }
+#http-request-panel { border-left: 4px solid #3498db; }
+
+.description {
+    font-size: 0.85em;
+    color: #555;
+    margin-bottom: 10px;
+    background-color: #ecf0f1;
+    padding: 8px;
+    border-radius: 3px;
+}
+
+.storage-content, .http-content {
+    background-color: #eef1f2;
+    padding: 10px;
+    border-radius: 4px;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 0.9em;
+    min-height: 100px;
+    overflow-y: auto;
+    white-space: pre-wrap; /* Mantiene saltos de línea y espacios */
+    word-wrap: break-word; /* Rompe palabras largas */
+    color: #333;
+}
+
+.status-message {
+    margin-top: 15px;
+    padding: 10px;
+    border-radius: 4px;
+    font-size: 0.9em;
+    text-align: center;
+    min-height: 1.5em; /* Para evitar saltos de layout */
+}
+.status-message.success {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+.status-message.error {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+.status-message.info {
+    background-color: #d1ecf1; /* Azul claro para info */
+    color: #0c5460;
+    border: 1px solid #bee5eb;
+}
+
+
+hr {
+    border: none;
+    border-top: 1px solid #ecf0f1;
+    margin: 25px 0;
+}
+
+
+/* --- Estilos Sección Información y Tabla (AÑADIDOS/FUSIONADOS) --- */
+.info-section {
+    margin-top: 40px;
+    padding: 30px;
+    background-color: #fdfdfd; /* Fondo ligeramente distinto */
+    border: 1px solid #e0e0e0; /* Borde similar a paneles */
+    /* Hereda estilos de .storage-simulator como max-width, margin, border-radius, box-shadow */
+}
+
+.info-section h2 {
+    color: #2c3e50;
+    border-bottom: 2px solid #e0e0e0;
+    padding-bottom: 10px;
+    margin-bottom: 25px;
+    margin-top: 0; /* Asegurar que no haya margen superior extra */
+}
+
+.info-section h3 {
+    color: #34495e;
+    margin-top: 25px;
+    margin-bottom: 15px;
+    border-left: 4px solid #3498db;
+    padding-left: 10px;
+    font-size: 1.2em; /* Un poco más grande */
+}
+
+.important-note {
+    background-color: #fffbe6; /* Fondo amarillo pálido */
+    border: 1px solid #ffe58f;
+    border-left: 5px solid #ffc107; /* Borde izquierdo amarillo */
+    padding: 15px;
+    margin-bottom: 25px;
+    border-radius: 4px;
+    color: #856404; /* Texto oscuro */
+    font-size: 0.95em;
+}
+
+.important-note strong {
+    color: #664d03;
+}
+
+.table-container {
+    overflow-x: auto; /* Permite scroll horizontal en tablas grandes */
+    margin-bottom: 20px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse; /* Une los bordes */
+    margin-top: 20px;
+    font-size: 0.95em;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+}
+
+th, td {
+    border: 1px solid #e0e0e0; /* Bordes sutiles */
+    padding: 12px 15px; /* Espaciado interno */
+    text-align: left;
+    vertical-align: top; /* Alinear arriba para celdas con mucho texto */
+}
+
+thead th {
+    background-color: #ecf0f1; /* Fondo gris claro para cabecera */
+    color: #2c3e50;
+    font-weight: 600;
+    position: sticky; /* Cabecera fija al hacer scroll vertical (si la tabla es larga) */
+    top: 0;
+    z-index: 1; /* Para que esté por encima del contenido al hacer scroll */
+}
+
+tbody tr:nth-child(even) {
+    background-color: #f8f9f9; /* Fondo alterno para filas */
+}
+
+tbody tr:hover {
+    background-color: #f1f1f1; /* Resaltar fila al pasar el ratón */
+}
+
+td strong {
+    color: #34495e; /* Resaltar texto en negrita dentro de celdas */
+}
+
+/* Estilos para listas en secciones de info */
+.info-section ul, .info-section ol {
+    margin-left: 20px;
+    padding-left: 15px;
+}
+.info-section ul li, .info-section ol li {
+    margin-bottom: 10px; /* Más espacio entre items de lista */
+}
+.info-section ul {
+    list-style: disc;
+}
+.info-section ol {
+    list-style: decimal;
+}
+
+
+/* Estilos Responsivos Básicos */
+@media (max-width: 768px) {
+    .panels-wrapper {
+        flex-direction: column;
+    }
+    .display-areas {
+         grid-template-columns: 1fr; /* Una columna en pantallas pequeñas */
+    }
+    thead th {
+        position: static; /* Desactivar sticky header en móvil si causa problemas */
+    }
+}

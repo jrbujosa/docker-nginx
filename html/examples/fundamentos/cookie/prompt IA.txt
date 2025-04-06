@@ -1,0 +1,23 @@
+Simulador de Almacenamiento Web (Cookies vs. LocalStorage vs. SessionStorage)
+
+Concepto: Las diferencias clave entre los mecanismos de almacenamiento del lado del cliente: Cookies, LocalStorage y SessionStorage.
+
+Objetivo Educativo: Entender cuándo usar cada uno basado en su persistencia (sesión vs. permanente), capacidad, scope (origen), y si se envían automáticamente al servidor.
+
+Visualización/Interacción:
+
+Panel Controles: Inputs para "Clave" y "Valor". Botones "Guardar en Cookie", "Guardar en LocalStorage", "Guardar en SessionStorage". Botones "Leer Todo", "Borrar Todo". Botón "Simular Cierre de Pestaña/Navegador".
+
+Panel Visualización Almacenamiento: Tres áreas distintas mostrando el contenido actual de:
+
+Cookies: Muestra clave=valor (y quizás atributos simulados como expires, httpOnly). Indica "Se envía con cada petición HTTP".
+
+LocalStorage: Muestra clave: valor. Indica "Persistente hasta borrado manual".
+
+SessionStorage: Muestra clave: valor. Indica "Persistente solo durante la sesión de la pestaña".
+
+Panel Petición HTTP (Simulada): Un área que muestra qué Cookies (si las hay) se incluirían automáticamente si se hiciera una petición al servidor.
+
+Componentes Simulados: APIs de Almacenamiento del Navegador, Cabeceras HTTP (para Cookies).
+
+Puntos Clave: Persistencia (cierre de pestaña/navegador), tamaño límite (conceptual), envío automático (Cookies), casos de uso típicos.

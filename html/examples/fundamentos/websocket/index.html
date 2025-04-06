@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulador WebSocket Básico - Educativo</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- Opcional: Añadir una fuente monoespaciada como Fira Code -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code&family=Segoe+UI:wght@400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="simulator-container">
+        <h1>Simulador Básico de WebSockets</h1>
+
+        <div class="panels-wrapper">
+            <!-- Panel Izquierdo: Cliente -->
+            <div class="panel" id="client-panel">
+                <h2>Cliente (Navegador)</h2>
+                <div class="status-bar">
+                    Estado: <span id="client-status" class="status disconnected">Desconectado</span>
+                </div>
+                <button id="connect-button">Conectar</button>
+                <hr>
+                <label for="message-input">Escribir Mensaje:</label>
+                <textarea id="message-input" rows="3" placeholder="Escribe tu mensaje aquí..." disabled></textarea>
+                <button id="send-button" disabled>Enviar</button>
+                <hr>
+                <label>Mensajes Recibidos del Servidor:</label>
+                <div class="log-area" id="received-messages"></div>
+                <hr>
+                <details>
+                    <summary>Código JS Cliente (Interfaz API)</summary>
+                    <pre><code class="language-javascript">
+// --- Interfaz API WebSocket del Navegador ---
+
+let socket;
+const serverUrl = 'ws://tu-servidor-real.com'; // URL real
+
+function connectWebSocket() {
+  console.log('Intentando conectar a:', serverUrl);
+  // CREACIÓN REAL:
+  // socket = new WebSocket(serverUrl);
+
+  // MANEJADORES DE EVENTOS REALES:
+  // socket.onopen = (event) => {
+  //   console.log('WebSocket Conectado!', event);
+  //   // Actualizar UI, etc.
+  // };
+
+  // socket.onmessage = (event) => {
+  //   const message = event.data;
+  //   console.log('Mensaje recibido:', message);
+  //   // Mostrar mensaje en la UI
+  // };
+
+  // socket.onclose = (event) => {
+  //   console.log('WebSocket Desconectado:', event.code, event.reason);
+  //   // Actualizar UI, limpiar estado
+  // };
+
+  // socket.onerror = (error) => {
+  //   console.error('Error WebSocket:', error);
+  //   // Manejar el error
+  // };
+
+  // --- En este simulador, estos eventos son disparados ---
+  // --- por el objeto 'mockWebSocket' en script.js ---
+}
+
+function sendMessage(message) {
+  if (socket && socket.readyState === WebSocket.OPEN) { // WebSocket.OPEN === 1
+    // ENVÍO REAL:
+    // socket.send(message);
+    console.log('Enviando mensaje:', message);
+  } else {
+    console.error('WebSocket no está conectado o listo.');
+  }
+  // --- En este simulador, se llama a mockWebSocket.send() ---
+}
+
+function disconnectWebSocket() {
+  if (socket && socket.readyState === WebSocket.OPEN) {
+    // CIERRE REAL:
+    // socket.close(1000, "Cierre iniciado por el cliente");
+    console.log('Iniciando desconexión...');
+  }
+  // --- En este simulador, se llama a mockWebSocket.close() ---
+}
+
+// --- Fin Interfaz API ---
+                    </code></pre>
+                </details>
+            </div>
+
+            <!-- Panel Central: Comunicación -->
+            <div class="panel" id="communication-panel">
+                <h2>Comunicación WebSocket (Simulada)</h2>
+                <div class="log-area" id="communication-log">
+                    <!-- Los logs de comunicación aparecerán aquí -->
+                </div>
+            </div>
+
+            <!-- Panel Derecho: Servidor Simulado -->
+            <div class="panel" id="server-panel">
+                <h2>Servidor (Simulado)</h2>
+                <div class="log-area" id="server-log">
+                    <!-- Los logs del servidor simulado aparecerán aquí -->
+                </div>
+            </div>
+        </div>
+    </div> <!-- Fin de simulator-container -->
+
+    <!-- Sección de Información Adicional -->
+    <section id="info-section" class="simulator-container">
+        <h2>Aprendiendo sobre WebSockets</h2>
+
+        <h3>¿Qué son los WebSockets y por qué usar este simulador?</h3>
+        <p>
+            Los <strong>WebSockets</strong> son una tecnología de comunicación avanzada que permite abrir un canal de comunicación <strong>bidireccional</strong> y <strong>persistente</strong> entre un cliente (normalmente un navegador web) y un servidor, sobre una única conexión TCP. A diferencia del ciclo clásico de petición/respuesta de HTTP, una vez establecida la conexión WebSocket, tanto el cliente como el servidor pueden enviar mensajes al otro en cualquier momento, sin necesidad de una nueva petición. Esto es ideal para aplicaciones en tiempo real.
+        </p>
+        <p>
+            <strong>¿Por qué este simulador es interesante para estudiantes?</strong>
+        </p>
+        <ul>
+            <li><strong>Visualización del Flujo:</strong> Permite ver claramente los pasos involucrados: conexión (handshake), envío de mensajes, recepción y desconexión, sin la complejidad de configurar un servidor real.</li>
+            <li><strong>Comprensión de la Bidireccionalidad:</strong> Observar cómo los mensajes fluyen en ambas direcciones (Cliente ↔ Servidor) ayuda a internalizar la diferencia fundamental con HTTP.</li>
+            <li><strong>Aislamiento de Conceptos:</strong> Separa la lógica del cliente (interfaz JS), la comunicación en sí (panel central) y la lógica del servidor (panel simulado).</li>
+            <li><strong>Entorno Seguro:</strong> Permite experimentar con la API de WebSocket del navegador (simulada aquí) sin riesgo y sin necesidad de infraestructura externa.</li>
+            <li><strong>Relevancia para Desarrollo Web y Sistemas:</strong> Es fundamental para desarrolladores web modernos (aplicaciones interactivas) y técnicos de sistemas (comprensión de protocolos de red y conexiones persistentes).</li>
+        </ul>
+
+        <h3>Relación con HTTP, Fetch, JS y otros elementos web</h3>
+        <ul>
+            <li><strong>Vs. Ciclo Petición/Respuesta HTTP:</strong> HTTP es fundamentalmente unidireccional en cada transacción (el cliente pide, el servidor responde) y generalmente sin estado (cada petición es independiente). WebSocket establece una conexión duradera y con estado, permitiendo comunicación iniciada por cualquiera de las partes.</li>
+            <li><strong>Handshake Inicial HTTP:</strong> ¡Importante! Una conexión WebSocket comienza con una petición HTTP/HTTPS especial. El cliente envía una petición con cabeceras específicas (<code>Upgrade: websocket</code>, <code>Connection: Upgrade</code>). Si el servidor soporta WebSockets, responde con un código <code>101 Switching Protocols</code>, y a partir de ese momento, esa misma conexión TCP se "convierte" en una conexión WebSocket, dejando de hablar HTTP.</li>
+            <li><strong>Vs. Fetch/XMLHttpRequest (XHR):</strong> <code>fetch</code> y <code>XHR</code> son APIs de JavaScript usadas para realizar peticiones <strong>HTTP</strong>. Sirven para obtener recursos, enviar datos de formularios, interactuar con APIs REST, etc. No establecen conexiones persistentes bidireccionales. Son herramientas diferentes para propósitos diferentes.</li>
+            <li><strong>Rol de JavaScript:</strong> En el cliente (navegador), JavaScript es esencial. La <strong>API WebSocket</strong> (<code>new WebSocket(...)</code>, <code>socket.send()</code>, <code>socket.onmessage</code>, etc.) es la interfaz que JS proporciona para crear y gestionar estas conexiones. Este simulador usa JS para *imitar* tanto el comportamiento del cliente que usa esta API como el del servidor.</li>
+            <li><strong>Alternativas:</strong>
+                <ul>
+                    <li><strong>Polling/Long Polling (HTTP):</strong> Técnicas antiguas donde el cliente pregunta repetidamente al servidor si hay datos nuevos. Ineficientes y con latencia.</li>
+                    <li><strong>Server-Sent Events (SSE):</strong> Permiten al servidor enviar datos al cliente de forma eficiente sobre HTTP, pero son <strong>unidireccionales</strong> (Servidor → Cliente). Buenos para notificaciones push, pero no para interacción cliente-servidor.</li>
+                    <li><strong>WebTransport:</strong> Una API más nueva y flexible, basada en HTTP/3 (QUIC), que puede reemplazar WebSockets para ciertos casos de uso, ofreciendo streams múltiples y envío no fiable (datagramas).</li>
+                </ul>
+            </li>
+        </ul>
+
+        <h3>WebSockets en las Herramientas de Desarrollo (DevTools)</h3>
+        <p>
+            Las herramientas de desarrollo del navegador (como las de Chrome, Firefox, Edge) son cruciales para depurar WebSockets:
+        </p>
+        <ul>
+            <li><strong>Pestaña "Network" (Red):</strong> Aquí es donde se monitorizan las conexiones.</li>
+            <li><strong>Filtro "WS":</strong> Puedes filtrar las peticiones para ver solo las conexiones WebSocket.</li>
+            <li><strong>Inspección de la Conexión:</strong> Al seleccionar una conexión WS activa, verás:
+                <ul>
+                    <li><strong>Headers (Cabeceras):</strong> Muestra la petición HTTP inicial de "Upgrade" y la respuesta 101 del servidor.</li>
+                    <li><strong>Frames/Messages (Tramas/Mensajes):</strong> ¡La parte más útil! Muestra un log en tiempo real de todos los mensajes (tramas) enviados (flecha verde hacia arriba) y recibidos (flecha roja hacia abajo) a través de esa conexión. Puedes inspeccionar el contenido (payload), el tamaño y el timestamp de cada mensaje.</li>
+                </ul>
+            </li>
+            <li><strong>Errores:</strong> La consola del navegador también mostrará errores relacionados con la conexión WebSocket si ocurren (ej., fallo en la conexión, cierre inesperado).</li>
+        </ul>
+        <p><em>(Prueba a abrir las DevTools mientras usas este simulador para ver los logs de `console.log` que hemos añadido).</em></p>
+
+        <h3>Glosario de Términos</h3>
+        <dl>
+            <dt>WebSocket</dt>
+            <dd>Protocolo de red y API de navegador que permite comunicación bidireccional y persistente sobre una conexión TCP.</dd>
+            <dt>Handshake</dt>
+            <dd>Proceso inicial (usando HTTP) donde cliente y servidor acuerdan "cambiar" a protocolo WebSocket.</dd>
+            <dt><code>ws://</code> / <code>wss://</code></dt>
+            <dd>Esquemas de URL para conexiones WebSocket. <code>ws</code> es no cifrado (como HTTP), <code>wss</code> es cifrado (como HTTPS, usando TLS/SSL).</dd>
+            <dt>Full-duplex</dt>
+            <dd>Comunicación donde ambas partes pueden enviar y recibir datos simultáneamente.</dd>
+            <dt>Persistent Connection (Conexión Persistente)</dt>
+            <dd>La conexión TCP subyacente se mantiene abierta durante la vida de la sesión WebSocket, evitando la sobrecarga de establecer nuevas conexiones para cada mensaje.</dd>
+            <dt><code>onopen</code></dt>
+            <dd>Evento JavaScript que se dispara en el cliente cuando la conexión WebSocket se ha establecido con éxito.</dd>
+            <dt><code>onmessage</code></dt>
+            <dd>Evento JavaScript que se dispara en el cliente cada vez que se recibe un mensaje del servidor.</dd>
+            <dt><code>onclose</code></dt>
+            <dd>Evento JavaScript que se dispara en el cliente cuando la conexión WebSocket se cierra (ya sea intencionadamente o por un error).</dd>
+            <dt><code>onerror</code></dt>
+            <dd>Evento JavaScript que se dispara en el cliente si ocurre un error en la conexión.</dd>
+            <dt>Frame (Trama)</dt>
+            <dd>Unidad de datos enviada a través de una conexión WebSocket. Un mensaje puede dividirse en varias tramas.</dd>
+        </dl>
+
+        <h3>Referencias para Ampliar Información</h3>
+        <ul>
+            <li><a href="https://developer.mozilla.org/es/docs/Web/API/WebSockets_API" target="_blank" rel="noopener noreferrer">MDN Web Docs: API de WebSockets</a> (Documentación fundamental de la API del navegador).</li>
+            <li><a href="https://datatracker.ietf.org/doc/html/rfc6455" target="_blank" rel="noopener noreferrer">RFC 6455 - The WebSocket Protocol</a> (La especificación técnica oficial, bastante densa).</li>
+            <li><a href="https://www.html5rocks.com/en/tutorials/websockets/basics/" target="_blank" rel="noopener noreferrer">HTML5 Rocks: WebSocket Basics</a> (Un tutorial clásico, aunque el sitio está archivado, sigue siendo útil).</li>
+            <li><a href="https://ably.com/topic/websockets" target="_blank" rel="noopener noreferrer">Ably: What are WebSockets?</a> (Explicaciones y comparaciones modernas).</li>
+            <li><a href="https://socket.io/docs/v4/" target="_blank" rel="noopener noreferrer">Socket.IO</a> (Una biblioteca popular que usa WebSockets -y otros transportes como fallback- pero añade su propio protocolo encima. Útil conocerla, pero distinta al WebSocket "puro").</li>
+        </ul>
+
+         <h3>Consideraciones Adicionales</h3>
+         <ul>
+            <li><strong>Seguridad:</strong> Siempre usa <code>wss://</code> en producción para cifrar el tráfico y prevenir ataques de intermediario (Man-in-the-Middle).</li>
+            <li><strong>Escalabilidad del Servidor:</strong> Manejar miles de conexiones WebSocket concurrentes en un servidor requiere arquitecturas específicas (event-driven, non-blocking I/O) y recursos adecuados.</li>
+            <li><strong>Proxies y Firewalls:</strong> A veces, los proxies inversos o firewalls corporativos pueden interferir con las conexiones WebSocket si no están configurados correctamente para permitir la cabecera `Upgrade`.</li>
+             <li><strong>Manejo de Errores y Reconexión:</strong> En aplicaciones reales, es crucial implementar lógica robusta para detectar cierres inesperados de conexión y intentar reconectar automáticamente.</li>
+         </ul>
+
+    </section> <!-- Fin de info-section -->
+
+    <!-- NUEVA SECCIÓN: Casos de Uso Reales -->
+    <section id="use-cases-section" class="simulator-container">
+        <h2>Casos de Uso Reales de WebSockets</h2>
+        <p>La capacidad de comunicación bidireccional y en tiempo real de los WebSockets los hace ideales para una variedad de aplicaciones modernas:</p>
+        <ul>
+            <li>
+                <strong>Aplicaciones de Chat:</strong> Quizás el ejemplo más clásico. Permiten que los mensajes enviados por un usuario se muestren instantáneamente a todos los demás participantes en la conversación sin necesidad de recargar la página o hacer polling constante.
+            </li>
+            <li>
+                <strong>Juegos Multijugador Online:</strong> Crucial para sincronizar el estado del juego (posiciones, acciones, puntuaciones) entre múltiples jugadores en tiempo real con baja latencia. Cada movimiento de un jugador se envía al servidor vía WebSocket, y el servidor lo retransmite a los demás jugadores conectados.
+            </li>
+            <li>
+                <strong>Notificaciones en Tiempo Real:</strong> Sistemas de alertas, actualizaciones de estado (ej., "Usuario X está escribiendo..."), notificaciones de redes sociales, resultados deportivos en vivo, etc. El servidor puede "empujar" (push) la información al cliente tan pronto como esté disponible.
+            </li>
+            <li>
+                <strong>Edición Colaborativa de Documentos:</strong> Plataformas como Google Docs o Figma usan tecnologías similares a WebSockets (o WebSockets directamente) para que múltiples usuarios puedan ver las ediciones de los demás en el mismo documento casi instantáneamente.
+            </li>
+            <li>
+                <strong>Dashboards y Monitorización en Vivo:</strong> Paneles de control que muestran métricas de sistemas, cotizaciones de bolsa, datos de sensores IoT, etc., que necesitan actualizarse constantemente a medida que llegan nuevos datos del servidor.
+            </li>
+            <li>
+                <strong>Geolocalización en Tiempo Real:</strong> Aplicaciones de seguimiento de vehículos (transporte público, logística), compartir ubicación en vivo entre amigos, etc. La posición actualizada se envía periódicamente a través del WebSocket.
+            </li>
+            <li>
+                <strong>Subastas Online:</strong> Mostrar las pujas de otros usuarios y actualizar el precio actual en tiempo real para todos los participantes.
+            </li>
+             <li>
+                <strong>Plataformas de Streaming Interactivo:</strong> Mientras que el video/audio principal puede usar otros protocolos, los WebSockets pueden manejar características interactivas como chats en vivo, encuestas instantáneas, reacciones, etc., sobrepuestas al stream.
+            </li>
+        </ul>
+        <p>En general, cualquier aplicación donde se necesite una interacción rápida y fluida entre el cliente y el servidor, o donde el servidor necesite enviar datos al cliente sin que este los solicite explícitamente, es una buena candidata para usar WebSockets.</p>
+
+    </section> <!-- Fin de use-cases-section -->
+
+
+    <script src="script.js"></script>
+</body>
+</html>
