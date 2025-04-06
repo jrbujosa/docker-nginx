@@ -1,0 +1,254 @@
+/* --- Estilos Generales --- */
+body {
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif; /* Fuente más moderna */
+    margin: 0; /* Quitar margen por defecto */
+    padding: 20px; /* Añadir padding alrededor */
+    background-color: #f8f9fa; /* Fondo ligeramente gris */
+    color: #212529; /* Color de texto principal oscuro */
+    line-height: 1.6;
+}
+
+h1, h2 {
+    text-align: center;
+    color: #343a40; /* Títulos un poco más oscuros */
+    margin-bottom: 25px;
+}
+
+h2 {
+    margin-top: 45px;
+    border-bottom: 2px solid; /* Borde inferior sólido */
+    padding-bottom: 10px;
+    display: inline-block; /* Para que el borde no ocupe todo el ancho */
+}
+
+/* --- Contenedor Principal de Simulación (Flexbox) --- */
+.simulation-container {
+    display: flex;             /* <<-- ACTIVA FLEXBOX: para poner los paneles en fila */
+    flex-wrap: wrap;           /* Permite que los paneles bajen si no caben */
+    justify-content: space-between; /* Distribuye espacio entre paneles */
+    gap: 25px;                 /* Espacio fijo entre paneles */
+    margin-bottom: 40px;       /* Espacio debajo del contenedor */
+}
+
+/* --- Estilos de los Paneles (Cliente, Red, Servidor) --- */
+.panel {
+    flex: 1;                  /* <<-- FLEX ITEM: Hace que cada panel intente ocupar el mismo espacio disponible */
+    min-width: 300px;         /* Ancho mínimo antes de que envuelva a la siguiente línea */
+    border: 1px solid #dee2e6; /* Borde más suave */
+    padding: 20px;
+    background-color: #ffffff; /* Fondo blanco */
+    box-shadow: 0 2px 5px rgba(0,0,0,0.08); /* Sombra sutil */
+    border-radius: 8px;       /* Bordes redondeados */
+    display: flex;            /* Usa flexbox para el contenido INTERNO del panel */
+    flex-direction: column;   /* Apila el contenido interno verticalmente */
+}
+
+.panel h3 {
+    margin-top: 0;
+    color: #007bff;           /* Azul distintivo para títulos de panel */
+    border-bottom: 1px solid #e9ecef;
+    padding-bottom: 12px;
+    text-align: center;
+    font-size: 1.15em;
+    font-weight: 600;
+}
+
+.panel h4 {
+    margin-top: 18px;
+    margin-bottom: 8px;
+    color: #495057; /* Gris oscuro para subtítulos */
+    font-size: 0.98em;
+    font-weight: 600;
+}
+
+/* Controles (botones) */
+.controls button {
+    padding: 9px 15px;
+    margin: 5px 5px 15px 0;
+    cursor: pointer;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 0.9em;
+    font-weight: 500;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.controls button:hover {
+    background-color: #0056b3; /* Azul más oscuro al pasar el ratón */
+}
+.controls button:active {
+    transform: scale(0.98); /* Efecto de pulsación */
+}
+
+/* Áreas de Log y Código */
+.log-area, .code-area, .network-flow {
+    background-color: #e9ecef; /* Fondo gris claro */
+    border: 1px solid #ced4da; /* Borde gris */
+    padding: 12px;
+    font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace; /* Fuentes monoespaciadas */
+    font-size: 0.88em;
+    white-space: pre-wrap;      /* Respeta saltos de línea y espacios */
+    word-wrap: break-word;      /* Evita desbordamiento horizontal */
+    min-height: 120px;
+    max-height: 220px;          /* Limita altura y añade scroll */
+    overflow-y: auto;           /* Scroll vertical si es necesario */
+    flex-grow: 1;               /* Permite que el área crezca si hay espacio en el panel */
+    margin-bottom: 15px;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+.code-area {
+    background-color: #f1f3f5; /* Fondo ligeramente distinto para el código estático */
+    max-height: 180px;
+}
+
+.network-flow {
+    background-color: #f8f9fa; /* Fondo de red un poco más claro */
+}
+
+/* Estilos específicos para mensajes en el panel de Red */
+.network-flow p {
+    margin: 8px 0;
+    padding: 10px;
+    border-radius: 4px;
+    font-size: 0.85em;
+    line-height: 1.4;
+}
+
+.network-request { /* Petición: Cliente -> Servidor */
+    background-color: #cfe2ff; /* Azul claro */
+    border-left: 4px solid #0d6efd; /* Borde azul */
+    color: #0a58ca;            /* Texto azul oscuro */
+    text-align: right;         /* Alineado a la derecha */
+}
+
+.network-response { /* Respuesta: Servidor -> Cliente */
+    background-color: #d1e7dd; /* Verde claro */
+    border-right: 4px solid #198754; /* Borde verde */
+    color: #146c43;            /* Texto verde oscuro */
+    text-align: left;          /* Alineado a la izquierda */
+}
+
+/* --- Secciones Inferiores (Explicaciones, Glosario, Referencias) --- */
+.explanations, .glossary, .references {
+    text-align: center; /* Centra el H2 */
+    margin-top: 40px;
+    padding: 0 15px;
+}
+
+/* Estilo común para los bloques de contenido dentro de las secciones inferiores */
+.explanation-block,
+.glossary dl,
+.references ul {
+     text-align: left;          /* Alinear el texto interno a la izquierda */
+     max-width: 950px;          /* Ancho máximo para legibilidad */
+     margin: 25px auto;         /* Centrar el bloque y dar espacio vertical */
+     padding: 20px 25px;        /* Padding interno */
+     background-color: #ffffff; /* Fondo blanco */
+     border: 1px solid #e9ecef; /* Borde suave */
+     border-radius: 8px;        /* Bordes redondeados */
+     box-shadow: 0 1px 3px rgba(0,0,0,0.05); /* Sombra muy sutil */
+}
+.references ul {
+     list-style: none;         /* Quitar viñetas por defecto */
+     padding-left: 0;
+     background-color: transparent; /* Hacer transparente el UL padre */
+     border: none;
+     box-shadow: none;
+     padding: 0; /* Quitar padding del UL para que los LI lo manejen */
+}
+
+/* Títulos de sección con colores distintivos */
+.explanations h2 { border-color: #0d6efd; } /* Azul */
+.glossary h2 { border-color: #ffc107; }     /* Amarillo */
+.references h2 { border-color: #198754; }     /* Verde */
+
+/* Bloques de explicación */
+.explanation-block {
+    border-left: 5px solid #0d6efd; /* Borde izquierdo azul */
+}
+.explanation-block h3 {
+    margin-top: 0;
+    color: #0b5ed7; /* Azul un poco más oscuro */
+}
+
+/* Glosario */
+.glossary dl {
+    padding: 25px;
+}
+.glossary dt {
+    font-weight: 600; /* Término en negrita */
+    color: #343a40;
+    margin-top: 18px;
+}
+.glossary dt:first-child { margin-top: 0; }
+.glossary dd {
+    margin-left: 20px;
+    margin-bottom: 12px;
+    color: #495057; /* Definición en gris oscuro */
+}
+
+/* Referencias */
+.references li {
+    background-color: #ffffff; /* Fondo blanco para cada item */
+    border: 1px solid #e9ecef;
+    border-left: 5px solid #198754; /* Borde izquierdo verde */
+    padding: 15px 20px;
+    margin-bottom: 15px;
+    border-radius: 6px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+.references li a {
+    font-weight: 600;
+    color: #0a58ca; /* Enlace en azul */
+    text-decoration: none;
+    display: block;
+    margin-bottom: 6px;
+}
+.references li a:hover {
+    text-decoration: underline;
+}
+.references .ref-desc { /* Estilo para la descripción dentro de la referencia */
+    color: #495057;
+    font-size: 0.95em;
+    display: block; /* Asegura que esté en nueva línea si es necesario */
+}
+
+
+/* --- Media Query para Responsividad --- */
+@media (max-width: 768px) {
+    body {
+        padding: 15px; /* Menos padding en pantallas pequeñas */
+    }
+    .simulation-container {
+        flex-direction: column; /* <<-- CAMBIO CLAVE: Apila los paneles verticalmente */
+        gap: 20px; /* Reducir espacio vertical entre paneles apilados */
+    }
+    .panel {
+        min-width: 100%; /* Ocupar todo el ancho disponible */
+        /* flex: 1 no es tan relevante cuando están en columna */
+    }
+    h1 {
+        font-size: 1.6em;
+    }
+    h2 {
+        font-size: 1.3em;
+    }
+    /* Asegurar que los bloques inferiores no sean demasiado anchos */
+    .explanation-block,
+    .glossary dl,
+    .references ul {
+         max-width: 100%; /* Ocupar el ancho disponible */
+         padding: 15px;
+    }
+}
+
+@media (max-width: 992px) and (min-width: 769px) {
+     /* En pantallas medianas, quizás queremos 2 columnas y luego 1 */
+     /* O simplemente dejar que flex-wrap haga su trabajo */
+     /* Por ahora, no añadimos reglas específicas aquí,
+        pero es donde se podrían ajustar los min-width si fuera necesario */
+}

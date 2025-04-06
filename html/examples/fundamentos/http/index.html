@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulador Petición/Respuesta HTTP</title>
+    <!-- Asegúrate de que el nombre del archivo CSS sea exactamente 'style.css'
+         y esté en la misma carpeta que este archivo HTML -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <h1>Simulador del Ciclo Petición/Respuesta HTTP</h1>
+
+    <!-- Contenedor Principal de la Simulación (Usa Flexbox) -->
+    <div class="simulation-container">
+
+        <!-- Panel Izquierdo: Cliente (Navegador) -->
+        <div class="panel client-panel">
+            <h3>Cliente (Navegador)</h3>
+            <div class="controls">
+                <button id="send-get-btn">Simular Petición GET (/api/datos)</button>
+                <button id="send-post-btn">Simular Petición POST (/api/enviar)</button>
+            </div>
+            <h4>Acción del Usuario y Log:</h4>
+            <pre id="client-action-log" class="log-area"></pre>
+            <h4>Respuesta Recibida del Servidor:</h4>
+            <pre id="client-response-log" class="log-area"></pre>
+            <h4>Código JavaScript (Fetch API - Ejemplo):</h4>
+            <pre id="client-js-code" class="code-area">
+/* Ejemplo de código JS para Fetch (no se ejecuta, solo visual) */
+// Ejemplo para GET:
+fetch('/api/datos')
+  .then(response => response.json())
+  .then(data => console.log(data))
+  .catch(error => console.error('Error:', error));
+
+// Ejemplo para POST:
+fetch('/api/enviar', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({ nombre: 'Usuario Test' })
+})
+  .then(response => response.json())
+  .then(data => console.log(data))
+  .catch(error => console.error('Error:', error));
+            </pre>
+        </div>
+
+        <!-- Panel Central: Red (Tráfico HTTP Simulado) -->
+        <div class="panel network-panel">
+             <h3>Red (Tráfico HTTP Simulado)</h3>
+            <div id="network-log" class="network-flow">
+                <!-- El contenido se genera dinámicamente con JS -->
+                <p>Esperando interacción...</p>
+            </div>
+        </div>
+
+        <!-- Panel Derecho: Servidor (Backend Simulado) -->
+        <div class="panel server-panel">
+             <h3>Servidor (Backend Simulado)</h3>
+            <h4>Log del Servidor:</h4>
+            <pre id="server-log" class="log-area">
+Servidor esperando peticiones...
+            </pre>
+        </div>
+        <!-- Fin de .simulation-container -->
+    </div>
+
+    <!-- Sección de Explicaciones -->
+    <div class="explanations">
+        <h2>Explicaciones del Simulador</h2>
+        <div class="explanation-block">
+            <h3>Objetivo General y Simplificaciones</h3>
+            <p>...</p> <!-- Contenido como antes -->
+            <p>
+                Este simulador busca <strong>ilustrar visualmente el flujo secuencial y las demoras</strong> inherentes en una comunicación web básica Cliente-Servidor usando el protocolo HTTP. Muestra cómo una acción en el navegador (Cliente) desencadena una Petición, cómo esta "viaja" (simuladamente), es procesada por un Servidor (simulado), y cómo la Respuesta regresa al Cliente.
+            </p>
+            <p>
+                <strong>Importante:</strong> Es una <strong>simplificación didáctica</strong>. No simula los detalles complejos de las redes reales (protocolos TCP/IP, resolución DNS, enrutamiento, firewalls, balanceadores de carga, etc.). Toda la simulación ocurre localmente en tu navegador usando JavaScript.
+            </p>
+        </div>
+        <div class="explanation-block">
+            <h3>El Panel "Cliente (Navegador)"</h3>
+             <p>...</p> <!-- Contenido como antes -->
+             <p>
+                Representa tu navegador web. Aquí es donde se origina la interacción:
+            </p>
+            <ul>
+                <li><strong>Botones:</strong> Simulan la acción del usuario (hacer clic en un enlace, enviar un formulario).</li>
+                <li><strong>Acción del Usuario y Log:</strong> Muestra los pasos que ocurren *dentro* del navegador: se presiona el botón, se prepara la petición HTTP (usando `fetch` internamente en una app real), se recibe la respuesta, se procesa.</li>
+                <li><strong>Respuesta Recibida:</strong> Muestra los detalles (código de estado, cabeceras, cuerpo) de la respuesta HTTP tal como la recibe el navegador.</li>
+                <li><strong>Código JS (Ejemplo):</strong> Muestra cómo se vería el código JavaScript real usando la `Fetch API` para realizar peticiones similares.</li>
+            </ul>
+        </div>
+         <div class="explanation-block">
+            <h3>El Panel "Servidor (Backend Simulado)"</h3>
+            <p>...</p> <!-- Contenido como antes -->
+            <p>
+                Representa un servidor web simple (como uno creado con Node.js/Express). Su función es:
+            </p>
+            <ul>
+                <li><strong>Esperar Peticiones:</strong> Está "escuchando" la llegada de peticiones simuladas.</li>
+                <li><strong>Log del Servidor:</strong> Muestra un registro de lo que ocurre en el servidor: cuándo llega una petición, de qué cliente simulado (`192.168.1.100`), qué cabeceras y cuerpo trae, qué lógica interna se ejecuta (simulada), y qué respuesta se prepara y envía.</li>
+                <li><strong>Procesamiento Simulado:</strong> Aunque no hay una base de datos real ni lógica compleja, el código simula tomar decisiones basadas en la URL y el método (GET/POST) y genera una respuesta apropiada (datos JSON, mensajes de éxito/error).</li>
+            </ul>
+        </div>
+        <div class="explanation-block">
+            <h3>El Panel "Red (Tráfico HTTP Simulado)" - ¡La Clave Visual!</h3>
+            <p>...</p> <!-- Contenido como antes -->
+            <p>
+                Este panel central es fundamental para la visualización, pero es crucial entender qué representa (y qué no):
+            </p>
+            <ul>
+                <li><strong>¿Qué es?:</strong> Es una <strong>metáfora visual</strong> del canal de comunicación entre el Cliente y el Servidor. Actúa como un "tablón de anuncios" donde se muestra la Petición cuando "sale" del cliente y la Respuesta cuando "sale" del servidor. <strong>No representa la complejidad real de la red de Internet.</strong></li>
+                <li><strong>¿Cómo interactúan Cliente y Servidor con "Red" aquí?:</strong> En esta simulación, ni el Cliente ni el Servidor "hablan" directamente con este panel como si fuera una entidad de red real. La interacción es indirecta y controlada por el script principal (`script.js`):
+                    <ol>
+                        <li>Cuando el script simula que el Cliente está listo para enviar, <strong>escribe</strong> el mensaje de la Petición en este panel 'Red'.</li>
+                        <li>Se usa `setTimeout` para simular el <strong>tiempo de viaje</strong> de la petición por la red.</li>
+                        <li>Cuando el script simula que el Servidor está listo para enviar la respuesta, <strong>escribe</strong> el mensaje de la Respuesta en este panel 'Red'.</li>
+                        <li>Se usa otro `setTimeout` para simular el <strong>tiempo de viaje</strong> de la respuesta de vuelta.</li>
+                    </ol>
+                </li>
+                <li><strong>¿Qué comandos de programación tengo para la "Red"?:</strong> En el contexto de *este simulador*, **no tienes comandos específicos** para interactuar con esta "Red" simulada. No es una API de red. La única "interacción" es a través de la función `logToPanel` que el script principal utiliza para añadir los mensajes formateados (petición y respuesta) en los momentos adecuados, orquestado por las pausas de `setTimeout`.</li>
+                <li><strong>Propósito Didáctico:</strong> Su función es exclusivamente **visualizar que la comunicación no es instantánea**. Muestra que hay un "viaje" de ida (petición) y un "viaje" de vuelta (respuesta), y ayuda a seguir la secuencia del flujo completo. Las flechas y la alineación (derecha para petición, izquierda para respuesta) refuerzan esta idea de dirección.</li>
+            </ul>
+        </div>
+         <div class="explanation-block">
+            <h3>El Rol de `setTimeout` (Simulación del Tiempo)</h3>
+            <p>...</p> <!-- Contenido como antes -->
+            <p>
+                Como se mencionó, la comunicación real toma tiempo (latencia de red, procesamiento). Para simular esto visualmente, usamos `setTimeout(callback, delay)`.
+            </p>
+            <ul>
+                <li>Cada `setTimeout` introduce una <strong>pausa artificial deliberada</strong> antes de ejecutar el siguiente paso de la simulación (el `callback`).</li>
+                <li>Estas pausas representan:
+                    <ul>
+                        <li>Tiempo de creación/procesamiento en el cliente.</li>
+                        <li>Tiempo de viaje de la petición por la red (latencia).</li>
+                        <li>Tiempo de procesamiento en el servidor.</li>
+                        <li>Tiempo de viaje de la respuesta por la red (latencia).</li>
+                        <li>Tiempo de procesamiento de la respuesta en el cliente.</li>
+                    </ul>
+                </li>
+                <li>Esto permite seguir el flujo paso a paso, observando cómo la información "se mueve" entre los paneles. Sin estas pausas, todo ocurriría casi instantáneamente en el navegador y no se apreciaría la secuencia ni el concepto de asincronía.</li>
+            </ul>
+        </div>
+         <div class="explanation-block">
+            <h3>Observando Tráfico Real con Herramientas de Desarrollo (F12)</h3>
+            <p>...</p> <!-- Contenido como antes -->
+            <p>
+                Las <strong>Herramientas de Desarrollo</strong> de tu navegador (F12) son esenciales para el desarrollo web real. La pestaña <strong>"Red" (Network)</strong> te permite ver las peticiones HTTP <strong>reales</strong> que tu navegador hace al cargar páginas web o interactuar con aplicaciones.
+            </p>
+            <ul>
+                <li>Verás detalles como métodos, URLs, códigos de estado, cabeceras, cuerpos y tiempos de cada petición real.</li>
+                <li><strong>Contraste Importante:</strong> El tráfico mostrado en la pestaña "Red" de las herramientas F12 es el <strong>real</strong>, manejado por el motor de red del navegador y el sistema operativo. <strong>No verás el tráfico *simulado* de esta página en la pestaña F12</strong>, porque nuestro simulador no realiza llamadas de red reales; sólo manipula elementos HTML dentro de la página.</li>
+                <li>Usar la pestaña "Red" (F12) en sitios web reales es la forma de analizar la comunicación HTTP fuera de este entorno simulado.</li>
+            </ul>
+        </div>
+         <!-- Fin de .explanations -->
+    </div>
+
+    <!-- Sección de Glosario -->
+    <div class="glossary">
+        <h2>Glosario de Términos</h2>
+        <dl>
+             <dt>API (Application Programming Interface)</dt>
+            <dd>Interfaz de Programación de Aplicaciones. Conjunto de reglas y protocolos que permite a diferentes programas comunicarse entre sí. En el contexto web, a menudo se refiere a un endpoint en un servidor al que se pueden hacer peticiones HTTP para obtener o enviar datos.</dd>
+
+            <dt>Backend</dt>
+            <dd>La parte de una aplicación web que se ejecuta en el servidor. Se encarga de la lógica de negocio, el acceso a bases de datos y de responder a las peticiones del cliente.</dd>
+
+            <dt>Cabeceras HTTP (Headers)</dt>
+            <dd>Metadatos enviados junto con una petición o respuesta HTTP. Proporcionan información adicional sobre la petición/respuesta o sobre el cliente/servidor (ej. tipo de contenido, cookies, agente de usuario).</dd>
+
+            <dt>Cliente (Navegador)</dt>
+            <dd>El programa (generalmente un navegador web como Chrome, Firefox, etc.) que inicia la comunicación solicitando recursos o datos a un servidor.</dd>
+
+            <dt>Código de Estado HTTP (Status Code)</dt>
+            <dd>Un número de tres dígitos devuelto por el servidor en la respuesta HTTP, indicando el resultado de la petición (ej. 200 OK, 201 Created, 404 Not Found, 500 Internal Server Error).</dd>
+
+            <dt>Cuerpo HTTP (Body/Payload)</dt>
+            <dd>Parte opcional de una petición o respuesta HTTP que contiene los datos principales que se envían (ej. datos de un formulario en POST, datos JSON en una respuesta de API).</dd>
+
+            <dt>DOM (Document Object Model)</dt>
+            <dd>Modelo de Objetos del Documento. Una representación estructurada (en forma de árbol) del documento HTML que el navegador crea. JavaScript puede interactuar con el DOM para modificar dinámicamente el contenido y la estructura de la página web.</dd>
+
+            <dt>Fetch API</dt>
+            <dd>Una interfaz moderna de JavaScript para realizar peticiones HTTP de forma asíncrona. Es más potente y flexible que el antiguo `XMLHttpRequest`.</dd>
+
+            <dt>Frontend</dt>
+            <dd>La parte de una aplicación web con la que el usuario interactúa directamente, generalmente se ejecuta en el navegador. Incluye HTML, CSS y JavaScript.</dd>
+
+            <dt>GET</dt>
+            <dd>Uno de los métodos HTTP más comunes. Se utiliza típicamente para solicitar/recuperar datos de un servidor. Las peticiones GET no suelen tener cuerpo y los parámetros se envían en la URL.</dd>
+
+            <dt>HTTP (HyperText Transfer Protocol)</dt>
+            <dd>Protocolo de Transferencia de Hipertexto. Es el protocolo fundamental de la World Wide Web, utilizado para la comunicación entre clientes y servidores. Define cómo se formatean y transmiten los mensajes (peticiones y respuestas).</dd>
+
+            <dt>JSON (JavaScript Object Notation)</dt>
+            <dd>Formato ligero de intercambio de datos, fácil de leer para humanos y fácil de interpretar para las máquinas. Es muy común para enviar y recibir datos en APIs web.</dd>
+
+            <dt>Latencia</dt>
+            <dd>El tiempo que tarda un paquete de datos en viajar desde el origen hasta el destino a través de una red. Es un componente del tiempo total de respuesta.</dd>
+
+            <dt>Método HTTP</dt>
+            <dd>Indica la acción que se desea realizar sobre un recurso en el servidor (ej. GET para obtener, POST para enviar/crear, PUT para actualizar, DELETE para borrar).</dd>
+
+            <dt>Petición HTTP (Request)</dt>
+            <dd>El mensaje enviado por el cliente al servidor para solicitar una acción o recurso.</dd>
+
+            <dt>POST</dt>
+            <dd>Otro método HTTP común. Se utiliza típicamente para enviar datos a un servidor para crear o actualizar un recurso. Los datos se envían en el cuerpo de la petición.</dd>
+
+            <dt>Respuesta HTTP (Response)</dt>
+            <dd>El mensaje enviado por el servidor al cliente como resultado de una petición.</dd>
+
+            <dt>Servidor</dt>
+            <dd>Un ordenador o programa que espera y responde a las peticiones de los clientes. Aloja los recursos (archivos HTML, imágenes, etc.) y ejecuta la lógica del backend.</dd>
+
+            <dt>setTimeout</dt>
+            <dd>Una función de JavaScript que ejecuta un fragmento de código o una función una vez después de que haya transcurrido un período de tiempo especificado (en milisegundos).</dd>
+
+            <dt>TCP/IP (Transmission Control Protocol/Internet Protocol)</dt>
+            <dd>Conjunto fundamental de protocolos de red que permiten la comunicación en Internet. TCP se encarga de la transmisión fiable de datos y IP del direccionamiento y enrutamiento.</dd>
+
+            <dt>URL (Uniform Resource Locator)</dt>
+            <dd>Localizador Uniforme de Recursos. La dirección única que identifica un recurso en la web (ej. `https://www.ejemplo.com/pagina.html`).</dd>
+        </dl>
+         <!-- Fin de .glossary -->
+    </div>
+
+    <!-- Sección de Referencias y Más Información -->
+    <div class="references">
+        <h2>Referencias y Más Información</h2>
+        <p>Para profundizar en los conceptos presentados en este simulador, aquí tienes algunos recursos útiles:</p>
+        <ul>
+             <li>
+                <a href="https://developer.mozilla.org/es/docs/Web/HTTP/Overview" target="_blank" rel="noopener noreferrer">MDN: Un resumen sobre HTTP</a>
+                 - <span class="ref-desc">Excelente punto de partida para entender qué es HTTP, su estructura (peticiones, respuestas) y su papel en la web. (Básico)</span>
+            </li>
+            <li>
+                <a href="https://developer.mozilla.org/es/docs/Web/HTTP/Methods" target="_blank" rel="noopener noreferrer">MDN: Métodos de Petición HTTP</a>
+                 - <span class="ref-desc">Detalla los diferentes verbos HTTP (GET, POST, PUT, DELETE, etc.) y cuándo usar cada uno. (Básico/Intermedio)</span>
+            </li>
+            <li>
+                <a href="https://developer.mozilla.org/es/docs/Web/HTTP/Status" target="_blank" rel="noopener noreferrer">MDN: Códigos de Estado HTTP</a>
+                 - <span class="ref-desc">Explica el significado de los códigos numéricos que devuelve el servidor (200 OK, 404 Not Found, 500 Internal Server Error, etc.). (Básico/Intermedio)</span>
+            </li>
+             <li>
+                <a href="https://developer.mozilla.org/es/docs/Learn/Common_questions/Web_mechanics/Client-server_overview" target="_blank" rel="noopener noreferrer">MDN: Visión General Cliente-Servidor</a>
+                 - <span class="ref-desc">Explica el modelo fundamental de comunicación en la web entre el cliente (navegador) y el servidor. (Básico)</span>
+            </li>
+            <li>
+                <a href="https://developer.chrome.com/docs/devtools/network?utm_source=devtools&utm_campaign=2019Q1&hl=es-419" target="_blank" rel="noopener noreferrer">Chrome DevTools: Referencia de Análisis de Red</a>
+                 - <span class="ref-desc">Guía oficial de Google sobre cómo usar la pestaña "Red" de las herramientas de desarrollo de Chrome para inspeccionar el tráfico HTTP real. (Intermedio)</span>
+            </li>
+             <li>
+                <a href="https://firefox-source-docs.mozilla.org/devtools-user/network_monitor/" target="_blank" rel="noopener noreferrer">Firefox DevTools: Monitor de Red</a>
+                 - <span class="ref-desc">Documentación similar a la de Chrome, pero para las herramientas de desarrollo de Firefox. Útil para ver las similitudes y diferencias. (Intermedio)</span>
+            </li>
+            <li>
+                <a href="https://developer.mozilla.org/es/docs/Web/API/Fetch_API/Using_Fetch" target="_blank" rel="noopener noreferrer">MDN: Usando la API Fetch</a>
+                 - <span class="ref-desc">Tutorial sobre cómo realizar peticiones HTTP desde JavaScript usando la moderna API Fetch, como se simula en el panel del cliente. (Intermedio)</span>
+            </li>
+             <li>
+                <a href="https://nodejs.org/es/about/" target="_blank" rel="noopener noreferrer">Node.js: Acerca de Node.js</a>
+                 - <span class="ref-desc">Introducción al entorno de ejecución de JavaScript del lado del servidor (Node.js), mencionado en la simulación del backend. (Intermedio)</span>
+            </li>
+             <li>
+                <a href="https://expressjs.com/es/starter/hello-world.html" target="_blank" rel="noopener noreferrer">Express.js: Hola Mundo</a>
+                 - <span class="ref-desc">Guía de inicio para Express, un framework popular para Node.js, que facilita la creación de servidores web y APIs (como el servidor simulado aquí). (Intermedio)</span>
+            </li>
+            <li>
+                <a href="https://web.dev/learn/http/" target="_blank" rel="noopener noreferrer">web.dev: Learn HTTP</a>
+                 - <span class="ref-desc">Curso de Google sobre HTTP/2 y HTTP/3, cubriendo aspectos más modernos y de rendimiento del protocolo. (Avanzado)</span>
+            </li>
+             <li>
+                <a href="https://httpwg.org/specs/" target="_blank" rel="noopener noreferrer">HTTP Working Group Specifications</a>
+                 - <span class="ref-desc">Acceso a las especificaciones técnicas oficiales (RFCs) que definen el protocolo HTTP. Muy detallado y técnico. (Muy Avanzado)</span>
+            </li>
+        </ul>
+         <!-- Fin de .references -->
+    </div>
+
+    <!-- Vincula el archivo JavaScript al final del body -->
+    <script src="script.js"></script>
+</body>
+</html>
