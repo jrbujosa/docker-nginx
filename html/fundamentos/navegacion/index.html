@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Simulador de Rutas Relativas</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div id="container">
+    <div class="panel" id="panel-navegador">
+      <h2>Vista del Navegador</h2>
+      <div id="vista-navegador"></div>
+    </div>
+
+    <div class="panel" id="panel-codigo">
+      <h2>Código HTML</h2>
+      <pre id="codigo-html"></pre>
+    </div>
+
+    <div class="panel" id="panel-arbol">
+      <h2>Árbol de Carpetas</h2>
+      <div id="arbol-carpetas"></div>
+    </div>
+  </div>
+
+  <div id="panel-explicacion">
+    <h2>Análisis de la Ruta</h2>
+    <div id="explicacion"></div>
+  </div>
+
+    <!-- =============================================================== -->
+    <!-- NUEVA SECCIÓN: Contenido Integrado de Buenas Prácticas -->
+    <!-- =============================================================== -->
+<div class="seccion-estructura">
+        <h2>Buenas Prácticas en Estructura Web y Rutas (Contenido Integrado)</h2>
+        <!-- Contenido copiado de estructura-web-buenas-practicas.html -->
+        <h1>Estructura Web y Buenas Prácticas con Rutas Relativas</h1>
+
+        <p>Organizar correctamente la estructura de archivos y carpetas de un sitio web es fundamental para su mantenimiento, escalabilidad y para evitar errores comunes, especialmente con las rutas relativas.</p>
+
+        <h2>¿Por Qué es Importante una Buena Estructura?</h2>
+        <ul>
+            <li><strong>Mantenibilidad:</strong> Facilita encontrar, modificar y actualizar archivos.</li>
+            <li><strong>Escalabilidad:</strong> Permite que el sitio crezca de forma ordenada sin volverse caótico.</li>
+            <li><strong>Colaboración:</strong> Ayuda a que diferentes miembros del equipo entiendan dónde encontrar cada recurso.</li>
+            <li><strong>Claridad con Rutas:</strong> Una estructura lógica hace que las rutas relativas sean más predecibles y menos propensas a errores.</li>
+            <li><strong>SEO (Optimización para Motores de Búsqueda):</strong> URLs claras y una estructura lógica pueden tener un impacto positivo.</li>
+        </ul>
+
+        <h2>Estructura Común Sugerida</h2>
+        <p>No hay una única estructura "perfecta", pero una organización común y efectiva suele ser:</p>
+        <pre><code class="file-tree-example">
+mi-proyecto-web/
+├── index.html             # Página principal (raíz del sitio)
+├── css/                   # Carpeta para hojas de estilo CSS
+│   ├── style.css
+│   └── vendor/            # Estilos de terceros (Bootstrap, etc.)
+│       └── bootstrap.min.css
+├── js/                    # Carpeta para archivos JavaScript
+│   ├── main.js
+│   └── vendor/            # Scripts de terceros (jQuery, etc.)
+│       └── jquery.min.js
+├── images/ (o img/, assets/images/) # Carpeta para imágenes
+│   ├── logo.png
+│   ├── banner.jpg
+│   └── icons/
+│       └── favicon.ico
+├── pages/ (o views/, templates/) # Carpeta para otras páginas HTML
+│   ├── about.html
+│   ├── contact.html
+│   └── services/
+│       ├── service1.html
+│       └── service2.html
+└── assets/ (alternativa o complementaria) # Recursos generales
+    ├── fonts/
+    │   └── myfont.woff2
+    └── documents/
+        └── terms.pdf
+        </code></pre>
+
+        <h2>Buenas Prácticas con Rutas Relativas</h2>
+        <ol>
+            <li>
+                <strong>Sé Consistente:</strong> Usa siempre el mismo estilo (p.ej., siempre rutas relativas desde la raíz o siempre relativas al archivo actual, aunque lo segundo es más común y a menudo más fácil de gestionar localmente).
+            </li>
+            <li>
+                <strong>Usa Barras Inclinadas (<code>/</code>):</strong> Siempre usa barras inclinadas hacia adelante (<code>/</code>) como separadores de directorios, incluso en Windows. Los servidores web y navegadores las entienden universalmente. Evita las barras invertidas (<code>\</code>).
+            </li>
+            <li>
+                <strong>Relativo al Archivo Actual (Más Común):</strong>
+                <ul>
+                    <li><code>./</code> (o simplemente el nombre del archivo/carpeta): Se refiere al directorio actual. &lt;a href="contact.html">Contacto</a&gt; o &lt;a href="./contact.html">Contacto</a&gt; buscarán <code>contact.html</code> en la misma carpeta que el archivo HTML que contiene el enlace.</li>
+                    <li><code>../</code>: Sube un nivel en la jerarquía de directorios. Si estás en <code>pages/about.html</code>, &lt;a href="../index.html">Inicio</a&gt; buscará <code>index.html</code> en la carpeta raíz (un nivel arriba de <code>pages/</code>).</li>
+                    <li><code>nombre_carpeta/</code>: Entra en una subcarpeta. Si estás en <code>index.html</code>, &lt;a href="pages/about.html">Sobre Nosotros</a&gt; buscará <code>about.html</code> dentro de la carpeta <code>pages/</code>.</li>
+                    <li>Combinaciones: &lt;a href="../images/logo.png"&gt; (sube un nivel, luego entra en <code>images/</code>).</li>
+                </ul>
+            </li>
+            <li>
+                <strong>Relativo a la Raíz del Sitio (Menos común para enlaces, más para assets):</strong>
+                <ul>
+                    <li>Empieza con una barra inclinada <code>/</code>: Indica que la ruta comienza desde la raíz del dominio del sitio web. &lt;a href="/pages/contact.html">Contacto</a&gt; siempre buscará <code>contact.html</code> dentro de la carpeta <code>pages</code> que está directamente en la raíz del sitio, sin importar dónde esté el archivo HTML actual.</li>
+                    <li>**Ventaja:** Funciona igual desde cualquier página.</li>
+                    <li>**Desventaja:** No funciona bien si el sitio se ejecuta desde una subcarpeta en el servidor o localmente sin un servidor web configurado (p.ej., abriendo el archivo HTML directamente desde el explorador de archivos). Por eso, para enlaces entre páginas, las rutas relativas al archivo suelen ser más robustas durante el desarrollo. Es más común usar rutas relativas a la raíz para recursos globales como CSS o JS principales (&lt;link rel="stylesheet" href="/css/style.css"&gt;).</li>
+                </ul>
+            </li>
+            <li>
+                <strong>Evita Rutas Absolutas Fijas (<code>file:///...</code> o <code>C:\...</code>):</strong> Nunca uses rutas del sistema de archivos local en tu código HTML/CSS/JS. Solo funcionarán en tu máquina y se romperán en cualquier otro lugar (servidor, otro desarrollador).
+            </li>
+            <li>
+                <strong>Nombres de Archivo/Carpeta:</strong>
+                <ul>
+                    <li>Usa nombres descriptivos y en minúsculas.</li>
+                    <li>Separa palabras con guiones (<code>-</code>) (kebab-case), es lo más común y legible en URLs. Evita espacios o caracteres especiales.</li>
+                    <li>Sé consistente (p.ej., todo en inglés o todo en español).</li>
+                </ul>
+            </li>
+            <li>
+                <strong>Prueba Localmente y en el Servidor:</strong> Asegúrate de que las rutas funcionen tanto cuando desarrollas en tu máquina como cuando despliegas el sitio en un servidor web real, especialmente si usas rutas relativas a la raíz. Herramientas como Live Server en VS Code ayudan a simular un entorno de servidor local.</li>
+        </ol>
+
+        <p>Una estructura bien pensada y un uso cuidadoso de las rutas relativas te ahorrarán muchos dolores de cabeza a medida que tu proyecto web crezca.</p>
+
+        <!-- Fin del contenido copiado -->
+    </div>
+
+
+  <script src="script.js"></script>
+</body>
+</html>

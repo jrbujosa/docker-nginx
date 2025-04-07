@@ -1,0 +1,79 @@
+Objetivo del Simulador: Enseñar visualmente cómo se estructura un sitio web en carpetas y cómo crear enlaces (<a>) correctos entre páginas HTML ubicadas en diferentes niveles de esa estructura, usando rutas relativas.
+
+Diseño Propuesto (3 Paneles Principales + Panel de Explicación):
+
+Panel Izquierdo: "Vista del Navegador (Simplificada)"
+
+Propósito: Simular lo que el usuario vería en un navegador básico.
+
+Contenido:
+
+Título Claro: Indicando la página HTML actualmente visible (ej: "Viendo: /index.html" o "Viendo: /paginas/servicios/consultoria.html").
+
+Contenido Básico: Un texto simple identificando la página (ej: "Esta es la Página Principal" o "Página de Consultoría").
+
+Enlaces Clickables: Mostrar los <a> de la página actual como enlaces de texto normales (ej: "Ir a Sobre Nosotros", "Volver a Inicio", "Ver Producto A").
+
+Interactividad:
+
+Al hacer clic en un enlace, simula la navegación: El simulador carga la página destino, actualizando todos los paneles.
+
+(Opcional, pero útil) Al pasar el ratón sobre un enlace, podría resaltar temporalmente el <a> correspondiente en el Panel de Código y el archivo destino en el Árbol de Carpetas.
+
+Panel Central: "Código HTML (Fuente de la Página Actual)"
+
+Propósito: Mostrar el código fuente HTML relevante de la página que se está viendo en el Panel Izquierdo.
+
+Contenido:
+
+Mostrar el código HTML de la página actual.
+
+Resaltado Esencial: Destacar claramente las etiquetas <a> y, específicamente, sus atributos href="...". Utilizar sintaxis de colores básica para HTML.
+
+Interactividad:
+
+Al pasar el ratón sobre un href="..." específico, activa el análisis detallado en el Panel de Explicación y podría resaltar el archivo destino en el Árbol de Carpetas.
+
+Debe actualizarse automáticamente cuando se navega a otra página (haciendo clic en un enlace del Panel Izquierdo o en el Árbol de Carpetas).
+
+Panel Derecho: "Árbol de Archivos y Carpetas del Sitio"
+
+Propósito: Visualizar la estructura completa de carpetas y archivos del sitio web de ejemplo.
+
+Contenido:
+
+Una representación gráfica tipo árbol (como en un explorador de archivos).
+
+Mostrar carpetas (con un icono de carpeta 📁) y archivos HTML (con un icono de documento 📄).
+
+Resaltado Clave: Indicar claramente cuál es el archivo HTML actualmente abierto (el que se muestra en los paneles Izquierdo y Central). Podría ser con un color de fondo diferente o un borde.
+
+Interactividad:
+
+(Opcional) Permitir hacer clic en un archivo HTML del árbol para navegar directamente a esa página, actualizando los otros paneles.
+
+Al analizar un href (por hover en Panel Izquierdo o Central), podría resaltar el archivo/carpeta destino al que apunta esa ruta relativa.
+
+Panel Inferior (o Lateral Adicional): "Análisis de la Ruta / Explicación"
+
+Propósito: Es el corazón didáctico. Explica cómo funciona la ruta relativa del enlace seleccionado o sobre el que se pasa el ratón.
+
+Contenido Dinámico:
+
+Contexto: Indicar: "Analizando el enlace desde: [ruta_archivo_actual] hacia: [valor_del_href]".
+
+Desglose Paso a Paso: Explicar la ruta relativa:
+
+Si href="pagina.html": "Busca pagina.html en la misma carpeta que [archivo_actual]."
+
+Si href="subcarpeta/pagina.html": "Desde [archivo_actual], entra en la subcarpeta subcarpeta/ y busca pagina.html."
+
+Si href="../pagina.html": "Desde [archivo_actual], sube un nivel (a la carpeta padre) y busca pagina.html."
+
+Si href="../otra_carpeta/pagina.html": "Desde [archivo_actual], sube un nivel, luego entra en la carpeta hermana otra_carpeta/ y busca pagina.html."
+
+Resultado Visual (Opcional): Podría mostrar una mini-representación del árbol destacando el movimiento (subir nivel, entrar en carpeta).
+
+Éxito/Error: Indicar si la ruta analizada apunta a un archivo existente en la estructura mostrada. Si no existe, explicar por qué (ej: "Error: La carpeta 'otra_carpeta' no existe en el nivel superior").
+
+Interactividad: Se actualiza automáticamente al interactuar (hover/selección) con los enlaces o href en los otros paneles.
