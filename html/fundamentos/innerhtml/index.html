@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Simulador de innerHTML</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <div class="panel left">
+      <h3>Ejemplos</h3>
+      <button id="btn-titulo">Título Simple</button>
+      <button id="btn-parrafo">Párrafo Estilos</button>
+      <button id="btn-lista">Lista</button>
+      <button id="btn-imagen">Imagen</button>
+      <button id="btn-script">¡PELIGRO: Script!</button>
+
+      <hr>
+
+      <label for="custom-html">Tu Código HTML:</label>
+      <textarea id="custom-html" rows="5"></textarea>
+      <button id="insert-custom">Insertar Código</button>
+
+      <hr>
+
+      <button id="reset-btn">Reiniciar Simulador</button>
+    </div>
+
+    <div class="panel center">
+      <h3>Código Fuente HTML</h3>
+      <pre id="html-source"><!-- El código fuente aparecerá aquí --></pre>
+    </div>
+
+    <div class="panel right">
+      <h3>Resultado Renderizado</h3>
+      <div id="targetDiv"></div>
+      <p id="security-warning" style="display:none; color:red; font-weight:bold;">
+        ⚠️ ¡Advertencia! El código contiene etiquetas peligrosas.
+      </p>
+      <pre id="current-inner-html-display"><!-- .innerHTML renderizado --></pre>
+    </div>
+  </div>
+
+  <div class="bottom">
+    <div id="alternatives-info">
+      <!-- Info sobre alternativas seguras -->
+    </div>
+  </div>
+
+  <footer>
+    <h3>Objetivo del simulador</h3>
+    <p>Este simulador muestra cómo funciona innerHTML y sus riesgos de seguridad.</p>
+    <h4>Funcionamiento</h4>
+    <p>Al hacer clic en los botones, el HTML se inyecta vía innerHTML en el área de resultado.</p>
+    <h4>Riesgos de usar innerHTML</h4>
+    <ul>
+      <li><strong>No uses innerHTML</strong> con contenido que no controles o venga del usuario.</li>
+      <li>Es el principal vector de ataques XSS (Cross Site Scripting).</li>
+      <li>Alternativa segura: <code>element.textContent = 'texto plano'</code>.</li>
+      <li>Para HTML dinámico seguro, usa:
+        <pre>
+const el = document.createElement('p');
+el.textContent = 'Texto seguro';
+document.body.appendChild(el);
+        </pre>
+      </li>
+      <li>Si debes usar HTML de terceros, usa librerías como DOMPurify.</li>
+    </ul>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>

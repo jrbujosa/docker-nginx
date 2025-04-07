@@ -1,0 +1,116 @@
+Build a HTML page, JavaScript and style.css for a this simulator.
+
+Estructura General (Visual):
+
++--------------------------------+------------------------------------+------------------------------------+
+| Panel Izquierdo (Controles)    | Panel Central (Código Fuente HTML) | Panel Derecho (Resultado Renderizado) |
+|--------------------------------|------------------------------------|------------------------------------|
+| Botones de Ejemplos Predefinidos|                                    |                                    |
+|  - Botón 1: Título Simple      | <pre id="html-source">             | <div id="targetDiv">               |
+|  - Botón 2: Párrafo Estilos    |   <!-- El código fuente HTML     |    (Aquí se renderiza el HTML      |
+|  - Botón 3: Lista              |        con < y >           |     inyectado vía innerHTML)       |
+|  - Botón 4: Imagen             |        aparecerá aquí -->      |                                    |
+|  - Botón 5: ¡PELIGRO: Script!  | </pre>                             | </div>                             |
+|                                |                                    |                                    |
+| --- Separador ---              |                                    | <p id="security-warning"           |
+|                                |                                    |    style="display:none;">⚠️...</p> |
+| Área de Entrada Personalizada: |                                    |                                    |
+|  <label>Tu Código HTML:</label>|                                    | <pre id="current-inner-html-display">|
+|  <textarea id="custom-html">   |                                    |   <!-- Opcional: Muestra el      |
+|  </textarea>                  |                                    |        .innerHTML actual del     |
+|  <button id="insert-custom">  |                                    |        div de arriba, escapado -->|
+|      Insertar Código           |                                    | </pre>                            |
+|  </button>                     |                                    |                                    |
+|                                |                                    |                                    |
+| --- Separador ---              |                                    |                                    |
+|                                |                                    |                                    |
+| <button id="reset-btn">        |                                    |                                    |
+|     Reiniciar Simulador        |                                    |                                    |
+| </button>                      |                                    |                                    |
++--------------------------------+------------------------------------+------------------------------------+
+| Sección Inferior: Alternativa Moderna y Segura                                                            |
++-----------------------------------------------------------------------------------------------------------+
+| <div id="alternatives-info">                                                                              |
+|    (Aquí aparecerá la explicación sobre alternativas como textContent, createElement, etc.)               |
+| </div>                                                                                                    |
++-----------------------------------------------------------------------------------------------------------+
+
+Componentes Detallados y Funcionamiento Mejorado:
+
+Panel Izquierdo (Controles):
+
+Botones de Ejemplos: (Título, Párrafo, Lista, Imagen, Script Peligroso). Al hacer clic:
+
+El código HTML correspondiente se prepara y se muestra (con &lt; y &gt;) en el Panel Central (html-source).
+
+El innerHTML del targetDiv (Panel Derecho) se actualiza usando el código original (con < y >).
+
+La sección "Alternativa Moderna" se actualiza.
+
+La advertencia de seguridad se muestra/oculta según el caso.
+
+Área de Entrada Personalizada:
+
+<textarea id="custom-html">: Para la entrada del usuario.
+
+Botón id="insert-custom": Al hacer clic:
+
+El código del <textarea> se prepara y se muestra (con &lt; y &gt;) en el Panel Central (html-source).
+
+El innerHTML del targetDiv (Panel Derecho) se actualiza usando el código original del <textarea>.
+
+Se comprueba si el código del usuario es potencialmente peligroso para mostrar la advertencia.
+
+La sección "Alternativa Moderna" se actualiza.
+
+Botón Reiniciar (id="reset-btn"): Restaura los paneles Central y Derecho, limpia el <textarea> y resetea la sección de alternativas.
+
+Panel Central (Código Fuente HTML):
+
+Contiene únicamente una etiqueta <pre id="html-source">.
+
+Funcionamiento clave: Muestra el string HTML exacto que se usará para la asignación innerHTML. Para asegurar que las etiquetas se vean como texto y no sean interpretadas por el navegador en este panel, el contenido textual dentro de <pre> tendrá todos los caracteres < reemplazados por &lt; y todos los caracteres > reemplazados por &gt;.
+
+Ejemplo: Si el código a insertar es <h1>Hola</h1>, el contenido textual dentro del <pre id="html-source"> será &lt;h1&gt;Hola&lt;/h1&gt;. El navegador renderizará esto como el texto <h1>Hola</h1> dentro de un bloque preformateado.
+
+No se utiliza la etiqueta <code> anidada. Se actualiza cada vez que se presiona un botón de ejemplo o el botón "Insertar Código".
+
+Panel Derecho (Resultado Renderizado):
+
+Contiene el div principal (id="targetDiv") donde el navegador interpreta y renderiza el HTML original (el que tiene < y >) inyectado mediante la propiedad innerHTML.
+
+Incluye el párrafo de advertencia de seguridad (id="security-warning") que se muestra si se detecta código potencialmente peligroso (<script>, onerror, etc.) en la cadena original.
+
+(Opcional) Un <pre id="current-inner-html-display"> que muestra el valor leído de targetDiv.innerHTML después de la asignación. Para mostrarlo correctamente, este contenido también necesitará escapar sus < y > a &lt; y &gt;.
+
+Sección Inferior (Alternativa Moderna y Segura):
+
+Un div (id="alternatives-info") cuyo contenido cambia dinámicamente para explicar textContent, createElement, appendChild, la sanitización (y su complejidad/riesgo) y el rol de los frameworks, adaptando el mensaje al tipo de contenido que se acaba de insertar (simple, complejo, peligroso).
+
+Implementación (Consideración Clave para JS):
+
+Cuando actualices el contenido del Panel Central (#html-source) desde JavaScript, deberás:
+
+Tomar el string HTML original (ej: const codigoOriginal = '<h1>Hola</h1>';).
+
+Crear una versión escapada para mostrar: const codigoEscapado = codigoOriginal.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+
+Asignar la versión escapada al textContent del elemento <pre>: document.getElementById('html-source').textContent = codigoEscapado;
+
+Asignar la versión original al innerHTML del targetDiv: document.getElementById('targetDiv').innerHTML = codigoOriginal;
+
+En la parte de abajo de la página crea una sección donde se explique:
+
+- Objetivo del simulador
+- Funcionamiento del simulador
+- Riesgos de usar innerhtml:
+
+Por ejemplo:
+NUNCA uses innerHTML con contenido que no controles o provenga del usuario. Es el principal vector de ataques XSS.
+La alternativa segura es siempre usar elemento.textContent = 'tu texto plano' para insertar sólo texto.
+Para construir HTML dinámicamente de forma segura, usa los métodos del DOM:
+document.createElement('tag')
+elemento.setAttribute('attr', 'value')
+elemento.appendChild(otroElemento)
+elemento.textContent = 'texto seguro'
+Si debes renderizar HTML de terceros (muy desaconsejado), usa librerías de sanitización como DOMPurify para limpiar el HTML antes de asignarlo a innerHTML.
