@@ -78,15 +78,12 @@ body {
 #resetBtn:hover:not(:disabled) {
     background-color: #c53030;
 }
-/* === ESTILO PARA EL NUEVO BOTÓN DE INFO === */
 #infoBtn {
     background-color: #63b3ed; /* Azul más claro o diferente */
 }
 #infoBtn:hover:not(:disabled) {
     background-color: #4299e1; /* Azul primario al hacer hover */
 }
-/* ========================================== */
-
 
 /* --- Contenedor Principal --- */
 .content-wrapper {
@@ -104,22 +101,51 @@ body {
 .panels-container {
     display: flex;
     flex-grow: 1;
-    gap: 20px;
-    min-height: 500px; /* Aumentar altura mínima si es necesario */
-    flex-wrap: wrap; /* Permitir que los paneles se envuelvan en pantallas pequeñas */
+    gap: 20px; /* El espacio entre paneles se mantiene */
+    min-height: 500px;
+    flex-wrap: wrap; /* Importante para responsiveness */
 }
+
+/* Estilo base para todos los paneles */
 .panel {
-    flex: 1 1 300px; /* Flex-grow, flex-shrink, flex-basis (permite wrapping) */
+    /* flex: 1 1 300px;  <-- SE ELIMINA/COMENTA ESTA LÍNEA para usar las reglas específicas de abajo */
     background-color: #ffffff;
     border: 1px solid #e2e8f0;
     border-radius: 8px;
-    padding: 0;
+    padding: 0; /* El padding se aplica a los hijos o al h2 */
     display: flex;
     flex-direction: column;
-    overflow: hidden; /* Importante para que el padding del h2 no se salga */
+    overflow: hidden; /* Importante para bordes redondeados y scroll interno */
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-    min-width: 300px; /* Ancho mínimo para cada panel */
+    /* min-width: 0; <-- Se aplica individualmente abajo si es necesario */
 }
+
+/* --- NUEVA CONFIGURACIÓN: Anchos Proporcionales de Paneles --- */
+#interactive-panel {
+    flex-grow: 25;  /* ~25% del espacio */
+    flex-shrink: 1; /* Permitir encoger */
+    flex-basis: 0;  /* Base 0 para que el grow distribuya el espacio */
+    min-width: 0;   /* Permitir que sea muy estrecho si es necesario */
+}
+
+#code-panel {
+    flex-grow: 45;  /* ~45% del espacio */
+    flex-shrink: 1;
+    flex-basis: 0;
+    min-width: 0;
+    position: relative; /* Mantenido por si #code-highlight lo necesita */
+}
+
+#log-panel {
+    flex-grow: 30;  /* ~30% del espacio */
+    flex-shrink: 1;
+    flex-basis: 0;
+    min-width: 0;
+}
+/* --- FIN NUEVA CONFIGURACIÓN --- */
+
+
+/* Estilos para el título H2 dentro de CUALQUIER panel */
 .panel h2 {
     margin: 0;
     padding: 12px 15px;
@@ -127,15 +153,15 @@ body {
     color: #4a5568;
     border-bottom: 1px solid #e2e8f0;
     background-color: #f7fafc;
-    flex-shrink: 0;
+    flex-shrink: 0; /* Evita que el título se encoja */
     font-weight: 600;
 }
 
-/* --- Panel Interactivo --- */
+/* --- Panel Interactivo (Contenido específico) --- */
 #interactive-panel .interactive-content {
     padding: 20px;
-    flex-grow: 1;
-    overflow-y: auto;
+    flex-grow: 1; /* Ocupa el espacio restante verticalmente */
+    overflow-y: auto; /* Scroll si el contenido es muy alto */
 }
 #interactive-panel button#miBoton {
     padding: 10px 20px;
@@ -156,7 +182,6 @@ body {
      cursor: not-allowed;
      opacity: 0.8;
 }
-
 #interactive-panel p#mensaje {
     margin-top: 15px;
     padding: 10px;
@@ -169,68 +194,64 @@ body {
     word-wrap: break-word; /* Para mensajes largos */
 }
 
-/* --- Panel de Código --- */
-#code-panel {
-    position: relative;
-}
+/* --- Panel de Código (Contenido específico) --- */
 #code-panel pre {
-    flex-grow: 1;
-    overflow: auto;
+    flex-grow: 1; /* Ocupa espacio vertical */
+    overflow: auto; /* Scroll horizontal y vertical si es necesario */
     margin: 0;
     padding: 15px;
     background-color: #fdfdfe;
     font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace;
     font-size: 0.9rem;
-    line-height: 1.6;
+    line-height: 1.6; /* Importante para calcular el resaltado */
     color: #2d3748;
-    white-space: pre;
-    position: relative; /* Para que el ::before no se salga */
+    white-space: pre; /* Mantiene espacios y saltos de línea */
+    position: relative; /* Para que el ::before no se salga (si hubiera) */
 }
 #code-highlight {
     position: absolute;
     left: 0;
     right: 0;
-    background-color: rgba(255, 235, 59, 0.4);
+    background-color: rgba(255, 235, 59, 0.4); /* Amarillo semitransparente */
     height: 1.6em; /* Debe coincidir con line-height del pre/code */
     z-index: 1;
-    display: none;
-    transition: top 0.15s ease-in-out; /* Transición más rápida */
-    border-left: 4px solid #f59e0b;
-    pointer-events: none;
+    display: none; /* Se muestra con JS */
+    transition: top 0.15s ease-in-out; /* Transición suave */
+    border-left: 4px solid #f59e0b; /* Borde izquierdo naranja */
+    pointer-events: none; /* No interfiere con la selección de texto */
 }
 #listener-code {
-    display: block; /* Asegura que tome el ancho completo */
-    position: relative;
+    display: block; /* Asegura que tome el ancho completo si es necesario */
+    position: relative; /* Para z-index si es necesario */
     z-index: 2; /* Por encima del resaltado */
     padding: 0;
     margin: 0;
 }
 
-
-/* --- Panel de Log --- */
+/* --- Panel de Log (Contenido específico) --- */
 #log-panel pre#event-log {
-    flex-grow: 1;
-    overflow: auto;
+    flex-grow: 1; /* Ocupa espacio vertical */
+    overflow: auto; /* Scroll vertical */
     margin: 0;
     padding: 15px;
-    background-color: #1a202c; /* Más oscuro */
-    color: #e2e8f0;
+    background-color: #1a202c; /* Fondo oscuro */
+    color: #e2e8f0; /* Texto claro */
     font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace;
     font-size: 0.85rem;
     line-height: 1.5;
-    white-space: pre-wrap;
-    word-wrap: break-word;
+    white-space: pre-wrap; /* Mantiene espacios, permite wrapping de líneas largas */
+    word-wrap: break-word; /* Asegura el wrapping */
 }
 #log-panel pre#event-log span {
     font-weight: bold;
-    color: #90cdf4;
+    color: #90cdf4; /* Azul claro para el actor */
     margin-right: 5px; /* Pequeño espacio después del actor */
 }
 #log-panel pre#event-log span::before { content: '['; } /* Añadir corchetes visualmente */
 #log-panel pre#event-log span::after { content: ']'; }
 
 
-/* === ESTILOS PARA LA NUEVA SECCIÓN Y TABLA === */
+/* --- Estilos para la Sección de Información de Listeners --- */
 .info-section {
     max-width: 1200px; /* Ancho similar a controls */
     margin: 30px auto 40px auto; /* Márgenes arriba/abajo y centrado horizontal */
@@ -241,7 +262,6 @@ body {
     border: 1px solid #e2e8f0;
     border-top: 4px solid #63b3ed; /* Borde superior con el color del botón info */
 }
-
 .info-section h2 {
     color: #2b6cb0; /* Azul oscuro para el título */
     text-align: left;
@@ -252,38 +272,65 @@ body {
     font-size: 1.4rem;
     font-weight: 600;
 }
-.info-section p {
-    margin-bottom: 20px;
+.info-section h3 { /* Estilo añadido para los subtítulos dentro de la sección info */
+    color: #4a5568;
+    margin-top: 25px;
+    margin-bottom: 10px;
+    font-size: 1.15rem;
+    font-weight: 600;
+}
+.info-section p,
+.info-section ul,
+.info-section ol { /* Aplicar a párrafos y listas */
+    margin-bottom: 15px;
     line-height: 1.6;
     color: #4a5568;
 }
+.info-section ul,
+.info-section ol {
+    padding-left: 25px; /* Indentación estándar para listas */
+}
+.info-section li {
+    margin-bottom: 8px; /* Espacio entre ítems de lista */
+}
+.info-section code { /* Estilo general para código inline en la sección info */
+    background-color: #edf2f7;
+    color: #2d3748;
+    padding: 2px 5px;
+    border-radius: 4px;
+    font-size: 0.9em;
+    font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace;
+}
+.info-section strong { /* Resaltar términos clave */
+     color: #2c5282; /* Un azul más oscuro */
+     font-weight: 600;
+}
 
+/* --- Estilos para la Tabla dentro de la Sección de Info --- */
 .info-section table {
     width: 100%;
     border-collapse: collapse;
-    margin-top: 15px;
+    margin-top: 20px; /* Más espacio antes de la tabla */
     font-size: 0.9em;
     box-shadow: 0 1px 2px rgba(0,0,0,0.05); /* Sombra sutil a la tabla */
 }
-
 .info-section th,
 .info-section td {
     border: 1px solid #e2e8f0; /* Bordes suaves */
-    padding: 12px 15px; /* Más padding */
+    padding: 10px 12px; /* Ajuste de padding */
     text-align: left;
-    vertical-align: top;
+    vertical-align: top; /* Alinear arriba para celdas con mucho texto */
     line-height: 1.5;
 }
-
 .info-section th {
     background-color: #f7fafc; /* Fondo muy claro para encabezados */
     font-weight: 600;
     color: #4a5568;
     position: sticky; /* Encabezados fijos si la tabla es muy larga y tiene scroll */
-    top: 0; /* Requiere que el contenedor tenga overflow */
+    top: 0; /* Requiere que el contenedor tenga overflow (ver media query) */
+    z-index: 10; /* Para estar sobre el contenido al hacer scroll */
 }
-
-/* Mejorar estilo del código dentro de la tabla */
+/* Estilo del código dentro de la tabla (más específico que el general) */
 .info-section td code {
     background-color: #ebf8ff; /* Fondo azul claro */
     color: #2c5282; /* Texto azul oscuro */
@@ -292,20 +339,25 @@ body {
     font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace;
     font-size: 0.95em; /* Ligeramente más grande */
     border: 1px solid #bee3f8; /* Borde sutil */
+    white-space: nowrap; /* Evitar que el código se parta en dos líneas */
+}
+.info-section td strong { /* Para los nombres de Grupo en la tabla */
+    color: #2b6cb0; /* Azul oscuro */
 }
 
-.info-section strong {
-    color: #2b6cb0; /* Azul oscuro para los nombres de grupo */
-}
-
-/* Responsive (opcional, para mejorar en pantallas pequeñas) */
-@media (max-width: 768px) {
+/* === Responsive Design === */
+@media (max-width: 900px) { /* Ajustar breakpoint si es necesario */
     .panels-container {
-        flex-direction: column; /* Apilar paneles */
+        flex-direction: column; /* Apilar paneles verticalmente */
     }
     .panel {
+        /* Resetear flex-grow/shrink/basis cuando están apilados */
+        flex-grow: 0;
+        flex-shrink: 1; /* Permitir encoger si la pantalla es muy estrecha */
+        flex-basis: auto; /* Altura basada en contenido */
         min-width: 0; /* Resetear min-width */
-        flex-basis: auto; /* Dejar que la altura se ajuste */
+        /* Opcional: Dar una altura mínima si se ven muy pequeños */
+        /* min-height: 350px; */
     }
     .controls > div {
         flex-wrap: wrap; /* Permitir que los botones se envuelvan */
@@ -317,9 +369,17 @@ body {
         padding: 20px;
     }
      /* Hacer la tabla scrolleable horizontalmente en móviles */
-    .info-section div.table-wrapper { /* Necesitarás envolver la tabla en un div */
+    .info-section div.table-wrapper { /* Necesitarás envolver la tabla en un div para esto */
         overflow-x: auto;
         -webkit-overflow-scrolling: touch; /* Scroll suave en iOS */
+        margin-left: -20px; /* Compensar padding para que el scroll ocupe todo */
+        margin-right: -20px;
+        padding-left: 20px;
+        padding-right: 20px;
     }
-    /* Nota: Para que el wrapper funcione, envuelve la <table> en <div class="table-wrapper">...</div> en el HTML */
+    .info-section div.table-wrapper table {
+        min-width: 700px; /* Forzar un ancho mínimo a la tabla para que haya scroll */
+    }
+    /* Nota: Para que el wrapper de tabla funcione, envuelve la <table> en
+       <div class="table-wrapper">...</div> en el HTML */
 }

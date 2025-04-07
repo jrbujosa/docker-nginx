@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulador de Renderizado del Navegador</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <!-- Barra superior Fija para Controles -->
+    <div class="top-bar">
+        <div class="controls" style="display: flex; justify-content: space-between; align-items: center;">
+            <div style="display:flex; justify-content:center; align-items: center;">
+                <button id="prev-step" disabled>« Anterior</button>
+                <button id="next-step">Siguiente »</button>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Fin Barra superior -->
+
+    <!-- Envoltura para el resto del contenido -->
+    <div class="content-wrapper">
+
+        <!-- Contenedor Explicación -->
+        <div class="control-explanation-container">
+            <div id="explanation-panel">
+                <h2>Explicación del Paso Actual</h2>
+                <p id="explanation-text">Haz clic en "Siguiente Paso" para iniciar la simulación.</p>
+            </div>
+        </div>
+
+        <!-- Contenedor de Paneles Principales -->
+        <div class="panels-container">
+
+            <!-- Panel Izquierdo: Código Fuente -->
+            <div class="panel" id="source-panel">
+                <h2>Código Fuente HTML</h2>
+                <pre><code id="source-code" data-language="html">
+&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+    &lt;title&gt;Página Simulada&lt;/title&gt;
+    &lt;link rel="stylesheet" href="sim-style.css"&gt; &lt;!-- CSS Simulado --&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;h1 id="main-heading"&gt;Título Principal&lt;/h1&gt;
+    &lt;p class="intro"&gt;Este es el primer párrafo.&lt;/p&gt;
+    &lt;button id="action-button"&gt;Haz Clic&lt;/button&gt;
+    &lt;script src="sim-script.js"&gt;&lt;/script&gt; &lt;!-- JS Simulado --&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+                </code></pre>
+                <!-- *** LÍNEA ELIMINADA *** -->
+                <!-- <div id="source-highlight"></div> -->
+            </div>
+
+            <!-- Contenedor para Paneles Centrales (DOM y CSSOM) -->
+            <div class="center-panels-wrapper">
+                <!-- Panel Central Superior: Árbol DOM -->
+                <div class="panel sub-panel" id="dom-panel">
+                    <h2>Árbol DOM</h2>
+                    <pre id="dom-tree"><!-- DOM se generará aquí --></pre>
+                </div>
+
+                <!-- Panel Central Inferior: Árbol CSSOM -->
+                <div class="panel sub-panel" id="cssom-panel">
+                    <h2>CSSOM (Simulado)</h2>
+                    <pre id="cssom-tree"><!-- CSSOM se generará aquí --></pre>
+                </div>
+            </div>
+
+            <!-- Panel Derecho: Renderizado Visual -->
+            <div class="panel" id="render-panel">
+                <h2>Renderizado Visual (Simulado)</h2>
+                <div id="render-output">
+                    <!-- El contenido renderizado aparecerá aquí -->
+                </div>
+            </div>
+        </div> <!-- Fin panels-container -->
+    </div> <!-- Fin content-wrapper -->
+
+<!-- ========== SECCIÓN DE EXPLICACIÓN ========== -->
+<section id="explicacion-simulador" style="padding: 20px; margin-top: 30px; border-top: 1px solid #ccc;">
+
+    <h2>Explicación del Simulador y el DOM</h2>
+
+    <p>
+        Bienvenido a este simulador interactivo. Su objetivo es ayudarte a comprender uno de los procesos más fundamentales que ocurren cuando navegas por la web: cómo un navegador transforma el código HTML que recibe en una estructura viva y manipulable llamada <strong>DOM (Document Object Model)</strong>.
+    </p>
+
+    <h3>¿Por qué es importante crear el DOM?</h3>
+    <p>
+        El archivo HTML que escribe un desarrollador es, en esencia, solo texto plano con etiquetas. Para que el navegador pueda mostrar una página web visualmente, aplicar estilos con CSS y permitir interactividad con JavaScript, necesita una representación estructurada y organizada de ese documento. Ahí es donde entra el DOM.
+    </p>
+    <p>
+        El navegador analiza (parsea) el código HTML, etiqueta por etiqueta, y construye una estructura en memoria, similar a un árbol genealógico. Esta estructura es el DOM. Sin este paso:
+    </p>
+    <ul>
+        <li>El navegador no sabría qué elementos mostrar ni cómo están relacionados (p. ej., qué párrafo está dentro de qué div).</li>
+        <li>El CSS no tendría una estructura clara sobre la cual aplicar sus reglas de estilo.</li>
+        <li>JavaScript no tendría un modelo consistente para encontrar, modificar, añadir o eliminar elementos de la página de forma dinámica.</li>
+    </ul>
+    <p>
+        En resumen, la creación del DOM es el puente crucial entre el código fuente estático (HTML) y la página web dinámica e interactiva que ves y usas.
+    </p>
+
+    <h3>Términos Clave del Simulador</h3>
+    <p>
+        Durante el uso del simulador, te encontrarás con varios términos. Aquí explicamos los más importantes:
+    </p>
+    <ul>
+        <li>
+            <strong>HTML (HyperText Markup Language):</strong> Es el lenguaje de marcado estándar utilizado para crear páginas web. Define la estructura y el contenido semántico utilizando etiquetas (como &lt;p&gt;, &lt;div&gt;, &lt;img&gt;).
+        </li>
+        <li>
+            <strong>Parsing (Análisis Sintáctico):</strong> Es el proceso mediante el cual el navegador lee el código HTML, interpreta las etiquetas y sus relaciones, y construye la estructura del DOM. El simulador visualiza este proceso paso a paso.
+        </li>
+        <li>
+            <strong>DOM (Document Object Model):</strong>
+            <ul>
+                <li><strong>¿Qué es?</strong> Es una interfaz de programación (API) que representa un documento HTML (o XML) como un árbol de objetos. Cada elemento HTML, atributo, y pieza de texto se convierte en un <strong>nodo</strong> en este árbol. Por ejemplo, un párrafo &lt;p>Texto</p&gt; se representaría como un nodo de tipo Elemento ('p') que contiene un nodo hijo de tipo Texto ('Texto').</li>
+                <li><strong>¿Cuál es su importancia?</strong> El DOM es la representación "viva" de la página en la memoria del navegador. Es lo que permite a lenguajes como JavaScript interactuar con la página:
+                    <ul>
+                        <li>Seleccionar elementos específicos (p. ej., "encuentra el botón con id 'enviar'").</li>
+                        <li>Cambiar el contenido o los atributos de los elementos (p. ej., "cambia el texto de este párrafo").</li>
+                        <li>Añadir o eliminar elementos (p. ej., "crea una nueva lista aquí").</li>
+                        <li>Modificar estilos CSS (p. ej., "haz que este elemento sea rojo").</li>
+                        <li>Responder a eventos del usuario (p. ej., "cuando se haga clic en este botón, haz algo").</li>
+                    </ul>
+                </li>
+                <li><strong>DOM vs. Código Fuente:</strong> Es crucial entender que el DOM no siempre es idéntico al HTML original. El navegador puede corregir errores leves en el HTML durante el parsing, y JavaScript puede modificar drásticamente el DOM después de que la página se cargue, cambiando lo que ves sin alterar el archivo HTML fuente.</li>
+            </ul>
+        </li>
+        <li>
+            <strong>Nodo (Node):</strong> Es la unidad fundamental en el árbol DOM. Puede ser un nodo de Elemento (como &lt;div&gt;), un nodo de Atributo (como <code>id="principal"</code>), un nodo de Texto (el contenido textual), un nodo de Comentario, etc.
+        </li>
+        <li>
+            <strong>Árbol DOM (DOM Tree):</strong> Es la representación jerárquica completa de todos los nodos del documento, comenzando desde el nodo raíz (normalmente el objeto `document`).
+        </li>
+    </ul>
+
+    <!-- ========== NUEVAS SECCIONES AÑADIDAS ========== -->
+
+    <h3>Definición de API y la Naturaleza del DOM como API</h3>
+    <p>
+        Una <strong>API (Application Programming Interface / Interfaz de Programación de Aplicaciones)</strong> es un conjunto de reglas, definiciones, protocolos y herramientas que permiten que diferentes componentes de software se comuniquen entre sí. Piensa en ella como un "contrato" que define cómo un software puede solicitar servicios o datos de otro. Por ejemplo, cuando usas una app del tiempo en tu móvil, esa app probablemente utiliza una API para pedir los datos meteorológicos a un servidor externo.
+    </p>
+    <p>
+        <strong>¿Por qué el DOM es una API?</strong> El DOM encaja perfectamente en esta definición:
+    </p>
+    <ul>
+        <li>Define un conjunto estándar de <strong>objetos</strong> para representar el documento (como `Document`, `Element`, `Node`, `Text`).</li>
+        <li>Define las <strong>propiedades</strong> de esos objetos (como `element.id`, `node.nodeType`, `element.textContent`).</li>
+        <li>Define los <strong>métodos</strong> (funciones) que se pueden usar para interactuar con esos objetos (como `document.getElementById()`, `element.appendChild()`, `node.removeChild()`).</li>
+    </ul>
+    <p>
+        En esencia, el DOM es la API que el navegador expone para que los lenguajes de scripting (principalmente JavaScript) puedan "hablar" con la estructura de la página web, leerla y manipularla de forma estandarizada y predecible. Es independiente del lenguaje de programación, aunque en el contexto web, su uso más común es con JavaScript.
+    </p>
+
+    <h3>El Objeto `document` y su Rol Central</h3>
+    <p>
+        Dentro del entorno de ejecución del navegador (y por tanto, accesible desde JavaScript), existe un objeto global fundamental llamado &lt;strong&gt;document&gt;/strong&gt;.
+    </p>
+    <p>
+        <strong>Sí, <code>document</code> es un objeto.</strong> Como objeto, posee propiedades (información sobre el estado del documento) y métodos (acciones que se pueden realizar sobre el documento).
+    </p>
+    <p>
+        <strong>Su importancia radica en que es el punto de entrada principal a todo el árbol DOM de la página.</strong> Representa la totalidad del documento HTML cargado en esa ventana o pestaña del navegador. A través del objeto <code>document</code>, puedes:
+    </p>
+    <ul>
+        <li>Acceder al nodo raíz del documento (<code>document.documentElement</code>, que suele ser el elemento &lt;html&gt;).</li>
+        <li>Acceder a elementos específicos como el &lt;head&gt; (<code>document.head</code>) o el &lt;body&gt; (<code>document.body</code>).</li>
+        <li>Utilizar métodos para buscar y seleccionar elementos dentro del árbol (p.ej., <code>document.getElementById('miId')</code>, <code>document.querySelector('.miClase')</code>).</li>
+        <li>Crear nuevos nodos (elementos, texto, comentarios) para añadirlos al árbol (p.ej., <code>document.createElement('div')</code>).</li>
+    </ul>
+    <p>
+        Casi cualquier operación que quieras realizar sobre la estructura de la página comenzará, directa o indirectamente, interactuando con el objeto <code>document</code>.
+    </p>
+
+    <h3>Métodos Comunes para la Manipulación del DOM</h3>
+    <p>
+        La API del DOM ofrece una amplia variedad de métodos para interactuar con los nodos del árbol. Aquí tienes una tabla resumen con ejemplos de las operaciones más habituales:
+    </p>
+    <table border="1" style="width:100%; border-collapse: collapse; margin-top: 15px;">
+        <thead>
+            <tr style="background-color: #f2f2f2;">
+                <th style="padding: 8px; text-align: left;">Categoría de Operación</th>
+                <th style="padding: 8px; text-align: left;">Método Ejemplo</th>
+                <th style="padding: 8px; text-align: left;">Descripción</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td style="padding: 8px;" rowspan="3"><strong>Selección de Nodos</strong></td>
+                <td style="padding: 8px;"><code>document.getElementById('id')</code></td>
+                <td style="padding: 8px;">Selecciona el único elemento que tiene el ID especificado.</td>
+            </tr>
+            <tr>
+                <td style="padding: 8px;"><code>element.querySelector('selector')</code></td>
+                <td style="padding: 8px;">Selecciona el primer elemento dentro de <code>element</code> que coincide con el selector CSS especificado. (Si se usa <code>document.querySelector</code>, busca en todo el documento).</td>
+            </tr>
+            <tr>
+                <td style="padding: 8px;"><code>element.querySelectorAll('selector')</code></td>
+                <td style="padding: 8px;">Selecciona todos los elementos dentro de <code>element</code> que coinciden con el selector CSS, devolviendo una NodeList.</td>
+            </tr>
+            <tr>
+                <td style="padding: 8px;" rowspan="2"><strong>Modificación de Contenido</strong></td>
+                <td style="padding: 8px;"><code>element.textContent = 'nuevo texto'</code></td>
+                <td style="padding: 8px;">Establece o devuelve el contenido de texto de un nodo y sus descendientes, sin interpretar HTML.</td>
+            </tr>
+            <tr>
+                <td style="padding: 8px;"><code>element.innerHTML = '<p>HTML</p>'</code></td>
+                <td style="padding: 8px;">Establece o devuelve el contenido HTML dentro de un elemento. Permite insertar etiquetas HTML.</td>
+            </tr>
+            <tr>
+                <td style="padding: 8px;" rowspan="4"><strong>Modificación Estructural (Añadir/Eliminar/Modificar Nodos y Atributos)</strong></td>
+                <td style="padding: 8px;"><code>document.createElement('tag')</code></td>
+                <td style="padding: 8px;">Crea un nuevo nodo de elemento del tipo especificado (ej: 'div', 'p', 'span').</td>
+            </tr>
+            <tr>
+                <td style="padding: 8px;"><code>parentNode.appendChild(newNode)</code></td>
+                <td style="padding: 8px;">Añade <code>newNode</code> como el último hijo de <code>parentNode</code>.</td>
+            </tr>
+            <tr>
+                <td style="padding: 8px;"><code>parentNode.removeChild(childNode)</code></td>
+                <td style="padding: 8px;">Elimina <code>childNode</code> de su padre <code>parentNode</code>.</td>
+            </tr>
+             <tr>
+                <td style="padding: 8px;"><code>element.setAttribute('nombre', 'valor')</code></td>
+                <td style="padding: 8px;">Añade un nuevo atributo o cambia el valor de un atributo existente en el elemento.</td>
+            </tr>
+        </tbody>
+    </table>
+    <p style="margin-top: 10px;"><em>Nota: Esta tabla muestra solo algunos ejemplos representativos. La API del DOM es mucho más extensa.</em></p>
+
+    <!-- ========== FIN NUEVAS SECCIONES AÑADIDAS ========== -->
+
+    <h3>Cómo Acceder al DOM desde las Herramientas de Desarrollo (DevTools)</h3>
+    <p>
+        Puedes explorar el DOM de cualquier página web tú mismo utilizando las <strong>Herramientas de Desarrollo (DevTools)</strong> que vienen integradas en navegadores como Chrome, Firefox, Edge y Safari:
+    </p>
+    <ol>
+        <li><strong>Abre las DevTools:</strong> Haz clic derecho en cualquier elemento de la página web y selecciona "Inspeccionar" o "Inspeccionar elemento". También puedes usar atajos de teclado como F12, o Ctrl+Shift+I (Cmd+Opt+I en Mac).</li>
+        <li><strong>Navega a la pestaña 'Elements' o 'Inspector':</strong> Esta pestaña te muestra una representación interactiva del árbol DOM actual de la página.</li>
+        <li><strong>Explora el Árbol:</strong> Puedes hacer clic en las flechas para expandir o contraer nodos y ver la estructura anidada. Al seleccionar un nodo en el árbol, el elemento correspondiente se resaltará visualmente en la página renderizada. También podrás ver sus estilos CSS aplicados y otras propiedades en paneles adyacentes.</li>
+    </ol>
+    <p>
+        Experimentar con las DevTools es una excelente manera de consolidar tu comprensión de cómo el HTML se traduce en el DOM y cómo este se relaciona con lo que ves en pantalla.
+    </p>
+
+    <h3>Referencias para Aprender Más</h3>
+    <p>Si deseas profundizar en el DOM y los conceptos relacionados, aquí tienes algunos recursos útiles:</p>
+    <ul>
+        <li>
+            <a href="https://developer.mozilla.org/es/docs/Web/API/Document_Object_Model/Introduction" target="_blank" rel="noopener noreferrer">Introducción al DOM (MDN Web Docs)</a> - Una explicación detallada y fundamental de Mozilla.
+        </li>
+        <li>
+            <a href="https://www.w3schools.com/js/js_htmldom.asp" target="_blank" rel="noopener noreferrer">HTML DOM Introduction (W3Schools)</a> - Un tutorial práctico para empezar a interactuar con el DOM usando JavaScript.
+        </li>
+        <li>
+            <a href="https://developer.mozilla.org/es/docs/Learn/JavaScript/Client-side_web_APIs/Manipulating_documents" target="_blank" rel="noopener noreferrer">Manipulación de documentos (MDN Web Docs)</a> - Aprende cómo usar JavaScript para modificar el DOM de forma práctica.
+        </li>
+    </ul>
+
+</section>
+<!-- ========== FIN SECCIÓN DE EXPLICACIÓN ========== -->
+
+
+    <script src="script.js"></script>
+</body>
+
+</html>
