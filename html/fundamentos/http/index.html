@@ -4,17 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Simulador Petición/Respuesta HTTP</title>
-    <!-- Asegúrate de que el nombre del archivo CSS sea exactamente 'style.css'
-         y esté en la misma carpeta que este archivo HTML -->
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <h1>Simulador del Ciclo Petición/Respuesta HTTP</h1>
+    <h1>Simulador uso de GET y POST en el Ciclo Petición/Respuesta HTTP</h1>
 
-    <!-- Contenedor Principal de la Simulación (Usa Flexbox) -->
+    <!-- Contenedor Principal de la Simulación -->
     <div class="simulation-container">
-
-        <!-- Panel Izquierdo: Cliente (Navegador) -->
+        <!-- Panel Cliente -->
         <div class="panel client-panel">
             <h3>Cliente (Navegador)</h3>
             <div class="controls">
@@ -25,37 +22,48 @@
             <pre id="client-action-log" class="log-area"></pre>
             <h4>Respuesta Recibida del Servidor:</h4>
             <pre id="client-response-log" class="log-area"></pre>
-            <h4>Código JavaScript (Fetch API - Ejemplo):</h4>
+            <h4>Código JavaScript (Fetch API con Async/Await):</h4>
             <pre id="client-js-code" class="code-area">
-/* Ejemplo de código JS para Fetch (no se ejecuta, solo visual) */
-// Ejemplo para GET:
-fetch('/api/datos')
-  .then(response => response.json())
-  .then(data => console.log(data))
-  .catch(error => console.error('Error:', error));
+/* Ejemplo JS (no se ejecuta, solo visual) */
+// Ejemplo para GET con async/await:
+async function fetchData() {
+  try {
+    const response = await fetch('/api/datos');
+    if (!response.ok) throw new Error('HTTP error ' + response.status);
+    const data = await response.json();
+    console.log(data);
+  } catch (error) {
+    console.error('Error:', error);
+  }
+}
 
-// Ejemplo para POST:
-fetch('/api/enviar', {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify({ nombre: 'Usuario Test' })
-})
-  .then(response => response.json())
-  .then(data => console.log(data))
-  .catch(error => console.error('Error:', error));
+// Ejemplo para POST con async/await:
+async function sendData() {
+  try {
+    const response = await fetch('/api/enviar', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ nombre: 'Usuario Test' })
+    });
+    if (!response.ok) throw new Error('HTTP error ' + response.status);
+    const data = await response.json();
+    console.log(data);
+  } catch (error) {
+    console.error('Error:', error);
+  }
+}
             </pre>
         </div>
 
-        <!-- Panel Central: Red (Tráfico HTTP Simulado) -->
+        <!-- Panel Red -->
         <div class="panel network-panel">
              <h3>Red (Tráfico HTTP Simulado)</h3>
             <div id="network-log" class="network-flow">
-                <!-- El contenido se genera dinámicamente con JS -->
                 <p>Esperando interacción...</p>
             </div>
         </div>
 
-        <!-- Panel Derecho: Servidor (Backend Simulado) -->
+        <!-- Panel Servidor -->
         <div class="panel server-panel">
              <h3>Servidor (Backend Simulado)</h3>
             <h4>Log del Servidor:</h4>
@@ -63,226 +71,301 @@ fetch('/api/enviar', {
 Servidor esperando peticiones...
             </pre>
         </div>
-        <!-- Fin de .simulation-container -->
     </div>
 
-    <!-- Sección de Explicaciones -->
+    <!-- Sección de Explicaciones (Reordenada y con nuevas secciones) -->
     <div class="explanations">
-        <h2>Explicaciones del Simulador</h2>
+        <h2>Nociones generales sobre GET y POST</h2>
+
         <div class="explanation-block">
-            <h3>Objetivo General y Simplificaciones</h3>
-            <p>...</p> <!-- Contenido como antes -->
+            <h3>1. Solicitud HTTP </h3>
+
+<p>GET y POST son métodos esenciales del protocolo HTTP. Por su parte, HTML proporciona los mecanismos necesarios para que el navegador pueda iniciar solicitudes HTTP utilizando dichos métodos.</p>
+
+<p>Por ejemplo, el atributo method en un elemento &lt;form&gt; especifica si la solicitud se enviará mediante GET o POST, mientras que un enlace estándar &lt;a&gt; genera automáticamente una solicitud GET cuando el usuario hace clic en él.</p>
+
+
+<p>En consecuencia, aunque GET y POST pertenecen al ámbito del protocolo HTTP, están estrechamente relacionados con HTML. Es a través de la estructura y los atributos definidos en los elementos HTML —como formularios y enlaces— que se indica al navegador qué método HTTP debe emplear al interactuar con recursos web, generalmente en respuesta a la acción del usuario.</p>
+
+        </div>
+
+        <div class="explanation-block">
+            <h3>2. Usos Comunes del Ciclo Petición/Respuesta HTTP</h3>
+            <p>
+                El ciclo Petición/Respuesta HTTP es la base de la World Wide Web y se utiliza constantemente para diversas tareas, como:
+            </p>
+            <ul>
+                <li><strong>Cargar Páginas Web:</strong> Peticiones GET para HTML, CSS, JS, imágenes.</li>
+                <li><strong>Enviar Formularios:</strong> Peticiones POST (o GET) con datos del usuario.</li>
+                <li><strong>Interactuar con APIs (Aplicaciones Web Dinámicas):</strong> Peticiones GET/POST (y otros) para cargar/enviar datos sin recargar la página (AJAX/Fetch).</li>
+                <li><strong>Descargar Archivos:</strong> Peticiones GET para obtener archivos.</li>
+                <li><strong>Autenticación y Autorización:</strong> Envío de credenciales/tokens en peticiones.</li>
+            </ul>
+            <p>Este simulador se centra en los casos básicos de GET y POST.</p>
+        </div>
+
+        <div class="explanation-block">
+            <h3>3. GET vs. POST: Visibilidad, Seguridad y Datos (¡Importante!)</h3>
+            
+            <ul>
+                <li><strong>GET:</strong> Los datos se añaden a la <strong>URL</strong> como parámetros de consulta (query parameters), después del signo `?` (ej: `/buscar?term=libro&page=2`).
+                    <ul>
+                        <li><strong>Visibilidad:</strong> ¡Sí! Estos datos son visibles en la barra de direcciones del navegador, en el historial, en los logs del servidor y pueden ser cacheados o guardados en marcadores fácilmente.</li>
+                        <li><strong>Limitaciones:</strong> Las URLs tienen una longitud máxima (aunque varía según el navegador/servidor, suele ser alrededor de 2000 caracteres), limitando la cantidad de datos. No es adecuado para enviar datos binarios.</li>
+                        <li><strong>Uso Ideal:</strong> Para solicitar datos, realizar búsquedas, o cualquier operación donde los parámetros no sean sensibles y sea útil poder enlazar o guardar la URL exacta. Se considera una operación *idempotente* (repetirla produce el mismo resultado).</li>
+                    </ul>
+                </li>
+                <li><strong>POST:</strong> Los datos se envían dentro del <strong>cuerpo (body)</strong> de la petición HTTP.
+                    <ul>
+                        <li><strong>Visibilidad:</strong> Los datos <strong>no son visibles</strong> directamente en la URL, historial o marcadores. Esto ofrece una capa de *privacidad visual* respecto a GET.</li>
+                        <li><strong>Capacidad:</strong> No tiene límites prácticos en la cantidad de datos que puede enviar (aunque los servidores pueden imponer límites). Adecuado para datos extensos o binarios (como subir archivos, aunque eso usa un `Content-Type` específico).</li>
+                        <li><strong>Uso Ideal:</strong> Para enviar datos que modifican el estado en el servidor (crear un usuario, publicar un comentario, procesar una compra), enviar datos sensibles o grandes cantidades de información. Generalmente *no es idempotente*.</li>
+                    </ul>
+                </li>
+                <li><strong>¿Y el Cifrado (Encriptación)?</strong> Aquí está la clave:
+                    <ul>
+                        <li><strong>Ni GET ni POST cifran los datos por sí mismos.</strong></li>
+                        <li>El cifrado lo proporciona **HTTPS (HTTP sobre TLS/SSL)**. Cuando usas `https://...`, TODA la comunicación HTTP (incluyendo la URL completa con los parámetros GET y el cuerpo POST) se cifra durante la transmisión entre el cliente y el servidor.</li>
+                        <li><strong>Por lo tanto, para proteger datos sensibles (contraseñas, datos bancarios), SIEMPRE debes usar HTTPS, independientemente de si usas GET o POST.</strong></li>
+                        <li>Aunque HTTPS cifra los parámetros GET en tránsito, estos *aún pueden quedar registrados en logs del servidor (después de descifrarse) y en el historial del navegador*. Por eso, **POST sobre HTTPS** es la práctica estándar para enviar datos realmente sensibles.</li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+
+        <div class="explanation-block">
+             <h3>4. Tabla Comparativa: GET vs. POST</h3>
+             <p>Un resumen rápido de las diferencias clave:</p>
+             <table class="comparison-table">
+                 <thead>
+                     <tr>
+                         <th>Característica</th>
+                         <th>GET</th>
+                         <th>POST</th>
+                     </tr>
+                 </thead>
+                 <tbody>
+                     <tr>
+                         <td><strong>Propósito Principal</strong></td>
+                         <td>Obtener/Solicitar datos de un recurso específico.</td>
+                         <td>Enviar datos para ser procesados (crear/actualizar recurso, etc.).</td>
+                     </tr>
+                     <tr>
+                         <td><strong>Ubicación de Datos</strong></td>
+                         <td>En la URL (Query String).</td>
+                         <td>En el Cuerpo (Body) de la petición.</td>
+                     </tr>
+                     <tr>
+                         <td><strong>Visibilidad de Datos</strong></td>
+                         <td>Visible en URL, historial, logs (incluso con HTTPS en logs/historial).</td>
+                         <td>No visible en URL/historial. Protegido en tránsito con HTTPS.</td>
+                     </tr>
+                     <tr>
+                         <td><strong>Límite de Tamaño</strong></td>
+                         <td>Limitado por la longitud de la URL (~2KB).</td>
+                         <td>Sin límite práctico (depende del servidor).</td>
+                     </tr>
+                     <tr>
+                         <td><strong>Tipos de Datos</strong></td>
+                         <td>Principalmente texto simple (codificado en URL).</td>
+                         <td>Cualquier tipo (texto, JSON, binario, formularios).</td>
+                     </tr>
+                     <tr>
+                         <td><strong>Cacheable</strong></td>
+                         <td>Sí (por navegadores, proxies).</td>
+                         <td>No por defecto (puede serlo bajo ciertas condiciones).</td>
+                     </tr>
+                     <tr>
+                         <td><strong>En Marcadores/Historial</strong></td>
+                         <td>Sí.</td>
+                         <td>No directamente (se guarda la URL base).</td>
+                     </tr>
+                     <tr>
+                         <td><strong>Idempotente</strong></td>
+                         <td>Sí (generalmente).</td>
+                         <td>No (generalmente).</td>
+                     </tr>
+                     <tr>
+                         <td><strong>Seguridad (Datos Sensibles)</strong></td>
+                         <td><strong>Nunca</strong> usar para datos sensibles.</td>
+                         <td>Preferido, <strong>siempre sobre HTTPS</strong>.</td>
+                     </tr>
+                 </tbody>
+             </table>
+             <p><em>*Idempotente: Realizar la misma petición múltiples veces produce el mismo resultado que realizarla una sola vez.</em></p>
+         </div>
+
+
+         <h2>Explicaciones del Simulador</h2>
+
+
+        <div class="explanation-block">
+            <h3>1. Objetivo General del Simulador y Simplificaciones</h3>
             <p>
                 Este simulador busca <strong>ilustrar visualmente el flujo secuencial y las demoras</strong> inherentes en una comunicación web básica Cliente-Servidor usando el protocolo HTTP. Muestra cómo una acción en el navegador (Cliente) desencadena una Petición, cómo esta "viaja" (simuladamente), es procesada por un Servidor (simulado), y cómo la Respuesta regresa al Cliente.
             </p>
             <p>
-                <strong>Importante:</strong> Es una <strong>simplificación didáctica</strong>. No simula los detalles complejos de las redes reales (protocolos TCP/IP, resolución DNS, enrutamiento, firewalls, balanceadores de carga, etc.). Toda la simulación ocurre localmente en tu navegador usando JavaScript.
+                <strong>Importante:</strong> Este simulador es una <strong>simplificación didáctica</strong>. No simula los detalles complejos de las redes reales (protocolos TCP/IP, resolución DNS, enrutamiento, firewalls, balanceadores de carga, etc.). Toda la simulación ocurre localmente en tu navegador usando JavaScript.
             </p>
         </div>
+
+
         <div class="explanation-block">
-            <h3>El Panel "Cliente (Navegador)"</h3>
-             <p>...</p> <!-- Contenido como antes -->
+            <h3>2. El Panel "Cliente (Navegador)"</h3>
              <p>
-                Representa tu navegador web. Aquí es donde se origina la interacción:
+                Representa tu navegador web. Aquí se origina la interacción y se maneja la respuesta:
             </p>
             <ul>
-                <li><strong>Botones:</strong> Simulan la acción del usuario (hacer clic en un enlace, enviar un formulario).</li>
-                <li><strong>Acción del Usuario y Log:</strong> Muestra los pasos que ocurren *dentro* del navegador: se presiona el botón, se prepara la petición HTTP (usando `fetch` internamente en una app real), se recibe la respuesta, se procesa.</li>
-                <li><strong>Respuesta Recibida:</strong> Muestra los detalles (código de estado, cabeceras, cuerpo) de la respuesta HTTP tal como la recibe el navegador.</li>
-                <li><strong>Código JS (Ejemplo):</strong> Muestra cómo se vería el código JavaScript real usando la `Fetch API` para realizar peticiones similares.</li>
+                <li><strong>Botones:</strong> Simulan la acción del usuario.</li>
+                <li><strong>Acción del Usuario y Log:</strong> Muestra los pasos *internos* del navegador (preparar petición, recibir respuesta, procesar).</li>
+                <li><strong>Respuesta Recibida:</strong> Muestra los detalles de la respuesta HTTP.</li>
+                <li><strong>Código JS (Ejemplo):</strong> Muestra cómo se vería el código JavaScript moderno (con `fetch` y `async/await`) para realizar peticiones similares (ver punto 8).</li>
             </ul>
         </div>
+
          <div class="explanation-block">
-            <h3>El Panel "Servidor (Backend Simulado)"</h3>
-            <p>...</p> <!-- Contenido como antes -->
+            <h3>3. El Panel "Servidor (Backend Simulado)"</h3>
             <p>
-                Representa un servidor web simple (como uno creado con Node.js/Express). Su función es:
+                Representa un servidor web simple que espera y procesa peticiones:
             </p>
             <ul>
-                <li><strong>Esperar Peticiones:</strong> Está "escuchando" la llegada de peticiones simuladas.</li>
-                <li><strong>Log del Servidor:</strong> Muestra un registro de lo que ocurre en el servidor: cuándo llega una petición, de qué cliente simulado (`192.168.1.100`), qué cabeceras y cuerpo trae, qué lógica interna se ejecuta (simulada), y qué respuesta se prepara y envía.</li>
-                <li><strong>Procesamiento Simulado:</strong> Aunque no hay una base de datos real ni lógica compleja, el código simula tomar decisiones basadas en la URL y el método (GET/POST) y genera una respuesta apropiada (datos JSON, mensajes de éxito/error).</li>
+                <li><strong>Esperar Peticiones:</strong> Escucha la llegada de peticiones simuladas.</li>
+                <li><strong>Log del Servidor:</strong> Registra la petición recibida, la lógica ejecutada y la respuesta enviada.</li>
+                <li><strong>Procesamiento Simulado:</strong> Decide qué respuesta generar basándose en el método (GET/POST) y la URL.</li>
             </ul>
         </div>
+
         <div class="explanation-block">
-            <h3>El Panel "Red (Tráfico HTTP Simulado)" - ¡La Clave Visual!</h3>
-            <p>...</p> <!-- Contenido como antes -->
+            <h3>4. El Panel "Red (Tráfico HTTP Simulado)"</h3>
             <p>
-                Este panel central es fundamental para la visualización, pero es crucial entender qué representa (y qué no):
+                Es una <strong>metáfora visual</strong> del canal de comunicación y el tiempo de viaje.
             </p>
             <ul>
-                <li><strong>¿Qué es?:</strong> Es una <strong>metáfora visual</strong> del canal de comunicación entre el Cliente y el Servidor. Actúa como un "tablón de anuncios" donde se muestra la Petición cuando "sale" del cliente y la Respuesta cuando "sale" del servidor. <strong>No representa la complejidad real de la red de Internet.</strong></li>
-                <li><strong>¿Cómo interactúan Cliente y Servidor con "Red" aquí?:</strong> En esta simulación, ni el Cliente ni el Servidor "hablan" directamente con este panel como si fuera una entidad de red real. La interacción es indirecta y controlada por el script principal (`script.js`):
-                    <ol>
-                        <li>Cuando el script simula que el Cliente está listo para enviar, <strong>escribe</strong> el mensaje de la Petición en este panel 'Red'.</li>
-                        <li>Se usa `setTimeout` para simular el <strong>tiempo de viaje</strong> de la petición por la red.</li>
-                        <li>Cuando el script simula que el Servidor está listo para enviar la respuesta, <strong>escribe</strong> el mensaje de la Respuesta en este panel 'Red'.</li>
-                        <li>Se usa otro `setTimeout` para simular el <strong>tiempo de viaje</strong> de la respuesta de vuelta.</li>
-                    </ol>
-                </li>
-                <li><strong>¿Qué comandos de programación tengo para la "Red"?:</strong> En el contexto de *este simulador*, **no tienes comandos específicos** para interactuar con esta "Red" simulada. No es una API de red. La única "interacción" es a través de la función `logToPanel` que el script principal utiliza para añadir los mensajes formateados (petición y respuesta) en los momentos adecuados, orquestado por las pausas de `setTimeout`.</li>
-                <li><strong>Propósito Didáctico:</strong> Su función es exclusivamente **visualizar que la comunicación no es instantánea**. Muestra que hay un "viaje" de ida (petición) y un "viaje" de vuelta (respuesta), y ayuda a seguir la secuencia del flujo completo. Las flechas y la alineación (derecha para petición, izquierda para respuesta) refuerzan esta idea de dirección.</li>
+                <li>Muestra la Petición "saliendo" del cliente y la Respuesta "saliendo" del servidor.</li>
+                <li>Visualiza que la comunicación no es instantánea (gracias a `setTimeout`).</li>
+                <li><strong>No representa la complejidad real de Internet.</strong> La interacción con este panel es controlada por el script principal para simular el flujo.</li>
             </ul>
         </div>
+
+
          <div class="explanation-block">
-            <h3>El Rol de `setTimeout` (Simulación del Tiempo)</h3>
-            <p>...</p> <!-- Contenido como antes -->
+            <h3>5. El Rol de `setTimeout` (Simulación del Tiempo)</h3>
             <p>
-                Como se mencionó, la comunicación real toma tiempo (latencia de red, procesamiento). Para simular esto visualmente, usamos `setTimeout(callback, delay)`.
+                Usamos `setTimeout` para introducir <strong>pausas artificiales</strong> que simulan la latencia de red y el tiempo de procesamiento. Esto es crucial para poder visualizar el flujo paso a paso y entender que la comunicación no es instantánea. Sin estas pausas, todo ocurriría demasiado rápido para observarlo.
             </p>
-            <ul>
-                <li>Cada `setTimeout` introduce una <strong>pausa artificial deliberada</strong> antes de ejecutar el siguiente paso de la simulación (el `callback`).</li>
-                <li>Estas pausas representan:
-                    <ul>
-                        <li>Tiempo de creación/procesamiento en el cliente.</li>
-                        <li>Tiempo de viaje de la petición por la red (latencia).</li>
-                        <li>Tiempo de procesamiento en el servidor.</li>
-                        <li>Tiempo de viaje de la respuesta por la red (latencia).</li>
-                        <li>Tiempo de procesamiento de la respuesta en el cliente.</li>
-                    </ul>
-                </li>
-                <li>Esto permite seguir el flujo paso a paso, observando cómo la información "se mueve" entre los paneles. Sin estas pausas, todo ocurriría casi instantáneamente en el navegador y no se apreciaría la secuencia ni el concepto de asincronía.</li>
-            </ul>
         </div>
+
          <div class="explanation-block">
-            <h3>Observando Tráfico Real con Herramientas de Desarrollo (F12)</h3>
-            <p>...</p> <!-- Contenido como antes -->
+            <h3>6. Observando Tráfico Real con Herramientas de Desarrollo (F12)</h3>
             <p>
-                Las <strong>Herramientas de Desarrollo</strong> de tu navegador (F12) son esenciales para el desarrollo web real. La pestaña <strong>"Red" (Network)</strong> te permite ver las peticiones HTTP <strong>reales</strong> que tu navegador hace al cargar páginas web o interactuar con aplicaciones.
+                Las <strong>Herramientas de Desarrollo</strong> de tu navegador (F12), en la pestaña <strong>"Red" (Network)</strong>, te permiten ver las peticiones HTTP <strong>reales</strong>. Es la herramienta fundamental para analizar la comunicación web fuera de este simulador. Recuerda que <strong>no verás el tráfico *simulado* de esta página en la pestaña F12</strong>.
             </p>
-            <ul>
-                <li>Verás detalles como métodos, URLs, códigos de estado, cabeceras, cuerpos y tiempos de cada petición real.</li>
-                <li><strong>Contraste Importante:</strong> El tráfico mostrado en la pestaña "Red" de las herramientas F12 es el <strong>real</strong>, manejado por el motor de red del navegador y el sistema operativo. <strong>No verás el tráfico *simulado* de esta página en la pestaña F12</strong>, porque nuestro simulador no realiza llamadas de red reales; sólo manipula elementos HTML dentro de la página.</li>
-                <li>Usar la pestaña "Red" (F12) en sitios web reales es la forma de analizar la comunicación HTTP fuera de este entorno simulado.</li>
-            </ul>
         </div>
-         <!-- Fin de .explanations -->
     </div>
 
     <!-- Sección de Glosario -->
     <div class="glossary">
         <h2>Glosario de Términos</h2>
         <dl>
-             <dt>API (Application Programming Interface)</dt>
-            <dd>Interfaz de Programación de Aplicaciones. Conjunto de reglas y protocolos que permite a diferentes programas comunicarse entre sí. En el contexto web, a menudo se refiere a un endpoint en un servidor al que se pueden hacer peticiones HTTP para obtener o enviar datos.</dd>
+            <dt>API (Application Programming Interface)</dt>
+            <dd>Interfaz de Programación de Aplicaciones. Conjunto de reglas para que programas se comuniquen. En web, endpoints HTTP para obtener/enviar datos.</dd>
+
+            <dt>Async/Await</dt>
+            <dd>Sintaxis de JavaScript para manejar operaciones asíncronas (como peticiones `fetch`) de forma más legible, basada en Promesas.</dd>
 
             <dt>Backend</dt>
-            <dd>La parte de una aplicación web que se ejecuta en el servidor. Se encarga de la lógica de negocio, el acceso a bases de datos y de responder a las peticiones del cliente.</dd>
+            <dd>Parte de la aplicación que corre en el servidor (lógica, base de datos).</dd>
 
             <dt>Cabeceras HTTP (Headers)</dt>
-            <dd>Metadatos enviados junto con una petición o respuesta HTTP. Proporcionan información adicional sobre la petición/respuesta o sobre el cliente/servidor (ej. tipo de contenido, cookies, agente de usuario).</dd>
+            <dd>Metadatos enviados con peticiones/respuestas (tipo de contenido, cookies, etc.).</dd>
 
             <dt>Cliente (Navegador)</dt>
-            <dd>El programa (generalmente un navegador web como Chrome, Firefox, etc.) que inicia la comunicación solicitando recursos o datos a un servidor.</dd>
+            <dd>Programa (navegador) que inicia la comunicación solicitando recursos/datos.</dd>
 
             <dt>Código de Estado HTTP (Status Code)</dt>
-            <dd>Un número de tres dígitos devuelto por el servidor en la respuesta HTTP, indicando el resultado de la petición (ej. 200 OK, 201 Created, 404 Not Found, 500 Internal Server Error).</dd>
+            <dd>Número de 3 dígitos en la respuesta indicando el resultado (200 OK, 404 Not Found, etc.).</dd>
 
             <dt>Cuerpo HTTP (Body/Payload)</dt>
-            <dd>Parte opcional de una petición o respuesta HTTP que contiene los datos principales que se envían (ej. datos de un formulario en POST, datos JSON en una respuesta de API).</dd>
+            <dd>Parte opcional con los datos principales (datos de formulario en POST, JSON en respuesta API).</dd>
 
             <dt>DOM (Document Object Model)</dt>
-            <dd>Modelo de Objetos del Documento. Una representación estructurada (en forma de árbol) del documento HTML que el navegador crea. JavaScript puede interactuar con el DOM para modificar dinámicamente el contenido y la estructura de la página web.</dd>
+            <dd>Representación estructurada del HTML. JavaScript lo usa para modificar la página.</dd>
 
             <dt>Fetch API</dt>
-            <dd>Una interfaz moderna de JavaScript para realizar peticiones HTTP de forma asíncrona. Es más potente y flexible que el antiguo `XMLHttpRequest`.</dd>
+            <dd>Interfaz moderna de JavaScript para realizar peticiones HTTP asíncronas.</dd>
 
             <dt>Frontend</dt>
-            <dd>La parte de una aplicación web con la que el usuario interactúa directamente, generalmente se ejecuta en el navegador. Incluye HTML, CSS y JavaScript.</dd>
+            <dd>Parte de la aplicación con la que el usuario interactúa (HTML, CSS, JS en el navegador).</dd>
 
             <dt>GET</dt>
-            <dd>Uno de los métodos HTTP más comunes. Se utiliza típicamente para solicitar/recuperar datos de un servidor. Las peticiones GET no suelen tener cuerpo y los parámetros se envían en la URL.</dd>
+            <dd>Método HTTP para solicitar/recuperar datos. Datos en la URL. Idempotente.</dd>
 
             <dt>HTTP (HyperText Transfer Protocol)</dt>
-            <dd>Protocolo de Transferencia de Hipertexto. Es el protocolo fundamental de la World Wide Web, utilizado para la comunicación entre clientes y servidores. Define cómo se formatean y transmiten los mensajes (peticiones y respuestas).</dd>
+            <dd>Protocolo fundamental de la web para comunicación cliente-servidor.</dd>
+
+             <dt>HTTPS (HTTP Secure)</dt>
+             <dd>Versión segura de HTTP que cifra la comunicación usando TLS/SSL. Esencial para proteger datos sensibles.</dd>
+
+            <dt>Idempotente</dt>
+            <dd>Una operación que produce el mismo resultado si se ejecuta una o múltiples veces.</dd>
 
             <dt>JSON (JavaScript Object Notation)</dt>
-            <dd>Formato ligero de intercambio de datos, fácil de leer para humanos y fácil de interpretar para las máquinas. Es muy común para enviar y recibir datos en APIs web.</dd>
+            <dd>Formato ligero de intercambio de datos, común en APIs web.</dd>
 
             <dt>Latencia</dt>
-            <dd>El tiempo que tarda un paquete de datos en viajar desde el origen hasta el destino a través de una red. Es un componente del tiempo total de respuesta.</dd>
+            <dd>Tiempo que tarda un paquete de datos en viajar por la red.</dd>
 
             <dt>Método HTTP</dt>
-            <dd>Indica la acción que se desea realizar sobre un recurso en el servidor (ej. GET para obtener, POST para enviar/crear, PUT para actualizar, DELETE para borrar).</dd>
+            <dd>Indica la acción deseada sobre un recurso (GET, POST, PUT, DELETE, etc.).</dd>
 
             <dt>Petición HTTP (Request)</dt>
-            <dd>El mensaje enviado por el cliente al servidor para solicitar una acción o recurso.</dd>
+            <dd>Mensaje del cliente al servidor solicitando acción/recurso.</dd>
 
             <dt>POST</dt>
-            <dd>Otro método HTTP común. Se utiliza típicamente para enviar datos a un servidor para crear o actualizar un recurso. Los datos se envían en el cuerpo de la petición.</dd>
+            <dd>Método HTTP para enviar datos al servidor (crear/actualizar). Datos en el cuerpo. No idempotente.</dd>
+
+             <dt>Promesa (Promise)</dt>
+             <dd>Objeto de JavaScript que representa el resultado eventual (éxito o fallo) de una operación asíncrona.</dd>
+
+             <dt>PUT, DELETE, PATCH, HEAD, OPTIONS</dt>
+             <dd>Otros métodos HTTP usados en APIs (actualizar, borrar, modificar parcial, etc.).</dd>
 
             <dt>Respuesta HTTP (Response)</dt>
-            <dd>El mensaje enviado por el servidor al cliente como resultado de una petición.</dd>
+            <dd>Mensaje del servidor al cliente como resultado de una petición.</dd>
 
             <dt>Servidor</dt>
-            <dd>Un ordenador o programa que espera y responde a las peticiones de los clientes. Aloja los recursos (archivos HTML, imágenes, etc.) y ejecuta la lógica del backend.</dd>
+            <dd>Ordenador/programa que espera y responde peticiones.</dd>
 
             <dt>setTimeout</dt>
-            <dd>Una función de JavaScript que ejecuta un fragmento de código o una función una vez después de que haya transcurrido un período de tiempo especificado (en milisegundos).</dd>
+            <dd>Función JS para ejecutar código tras un retardo.</dd>
 
-            <dt>TCP/IP (Transmission Control Protocol/Internet Protocol)</dt>
-            <dd>Conjunto fundamental de protocolos de red que permiten la comunicación en Internet. TCP se encarga de la transmisión fiable de datos y IP del direccionamiento y enrutamiento.</dd>
+            <dt>TCP/IP</dt>
+            <dd>Protocolos fundamentales de red en Internet.</dd>
+
+             <dt>TLS/SSL (Transport Layer Security / Secure Sockets Layer)</dt>
+             <dd>Protocolos criptográficos que proporcionan comunicaciones seguras sobre una red, usados por HTTPS.</dd>
 
             <dt>URL (Uniform Resource Locator)</dt>
-            <dd>Localizador Uniforme de Recursos. La dirección única que identifica un recurso en la web (ej. `https://www.ejemplo.com/pagina.html`).</dd>
+            <dd>Dirección única de un recurso en la web.</dd>
         </dl>
-         <!-- Fin de .glossary -->
     </div>
 
-    <!-- Sección de Referencias y Más Información -->
+    <!-- Sección de Referencias -->
     <div class="references">
         <h2>Referencias y Más Información</h2>
-        <p>Para profundizar en los conceptos presentados en este simulador, aquí tienes algunos recursos útiles:</p>
         <ul>
-             <li>
-                <a href="https://developer.mozilla.org/es/docs/Web/HTTP/Overview" target="_blank" rel="noopener noreferrer">MDN: Un resumen sobre HTTP</a>
-                 - <span class="ref-desc">Excelente punto de partida para entender qué es HTTP, su estructura (peticiones, respuestas) y su papel en la web. (Básico)</span>
-            </li>
-            <li>
-                <a href="https://developer.mozilla.org/es/docs/Web/HTTP/Methods" target="_blank" rel="noopener noreferrer">MDN: Métodos de Petición HTTP</a>
-                 - <span class="ref-desc">Detalla los diferentes verbos HTTP (GET, POST, PUT, DELETE, etc.) y cuándo usar cada uno. (Básico/Intermedio)</span>
-            </li>
-            <li>
-                <a href="https://developer.mozilla.org/es/docs/Web/HTTP/Status" target="_blank" rel="noopener noreferrer">MDN: Códigos de Estado HTTP</a>
-                 - <span class="ref-desc">Explica el significado de los códigos numéricos que devuelve el servidor (200 OK, 404 Not Found, 500 Internal Server Error, etc.). (Básico/Intermedio)</span>
-            </li>
-             <li>
-                <a href="https://developer.mozilla.org/es/docs/Learn/Common_questions/Web_mechanics/Client-server_overview" target="_blank" rel="noopener noreferrer">MDN: Visión General Cliente-Servidor</a>
-                 - <span class="ref-desc">Explica el modelo fundamental de comunicación en la web entre el cliente (navegador) y el servidor. (Básico)</span>
-            </li>
-            <li>
-                <a href="https://developer.chrome.com/docs/devtools/network?utm_source=devtools&utm_campaign=2019Q1&hl=es-419" target="_blank" rel="noopener noreferrer">Chrome DevTools: Referencia de Análisis de Red</a>
-                 - <span class="ref-desc">Guía oficial de Google sobre cómo usar la pestaña "Red" de las herramientas de desarrollo de Chrome para inspeccionar el tráfico HTTP real. (Intermedio)</span>
-            </li>
-             <li>
-                <a href="https://firefox-source-docs.mozilla.org/devtools-user/network_monitor/" target="_blank" rel="noopener noreferrer">Firefox DevTools: Monitor de Red</a>
-                 - <span class="ref-desc">Documentación similar a la de Chrome, pero para las herramientas de desarrollo de Firefox. Útil para ver las similitudes y diferencias. (Intermedio)</span>
-            </li>
-            <li>
-                <a href="https://developer.mozilla.org/es/docs/Web/API/Fetch_API/Using_Fetch" target="_blank" rel="noopener noreferrer">MDN: Usando la API Fetch</a>
-                 - <span class="ref-desc">Tutorial sobre cómo realizar peticiones HTTP desde JavaScript usando la moderna API Fetch, como se simula en el panel del cliente. (Intermedio)</span>
-            </li>
-             <li>
-                <a href="https://nodejs.org/es/about/" target="_blank" rel="noopener noreferrer">Node.js: Acerca de Node.js</a>
-                 - <span class="ref-desc">Introducción al entorno de ejecución de JavaScript del lado del servidor (Node.js), mencionado en la simulación del backend. (Intermedio)</span>
-            </li>
-             <li>
-                <a href="https://expressjs.com/es/starter/hello-world.html" target="_blank" rel="noopener noreferrer">Express.js: Hola Mundo</a>
-                 - <span class="ref-desc">Guía de inicio para Express, un framework popular para Node.js, que facilita la creación de servidores web y APIs (como el servidor simulado aquí). (Intermedio)</span>
-            </li>
-            <li>
-                <a href="https://web.dev/learn/http/" target="_blank" rel="noopener noreferrer">web.dev: Learn HTTP</a>
-                 - <span class="ref-desc">Curso de Google sobre HTTP/2 y HTTP/3, cubriendo aspectos más modernos y de rendimiento del protocolo. (Avanzado)</span>
-            </li>
-             <li>
-                <a href="https://httpwg.org/specs/" target="_blank" rel="noopener noreferrer">HTTP Working Group Specifications</a>
-                 - <span class="ref-desc">Acceso a las especificaciones técnicas oficiales (RFCs) que definen el protocolo HTTP. Muy detallado y técnico. (Muy Avanzado)</span>
-            </li>
+             <li><a href="https://developer.mozilla.org/es/docs/Web/HTTP/Overview" target="_blank" rel="noopener noreferrer">MDN: Un resumen sobre HTTP</a> - <span class="ref-desc">Base de HTTP. (Básico)</span></li>
+             <li><a href="https://developer.mozilla.org/es/docs/Web/HTTP/Methods" target="_blank" rel="noopener noreferrer">MDN: Métodos de Petición HTTP</a> - <span class="ref-desc">Detalle de GET, POST, PUT, etc. (Básico/Intermedio)</span></li>
+             <li><a href="https://developer.mozilla.org/es/docs/Web/HTTP/Headers" target="_blank" rel="noopener noreferrer">MDN: Cabeceras HTTP</a> - <span class="ref-desc">Información sobre metadatos. (Intermedio)</span></li>
+             <li><a href="https://developer.mozilla.org/es/docs/Web/HTTP/Status" target="_blank" rel="noopener noreferrer">MDN: Códigos de Estado HTTP</a> - <span class="ref-desc">Significado de 200, 404, 500, etc. (Básico/Intermedio)</span></li>
+             <li><a href="https://developer.mozilla.org/es/docs/Web/Security/Securing_your_site/Why_HTTPS" target="_blank" rel="noopener noreferrer">MDN: ¿Por qué HTTPS?</a> - <span class="ref-desc">Importancia de HTTPS para la seguridad. (Esencial)</span></li>
+             <li><a href="https://developer.mozilla.org/es/docs/Web/API/Fetch_API/Using_Fetch" target="_blank" rel="noopener noreferrer">MDN: Usando la API Fetch</a> - <span class="ref-desc">Cómo hacer peticiones desde JS. (Intermedio)</span></li>
+             <li><a href="https://developer.mozilla.org/es/docs/Web/JavaScript/Reference/Statements/async_function" target="_blank" rel="noopener noreferrer">MDN: async function / await</a> - <span class="ref-desc">Manejo moderno de asincronía en JS. (Intermedio)</span></li>
+             <li><a href="https://developer.chrome.com/docs/devtools/network?hl=es-419" target="_blank" rel="noopener noreferrer">Chrome DevTools: Análisis de Red</a> - <span class="ref-desc">Inspeccionar tráfico real. (Intermedio)</span></li>
+             <li><a href="https://restfulapi.net/http-methods/" target="_blank" rel="noopener noreferrer">RESTful API HTTP Methods</a> - <span class="ref-desc">Explicación de métodos en contexto de APIs REST. (Inglés - Intermedio)</span></li>
         </ul>
-         <!-- Fin de .references -->
     </div>
 
-    <!-- Vincula el archivo JavaScript al final del body -->
     <script src="script.js"></script>
 </body>
 </html>

@@ -71,10 +71,11 @@ function getStatusText(code) {
 function simulateRequest(method, url, body = null) {
     clearLogs(); // Limpiar logs anteriores
     const startTime = Date.now();
+    const requestUrl = (method === 'GET' && body) ? `${url}?${new URLSearchParams(body).toString()}` : url; // Añadir params a URL para GET si existen
 
     // --- PASO 1: Acción del Cliente ---
     logToPanel(clientActionLog, `Botón '${method}' presionado.`);
-    logToPanel(clientActionLog, `Iniciando petición ${method} a ${url}...`);
+    logToPanel(clientActionLog, `Iniciando petición ${method} a ${requestUrl}... (Usando async/await internamente)`);
 
     // Simula la creación de la petición por JS/Navegador (pequeña demora)
     setTimeout(() => {
@@ -83,8 +84,9 @@ function simulateRequest(method, url, body = null) {
             ...(method === 'POST' && { 'Content-Type': 'application/json' }), // Añadir Content-Type para POST
             'User-Agent': 'SimuladorBrowser/1.0'
         };
-        let requestSummary = `${method} ${url}`;
+        let requestSummary = `${method} ${requestUrl}`; // Usar la URL con params si es GET
         let requestDetails = `--> ${requestSummary}\n    Cabeceras: ${JSON.stringify(requestHeaders, null, 2)}`;
+        // Solo mostrar cuerpo en log si es POST
         if (method === 'POST' && body) {
             requestDetails += `\n    Cuerpo: ${JSON.stringify(body)}`;
         }
@@ -94,13 +96,23 @@ function simulateRequest(method, url, body = null) {
         logToPanel(networkLog, `Enviando Petición:\n${requestDetails}`, 'network-request');
 
         setTimeout(() => { // Simula latencia de red (ida)
-            logToPanel(networkLog, `   (...) Petición en tránsito por la red`);
+            logToPanel(networkLog, `   (...) Petición en tránsito por la red (HTTPS simularía cifrado aquí)`);
 
             // --- PASO 3: Servidor Recibe la Petición ---
             setTimeout(() => {
-                logToPanel(serverLog, `Petición ${method} ${url} recibida.`);
+                logToPanel(serverLog, `Petición ${method} ${requestUrl} recibida.`); // Usar la URL completa
                 logToPanel(serverLog, `   Desde: 192.168.1.100 (IP simulada)`);
                 logToPanel(serverLog, `   Cabeceras: ${JSON.stringify(requestHeaders, null, 2)}`);
+                // Extraer parámetros de la URL si es GET
+                let queryParams = {};
+                if (method === 'GET') {
+                    const urlParts = requestUrl.split('?');
+                    if (urlParts.length > 1) {
+                         queryParams = Object.fromEntries(new URLSearchParams(urlParts[1]));
+                         logToPanel(serverLog, `   Parámetros URL (Query Params): ${JSON.stringify(queryParams)}`);
+                    }
+                }
+                // Mostrar cuerpo si es POST
                 if (method === 'POST' && body) {
                     logToPanel(serverLog, `   Cuerpo recibido: ${JSON.stringify(body)}`);
                 }
@@ -117,11 +129,13 @@ function simulateRequest(method, url, body = null) {
                     };
 
                     // Lógica simulada del backend
-                    if (method === 'GET' && url === '/api/datos') {
-                        responseBody = { message: 'Datos obtenidos correctamente!', data: ['manzana', 'banana', 'cereza'], timestamp: Date.now() };
+                    // Usamos la URL base (sin query params) para el enrutamiento
+                    const baseUrl = requestUrl.split('?')[0];
+                    if (method === 'GET' && baseUrl === '/api/datos') {
+                        responseBody = { message: 'Datos obtenidos correctamente!', data: ['manzana', 'banana', 'cereza'], timestamp: Date.now(), paramsRecibidos: queryParams };
                         responseStatus = 200;
                         logToPanel(serverLog, '   [Lógica GET /api/datos] Datos encontrados y preparados.');
-                    } else if (method === 'POST' && url === '/api/enviar') {
+                    } else if (method === 'POST' && baseUrl === '/api/enviar') {
                         if (body && body.nombre) {
                            responseBody = { status: 'ok', message: `Datos de '${body.nombre}' recibidos y procesados con éxito.` };
                            responseStatus = 201; // Created
@@ -132,16 +146,15 @@ function simulateRequest(method, url, body = null) {
                            logToPanel(serverLog, `   [Lógica POST /api/enviar] Error: Cuerpo de petición inválido.`);
                         }
                     } else {
-                        responseBody = { error: 'Ruta no encontrada en el servidor simulado.' };
+                        responseBody = { error: `Ruta no encontrada en el servidor simulado para ${method} ${baseUrl}` };
                         responseStatus = 404; // Not Found
-                         logToPanel(serverLog, `   [Lógica ${method} ${url}] Error: Ruta no implementada (404).`);
+                         logToPanel(serverLog, `   [Lógica ${method} ${baseUrl}] Error: Ruta no implementada (404).`);
                     }
 
                     // --- PASO 5: Servidor Envía la Respuesta ---
-                    // ¡¡IMPORTANTE!! Loggear *antes* de enviarla por la red simulada
                     logToPanel(serverLog, `   Preparando respuesta: ${responseStatus} ${getStatusText(responseStatus)}`);
                     logToPanel(serverLog, `   Cuerpo de respuesta: ${JSON.stringify(responseBody)}`);
-                    logToPanel(serverLog, `   Enviando respuesta al cliente...`); // Log explícito del envío
+                    logToPanel(serverLog, `   Enviando respuesta al cliente...`);
 
                     let responseSummary = `${responseStatus} ${getStatusText(responseStatus)}`;
                     let responseDetails = `<-- ${responseSummary}\n    Cabeceras: ${JSON.stringify(responseHeaders, null, 2)}\n    Cuerpo: ${JSON.stringify(responseBody)}`;
@@ -149,9 +162,10 @@ function simulateRequest(method, url, body = null) {
                     setTimeout(() => { // Pequeño retardo antes de que aparezca en la red
                          // --- PASO 6: Respuesta viaja por la Red (Servidor -> Cliente) ---
                          logToPanel(networkLog, `Recibiendo Respuesta:\n${responseDetails}`, 'network-response');
+                         logToPanel(networkLog, `   (...) Respuesta en tránsito por la red (HTTPS simularía cifrado aquí)`);
+
 
                         setTimeout(() => { // Simula latencia de red (vuelta)
-                             logToPanel(networkLog, `   (...) Respuesta en tránsito por la red`);
 
                             // --- PASO 7: Cliente Recibe la Respuesta ---
                             setTimeout(() => {
@@ -163,7 +177,7 @@ function simulateRequest(method, url, body = null) {
                                 logToPanel(clientResponseLog, `Cuerpo:\n${JSON.stringify(responseBody, null, 2)}`);
 
                                 // --- PASO 8: Cliente Procesa la Respuesta ---
-                                logToPanel(clientActionLog, 'Procesando respuesta y actualizando UI (simulado).');
+                                logToPanel(clientActionLog, 'Procesando respuesta (ej: mostrando datos en UI - simulado).');
                                 const endTime = Date.now();
                                 const duration = endTime - startTime;
                                 logToPanel(clientActionLog, `--- Simulación completada en ${duration}ms ---`);
@@ -186,12 +200,14 @@ function simulateRequest(method, url, body = null) {
 
 // --- Event Listeners para los Botones ---
 sendGetBtn.addEventListener('click', () => {
-    simulateRequest('GET', '/api/datos');
+    // Simulamos también enviar un parámetro por GET
+    const getData = { search: 'items', limit: 10 };
+    simulateRequest('GET', '/api/datos', getData); // Pasamos datos para GET
 });
 
 sendPostBtn.addEventListener('click', () => {
     // Simulamos un cuerpo de datos para la petición POST
-    const postData = { nombre: 'Ana García', id: Date.now() % 1000 }; // Datos de ejemplo
+    const postData = { nombre: 'Carlos Ruiz', id: Date.now() % 1000 }; // Datos de ejemplo
     simulateRequest('POST', '/api/enviar', postData);
 });
 
