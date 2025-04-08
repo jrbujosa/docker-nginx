@@ -1,0 +1,313 @@
+/* =========================
+   Estilos Generales
+   ========================= */
+body {
+    font-family: sans-serif;
+    line-height: 1.6;
+    margin: 20px;
+    background-color: #f4f4f4;
+    color: #333;
+}
+
+h1, h2 {
+    color: #2c3e50;
+    border-bottom: 2px solid #3498db;
+    padding-bottom: 5px;
+    margin-top: 0; /* A menudo útil quitar margen superior de los títulos */
+}
+
+h1 {
+     margin-bottom: 30px; /* Más espacio después del título principal */
+}
+
+
+/* =========================
+   Contenedor Principal y Paneles
+   ========================= */
+#simulator-container {
+    display: flex; /* Habilita Flexbox */
+    gap: 20px; /* Espacio entre paneles */
+    margin-bottom: 30px;
+    align-items: flex-start; /* Alinea los paneles arriba si tienen alturas diferentes */
+}
+
+.panel {
+    /* Propiedades comunes a todos los paneles */
+    background-color: #fff;
+    padding: 15px;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    flex-shrink: 1; /* Permite que los paneles se encojan si no hay espacio */
+    /* flex-grow: 0; */ /* Evita que crezcan más allá de su basis por defecto */
+}
+
+/* --- Distribución de Ancho Específica --- */
+#panel-control {
+    flex-basis: 50%; /* Tamaño base ideal: 50% */
+    order: 1; /* Orden visual (opcional, por defecto ya es el primero) */
+}
+
+#panel-eventloop {
+    flex-basis: 25%; /* Tamaño base ideal: 25% */
+    order: 2; /* Orden visual */
+}
+
+#panel-log {
+    flex-basis: 25%; /* Tamaño base ideal: 25% */
+    order: 3; /* Orden visual */
+}
+
+
+/* =========================
+   Contenido Específico de Paneles
+   ========================= */
+
+/* Panel de Control (Izquierdo) */
+#panel-control button {
+    background-color: #3498db;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1em;
+    margin-bottom: 15px;
+    transition: background-color 0.2s ease;
+}
+
+#panel-control button:hover {
+    background-color: #2980b9;
+}
+
+#panel-control button:active {
+     background-color: #2471a3;
+}
+
+#panel-control pre {
+    background-color: #ecf0f1;
+    padding: 10px;
+    border-radius: 4px;
+    overflow-x: auto; /* Scroll horizontal si el código es largo */
+    border: 1px solid #bdc3c7;
+    margin-top: 10px; /* Espacio sobre el bloque de código */
+}
+
+#panel-control code {
+    font-family: monospace;
+    color: #2c3e50;
+    font-size: 0.9em; /* Código un poco más pequeño */
+}
+
+#panel-control .output-box { /* Div de resultado */
+    border: 1px solid #bdc3c7;
+    min-height: 60px;
+    padding: 10px;
+    margin-top: 15px; /* Espacio sobre el resultado */
+    background-color: #f9f9f9;
+    border-radius: 4px;
+    font-size: 0.9em;
+    word-wrap: break-word;
+}
+
+
+/* Panel Event Loop (Central) */
+#panel-eventloop .event-loop-diagram {
+    position: relative;
+    border: 1px dashed #95a5a6;
+    padding: 10px;
+    border-radius: 4px;
+    background-color: #fdfefe;
+    margin-top: 10px;
+}
+
+#panel-eventloop .diagram-box {
+    border: 1px solid #7f8c8d;
+    padding: 10px;
+    margin-bottom: 10px;
+    min-height: 50px; /* Altura mínima para las cajas */
+    background-color: #ecf0f1;
+    border-radius: 3px;
+    transition: background-color 0.3s ease, border-color 0.3s ease; /* Transición suave */
+    position: relative; /* Para posicionar elementos internos si fuera necesario */
+    overflow: hidden; /* Evita que el contenido se desborde visualmente */
+}
+#panel-eventloop .diagram-box strong {
+    display: block;
+    margin-bottom: 5px;
+    font-size: 0.9em;
+    color: #2c3e50;
+}
+#panel-eventloop .diagram-content {
+    font-size: 0.8em; /* Contenido más pequeño */
+    color: #555;
+    max-height: 80px; /* Limita altura del contenido si es mucho */
+    overflow-y: auto; /* Scroll si el contenido excede la altura */
+}
+/* Estilos para indicar actividad (muy básico) */
+#panel-eventloop .diagram-box.active {
+    background-color: #f9e79f; /* Amarillo suave */
+    border-color: #f1c40f;
+}
+#panel-eventloop .diagram-content .item-added {
+     font-weight: bold;
+     display: block; /* Asegura que cada item esté en su línea */
+     margin-bottom: 3px; /* Espacio entre items en el stack/queue */
+     white-space: nowrap; /* Evita que se partan los nombres */
+     overflow: hidden;
+     text-overflow: ellipsis; /* Pone ... si el nombre es muy largo */
+}
+/* Icono Event Loop */
+#event-loop-icon {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    font-size: 1.8em;
+    color: #3498db;
+    text-align: center;
+    line-height: 1;
+    animation: spin 4s linear infinite;
+    opacity: 0.7; /* Un poco transparente */
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+
+/* Panel Log (Derecho) */
+#panel-log .console { /* Div de la consola simulada */
+    border: 1px solid #bdc3c7;
+    height: 400px; /* Altura fija para la consola (ajustable) */
+    overflow-y: scroll; /* Scroll vertical */
+    padding: 10px;
+    margin-top: 10px;
+    background-color: #2c3e50; /* Fondo oscuro para la consola */
+    color: #ecf0f1; /* Texto claro */
+    font-family: monospace;
+    font-size: 0.85em;
+    border-radius: 4px;
+    white-space: pre-wrap; /* Respetar saltos de línea y espacios */
+    word-wrap: break-word; /* Evitar desbordamiento horizontal */
+}
+
+#panel-log .console div { /* Estilo para cada línea de log */
+    padding: 3px 0;
+    border-bottom: 1px dotted #566573; /* Línea separadora más oscura */
+}
+#panel-log .console div:last-child {
+    border-bottom: none; /* Sin borde en la última línea */
+}
+
+#panel-log .console .error {
+    color: #e74c3c; /* Rojo */
+    font-weight: bold;
+}
+#panel-log .console .info {
+    color: #3498db; /* Azul */
+}
+#panel-log .console .success {
+    color: #2ecc71; /* Verde */
+}
+
+
+/* =========================
+   Sección de Explicaciones
+   ========================= */
+#explanations {
+    margin-top: 30px;
+    background-color: #fff;
+    padding: 20px;
+     border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+#explanations details {
+    margin-bottom: 15px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 10px 15px; /* Más padding horizontal */
+     background-color: #f9f9f9;
+     transition: background-color 0.2s ease;
+}
+#explanations details:hover {
+     background-color: #f0f0f0;
+}
+
+
+#explanations summary {
+    cursor: pointer;
+    font-weight: bold;
+    color: #2980b9;
+    outline: none; /* Quitar borde de foco */
+    list-style-position: inside; /* Indicador dentro */
+}
+
+#explanations details[open] {
+     background-color: #eaf2f8; /* Fondo ligero al abrir */
+}
+
+#explanations details[open] summary {
+    margin-bottom: 10px;
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 5px;
+}
+
+#explanations dl dt {
+    font-weight: bold;
+    margin-top: 8px;
+    color: #34495e;
+}
+#explanations dl dd {
+    margin-left: 20px;
+    margin-bottom: 5px;
+}
+#explanations code.small-code, #explanations pre code {
+     font-size: 0.9em;
+     background-color: #e8e8e8;
+     padding: 2px 5px;
+     border-radius: 3px;
+     font-family: monospace;
+     color: #333;
+}
+#explanations pre {
+     background-color: #e8e8e8;
+     padding: 10px;
+     border-radius: 4px;
+     overflow-x: auto;
+     border: 1px solid #ccc;
+}
+
+
+/* =========================
+   Diseño Responsivo
+   ========================= */
+@media (max-width: 900px) { /* Un punto de quiebre más ancho para tableta */
+    #panel-eventloop, #panel-log {
+        flex-basis: 30%; /* Dar un poco más de espacio a los paneles laterales */
+    }
+     #panel-control {
+        flex-basis: 40%; /* Reducir un poco el izquierdo */
+    }
+     #event-loop-icon { font-size: 1.5em; } /* Icono más pequeño */
+}
+
+
+@media (max-width: 768px) { /* Punto de quiebre para móvil */
+    #simulator-container {
+        flex-direction: column; /* Apilar paneles */
+        gap: 15px; /* Reducir espacio entre paneles apilados */
+    }
+
+    /* En modo columna, flex-basis no aplica al ancho, reseteamos */
+    #panel-control, #panel-eventloop, #panel-log {
+         flex-basis: auto; /* Resetea el basis */
+         width: 100%; /* Ocupan todo el ancho disponible */
+         order: 0; /* Resetea el orden */
+    }
+
+     #panel-log .console {
+         height: 250px; /* Reducir altura de consola en móvil */
+     }
+     #event-loop-icon { display: none; } /* Ocultar icono giratorio en móvil */
+}

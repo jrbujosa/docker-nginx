@@ -1,23 +1,30 @@
+Con este boceto, diseña el funcionamiento y contenido deun simulador para ejecutarse en una página web. 
+
+Borrador de especificaciones para que lo revises y mejores
+
 Simulador Asíncrono (fetch y Promesas/Async-Await):
 
-Objetivo: Visualizar cómo JavaScript maneja operaciones que toman tiempo (como llamadas de red) sin bloquear la interfaz, introduciendo el Event Loop, las Web APIs y la cola de microtareas.
+Objetivo:  El simulador es para estudiantes de nivel básico. De forma simplificada, Visualizar cómo JavaScript maneja operaciones que toman tiempo (como llamadas de red) sin bloquear la interfaz
 
-Actores: Motor JS (Call Stack), Navegador (Web APIs - como fetch), Event Loop, Microtask Queue, Task Queue (opcional, para setTimeout), Servidor (simulado).
 
-Ejemplo: Un botón que al hacer clic llama a una función JS que usa fetch para "obtener" datos de una URL simulada, y luego actualiza un div con la respuesta usando .then() o async/await. Incluir un console.log antes y después de la llamada a fetch.
+Funcionamiento del simulador: Un botón que al hacer clic llama a una función JS que usa fetch para "obtener" datos de una URL simulada, y luego actualiza un div con la respuesta usando .then() o async/await. Incluir un console.log antes y después de la llamada a fetch.
 
 Visualización:
 
 - Panel Izquierdo: Botón y div de resultados. Código JS con fetch.
 
-- Panel Central (Superior): "Call Stack": Muestra las funciones que se están ejecutando sincrónicamente.
+- Panel Central Representación del Event Loop: Call Stack, Web API, Tasks Queue, evento loop
 
-- Panel Central (Inferior): "Web APIs / Background": Muestra tareas delegadas al navegador (ej. "Petición fetch en progreso...").
+- Panel Derecho : "Log / Consola Simulada": Muestra console.log y el estado de la petición/respuesta.
 
-- Panel Derecho (Superior): "Microtask Queue": Muestra las funciones callback de las promesas (.then, .catch, await) esperando a ser ejecutadas.
+Pasos Simulados: Clic -> JS añade función al Call Stack -> Se ejecuta console.log (antes) -> Se ejecuta fetch -> fetch se pasa a Web APIs -> fetch devuelve una Promesa (pendiente) -> Se ejecuta console.log (después) 
 
-- Panel Derecho (Medio): "Task Queue": (Opcional) Muestra callbacks de setTimeout, eventos DOM, etc.
+En la parte de abajo del simulador añade las siguientes explicaciones:
 
-- Panel Derecho (Inferior): "Log / Consola Simulada": Muestra console.log y el estado de la petición/respuesta.
-
-Pasos Simulados: Clic -> JS añade función al Call Stack -> Se ejecuta console.log (antes) -> Se ejecuta fetch -> fetch se pasa a Web APIs -> fetch devuelve una Promesa (pendiente) -> Se ejecuta console.log (después) -> Función sale del Call Stack -> Petición de red simulada (en Web APIs) -> Respuesta del Servidor (simulada) -> Navegador añade el callback .then o la continuación de await a la Microtask Queue -> Event Loop ve Call Stack vacío, procesa Microtask Queue -> Callback va al Call Stack -> JS ejecuta el callback -> Actualiza el DOM -> Callback sale del Call Stack.
+- La Necesidad de Asincronía y Fetch.
+- Implicaciones del uso de Get y Post (get por defecto) 
+- La función de los componentes que aparecen en el diagrama "Representación del Event Loop:" 
+- Manejo de Datos: Formatos de Respuesta 
+- Uso de Chrome DevTools par depuración 
+- Un glosario de términos
+- Cualquier otro aspecto que consideres relevante
