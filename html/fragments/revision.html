@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,23 +12,31 @@
             margin: 20px;
             background-color: #fdfdfd;
         }
+
         h1 {
             border-bottom: 2px solid #eee;
             padding-bottom: 10px;
-            margin-top: 1.5em; /* Añadido margen superior a H1 */
+            margin-top: 1.5em;
+            /* Añadido margen superior a H1 */
         }
+
         h2 {
             margin-top: 2em;
             border-bottom: 1px solid #eee;
             padding-bottom: 5px;
             color: #333;
         }
-        ul, ol { /* Aplicar a ambos tipos de lista */
+
+        ul,
+        ol {
+            /* Aplicar a ambos tipos de lista */
             margin-left: 20px;
         }
+
         li {
             margin-bottom: 0.8em;
         }
+
         code {
             background-color: #f0f0f0;
             padding: 2px 5px;
@@ -35,19 +44,26 @@
             font-family: monospace;
             font-size: 0.95em;
         }
+
         strong {
             font-weight: bold;
         }
-         /* Estilo muy básico para listas anidadas */
-        ul ul, ol ol, ul ol, ol ul {
-             margin-left: 25px;
-             margin-top: 0.5em;
+
+        /* Estilo muy básico para listas anidadas */
+        ul ul,
+        ol ol,
+        ul ol,
+        ol ul {
+            margin-left: 25px;
+            margin-top: 0.5em;
         }
+
         /* Estilo para subsecciones dentro de un tema */
         .subsection-title {
             font-weight: bold;
             margin-top: 1em;
-            display: block; /* Para que ocupe su propia línea */
+            display: block;
+            /* Para que ocupe su propia línea */
         }
 
         /* Estilos para la Tabla de Contenidos */
@@ -58,32 +74,42 @@
             margin-bottom: 30px;
             border-radius: 4px;
         }
+
         .tabla-de-contenido h3 {
             margin-top: 0;
             margin-bottom: 15px;
             border-bottom: 1px solid #eee;
             padding-bottom: 8px;
         }
+
         .tabla-de-contenido ol {
-            list-style-type: decimal; /* Usar números */
-            padding-left: 20px; /* Ajustar padding si se usa ol */
-            margin-left: 0; /* Resetear margen izquierdo para <ol> dentro de ToC */
+            list-style-type: decimal;
+            /* Usar números */
+            padding-left: 20px;
+            /* Ajustar padding si se usa ol */
+            margin-left: 0;
+            /* Resetear margen izquierdo para <ol> dentro de ToC */
         }
+
         .tabla-de-contenido li {
             margin-bottom: 5px;
         }
+
         .tabla-de-contenido a {
             text-decoration: none;
-            color: #0056b3; /* Azul */
+            color: #0056b3;
+            /* Azul */
         }
+
         .tabla-de-contenido a:hover,
         .tabla-de-contenido a:focus {
             text-decoration: underline;
-            color: #003d80; /* Azul más oscuro */
+            color: #003d80;
+            /* Azul más oscuro */
         }
-
     </style>
 </head>
+
 <body>
     <h1>Revisión de los conceptos más importantes de este sitio web</h1>
     <!-- INICIO: Tabla de Contenidos -->
@@ -95,7 +121,8 @@
             <li><a href="#tema-3">Manejo de Eventos con JavaScript (Event Listeners)</a></li>
             <li><a href="#tema-4">CSS: Cascada, Especificidad y Herencia</a></li>
             <li><a href="#tema-5">El Modelo de Caja (Box Model) en CSS</a></li>
-            <li><a href="#tema-6">Manipulación Segura del Contenido HTML (<code>innerHTML</code> vs. Alternativas)</a></li>
+            <li><a href="#tema-6">Manipulación Segura del Contenido HTML (<code>innerHTML</code> vs. Alternativas)</a>
+            </li>
             <li><a href="#tema-7">Métodos HTTP: GET vs. POST</a></li>
             <li><a href="#tema-8">JavaScript Asíncrono (Conceptos Básicos con <code>fetch</code>)</a></li>
             <li><a href="#tema-9">WebSockets: Comunicación Bidireccional</a></li>
@@ -104,7 +131,7 @@
     </div>
     <!-- FIN: Tabla de Contenidos -->
 
- 
+
 
 
     <h2 id="tema-1">1. Estructura de Carpetas y Rutas en un Sitio Web</h2>
@@ -112,7 +139,8 @@
         <li><strong>Organización del Proyecto:</strong>
             <ul>
                 <li>¿Por qué es importante mantener una estructura de carpetas organizada en un proyecto web?</li>
-                <li>Nombra 2 o 3 carpetas comunes (y su contenido) que encontrarías en la raíz de un proyecto web sencillo.</li>
+                <li>Nombra 2 o 3 carpetas comunes (y su contenido) que encontrarías en la raíz de un proyecto web
+                    sencillo.</li>
             </ul>
         </li>
 
@@ -120,33 +148,67 @@
             <ul>
                 <li>¿Qué significa <code>./</code> al principio de una ruta relativa?</li>
                 <li>¿Qué significa <code>../</code> al principio de una ruta relativa?</li>
-                <li>¿Qué indica una ruta que comienza directamente con una barra inclinada <code>/</code> (por ejemplo, <code>/images/logo.png</code>), en el contexto de una URL o un enlace en una página web? ¿Desde dónde considera el navegador que empieza esa ruta?</li>
-                <li>Si te encuentras en el archivo <code>proyecto/index.html</code>, ¿cómo escribirías la ruta relativa para enlazar una imagen ubicada en <code>proyecto/assets/images/logo.png</code>?</li>
-                <li>Si te encuentras en el archivo <code>proyecto/pages/about.html</code>, ¿cómo escribirías la ruta relativa para enlazar la hoja de estilos principal ubicada en <code>proyecto/css/style.css</code>?</li>
-                <li>Desde <code>proyecto/pages/about.html</code>, ¿cómo enlazarías a <code>proyecto/contact/form.html</code>?</li>
+                <li>¿Qué indica una ruta que comienza directamente con una barra inclinada <code>/</code> (por ejemplo,
+                    <code>/images/logo.png</code>), en el contexto de una URL o un enlace en una página web? ¿Desde
+                    dónde considera el navegador que empieza esa ruta?
+                </li>
+                <li>Si te encuentras en el archivo <code>proyecto/index.html</code>, ¿cómo escribirías la ruta relativa
+                    para enlazar una imagen ubicada en <code>proyecto/assets/images/logo.png</code>?</li>
+                <li>Si te encuentras en el archivo <code>proyecto/pages/about.html</code>, ¿cómo escribirías la ruta
+                    relativa para enlazar la hoja de estilos principal ubicada en <code>proyecto/css/style.css</code>?
+                </li>
+                <li>Desde <code>proyecto/pages/about.html</code>, ¿cómo enlazarías a
+                    <code>proyecto/contact/form.html</code>?
+                </li>
             </ul>
         </li>
 
         <li><strong>Convenciones de Nomenclatura:</strong>
             <ul>
-                <li>¿Qué es la convención "kebab-case" y por qué se recomienda para nombres de archivos/carpetas web?</li>
+                <li>¿Qué es la convención "kebab-case" y por qué se recomienda para nombres de archivos/carpetas web?
+                </li>
             </ul>
         </li>
 
         <li><span class="subsection-title">Relación con Servidor Web y Docker:</span>
             <ul>
-                <li>En la configuración de un servidor web como Nginx, ¿qué representa la directiva <code>root</code> (o <code>DocumentRoot</code> en Apache), por ejemplo <code>root /var/www/html;</code>? ¿Qué relación tiene con las rutas que empiezan por <code>/</code>?</li>
-                <li>Cuando ejecutas un servidor web dentro de un contenedor Docker, ¿por qué ese servidor, por defecto, no puede acceder directamente a los archivos de tu proyecto que están en tu máquina local (ej: en la carpeta <code>usuario/mi-proyecto/html</code>)?</li>
-                <li>¿Qué mecanismo proporciona Docker para 'conectar' una carpeta de tu máquina host (donde está tu código fuente) con una carpeta dentro del contenedor (donde el servidor web espera encontrar los archivos)? ¿Cómo se llama comúnmente esta conexión en Docker Compose?</li>
-                <li>En una definición de volumen dentro de <code>docker-compose.yml</code> como <code>volumes: - ./mi-proyecto-web:/var/www/html</code>, ¿qué representa la parte <code>./mi-proyecto-web</code> y qué representa <code>/var/www/html</code>?</li>
+                <li>En la configuración de un servidor web como Nginx, ¿qué representa la directiva <code>root</code> (o
+                    <code>DocumentRoot</code> en Apache), por ejemplo <code>root /var/www/html;</code>? ¿Qué relación
+                    tiene con
+                    las rutas que empiezan por <code>/</code>?
+                </li>
+                <li>Cuando ejecutas un servidor web dentro de un contenedor Docker, ¿por qué ese servidor, por defecto,
+                    no puede
+                    acceder directamente a los archivos de tu proyecto que están en tu máquina local (ej: en la carpeta
+                    <code>usuario/mi-proyecto/html</code>)?
+                </li>
+                <li>¿Qué mecanismo proporciona Docker para 'conectar' una carpeta de tu máquina host (donde está tu
+                    código
+                    fuente) con una carpeta dentro del contenedor (donde el servidor web espera encontrar los archivos)?
+                    ¿Cómo
+                    se llama comúnmente esta conexión en Docker Compose?</li>
+                <li>En una definición de volumen dentro de <code>docker-compose.yml</code> como
+                    <code>volumes: - ./mi-proyecto-web:/var/www/html</code>, ¿qué representa la parte
+                    <code>./mi-proyecto-web</code> y qué representa <code>/var/www/html</code>?
+                </li>
+                <li>Un servidor web Nginx se ejecuta dentro de un contenedor Docker. Dentro del contenedor, la página web index.html se encuentra en la ruta
+                    /docker-nginx/html/pages/index.html.
+
+                    ¿Por qué la visualización del archivo directamente en el navegador Chrome abriendo el archivo
+                    /docker-nginx/html/pages/index.html (desde el sistema de archivos local) puede diferir de la
+                    visualización de la misma página accediendo a ella a través de localhost:8080/pages/index.html
+                    (donde 8080 es el puerto expuesto por el contenedor Docker)?
+                </li>
             </ul>
-        </li>
+    </ul>
+    </li>
     </ul>
     <h2 id="tema-2">2. El DOM (Document Object Model)</h2>
     <ul>
         <li><strong>Propósito del DOM:</strong>
             <ul>
-                <li>¿Por qué necesita el navegador transformar el código HTML en una estructura diferente (el DOM) para poder trabajar con la página?</li>
+                <li>¿Por qué necesita el navegador transformar el código HTML en una estructura diferente (el DOM) para
+                    poder trabajar con la página?</li>
             </ul>
         </li>
         <li><strong>Definición y Estructura:</strong>
@@ -163,18 +225,22 @@
         </li>
         <li><strong>Acceso y Visualización:</strong>
             <ul>
-                <li>¿Cuál es el objeto principal en JavaScript que representa todo el documento y sirve como punto de entrada para acceder al DOM?</li>
-                <li>¿Cómo puedes inspeccionar visualmente la estructura del DOM de cualquier página web que visitas?</li>
+                <li>¿Cuál es el objeto principal en JavaScript que representa todo el documento y sirve como punto de
+                    entrada para acceder al DOM?</li>
+                <li>¿Cómo puedes inspeccionar visualmente la estructura del DOM de cualquier página web que visitas?
+                </li>
             </ul>
         </li>
         <li><strong>Manipulación Básica con JavaScript:</strong>
             <ul>
-                <li>¿Qué tipo de valor devuelve <code>document.getElementById('unIdEspecifico')</code> si encuentra el elemento? ¿Y si no lo encuentra?</li>
+                <li>¿Qué tipo de valor devuelve <code>document.getElementById('unIdEspecifico')</code> si encuentra el
+                    elemento? ¿Y si no lo encuentra?</li>
                 <li>Menciona al menos tres tipos de acciones que JavaScript puede realizar sobre el DOM.</li>
-                <li>Describe y explica cómo la ubicación de la etiqueta <script> dentro de un documento HTML (cuando no se utiliza el atributo defer) afecta la forma en que el navegador interpreta y renderiza la página.</li>
-            </ul>
-        </li>
-    </ul>
+                <li>Describe y explica cómo la ubicación de la etiqueta
+                    <script> dentro de un documento HTML(cuando no se utiliza el atributo defer) afecta la forma en que el navegador interpreta y renderiza la página.</li >
+            </ul >
+        </li >
+    </ul >
 
     <h2 id="tema-3">3. Manejo de Eventos con JavaScript (Event Listeners)</h2>
     <ul>
@@ -362,5 +428,5 @@
     </ul>
     <!-- === FIN TEMAS === -->
 
-</body>
-</html>
+</body >
+</html >
