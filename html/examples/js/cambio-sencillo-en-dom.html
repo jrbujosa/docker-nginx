@@ -135,6 +135,7 @@
                    document.getElementById("titulo1").innerText = input.value || "Hola Mundo";
                 });
             </script>
+            <p><b>Instrucción clave:</b> <code>document.getElementById("titulo1").innerText = input.value || "Hola Mundo";</code></p>
         </div>
 
         <!-- Ejemplo 2: Añadir Elemento (appendChild) -->
@@ -151,6 +152,7 @@
                     lista2.appendChild(li); // Añade al final
                 });
             </script>
+            <p><b>Instrucción clave:</b> <code>lista2.appendChild(li);</code></p>
         </div>
 
         <!-- Ejemplo 3: Cambiar Estilo Inline -->
@@ -165,6 +167,7 @@
                     cont3.style.backgroundColor = c[Math.floor(Math.random() * c.length)];
                 });
             </script>
+            <p><b>Instrucción clave:</b> <code>cont3.style.backgroundColor = c[Math.floor(Math.random() * c.length)];</code></p>
         </div>
 
         <!-- Ejemplo 4: Añadir/Quitar Clase CSS -->
@@ -181,6 +184,7 @@
                     btn4.textContent = elem4.classList.contains("hidden") ? "Mostrar" : "Ocultar";
                 });
             </script>
+            <p><b>Instrucción clave:</b> <code>elem4.classList.toggle("hidden");</code></p>
         </div>
 
         <!-- Ejemplo 5: Leer Valor de Input -->
@@ -196,6 +200,7 @@
                     document.getElementById("salidaTexto5").textContent = input.value || "(vacío)";
                 });
             </script>
+            <p><b>Instrucción clave:</b> <code>document.getElementById("salidaTexto5").textContent = input.value || "(vacío)";</code></p>
         </div>
 
         <!-- Ejemplo 6: Eliminar Elemento -->
@@ -211,6 +216,7 @@
                     else alert("¡Lista vacía!");
                 });
             </script>
+             <p><b>Instrucción clave:</b> <code>lista6.lastElementChild.remove();</code></p>
         </div>
 
         <!-- Ejemplo 7: Cambiar Atributo (src, alt) -->
@@ -230,6 +236,7 @@
                     btn7.textContent = esImg1 ? "Mostrar Imagen 1" : "Mostrar Imagen 2";
                 });
             </script>
+           <p><b>Instrucción clave:</b> <code>img7.src = esImg1 ? url2 : url1;</code></p>
         </div>
 
         <!-- Ejemplo 8: Eventos del Ratón (mouseover/out) -->
@@ -243,6 +250,7 @@
                 area8.addEventListener("mouseover", () => area8.classList.add("highlighted"));
                 area8.addEventListener("mouseout", () => area8.classList.remove("highlighted"));
             </script>
+            <p><b>Instrucciones clave:</b> <code>area8.addEventListener("mouseover", ...);</code> y <code>area8.addEventListener("mouseout", ...);</code></p>
         </div>
 
         <!-- Ejemplo 9: Evento Change (Select) -->
@@ -259,6 +267,7 @@
                     document.getElementById("selectOutput9").textContent = this.value || "(ninguno)";
                 });
             </script>
+            <p><b>Instrucción clave:</b> <code>document.getElementById("selectOutput9").textContent = this.value || "(ninguno)";</code></p>
         </div>
 
          <!-- Ejemplo 10: Evento Input y Validación -->
@@ -276,6 +285,7 @@
                     else { msg10.textContent = "¡Correcto!"; msg10.classList.add("success-message"); }
                 });
             </script>
+           <p><b>Instrucción clave:</b> <code>input10.addEventListener("input", function() { ... });</code></p>
         </div>
 
          <!-- Ejemplo 11: Contador de Caracteres (Textarea) -->
@@ -294,6 +304,7 @@
                     if (len > maxL) count11.classList.add("limit-exceeded"); else if (len >= nearL) count11.classList.add("limit-near");
                 });
             </script>
+           <p><b>Instrucción clave:</b> <code>ta11.addEventListener("input", function() { ... });</code></p>
         </div>
 
          <!-- Ejemplo 12: Habilitar/Deshabilitar Elemento -->
@@ -307,6 +318,7 @@
                     document.getElementById("submitButton12").disabled = !this.checked; // Habilita/deshabilita
                 });
             </script>
+           <p><b>Instrucción clave:</b> <code>document.getElementById("submitButton12").disabled = !this.checked;</code></p>
         </div>
 
         <!-- Ejemplo 13: Usar innerHTML -->
@@ -324,6 +336,7 @@
                     document.getElementById("innerHTMLTarget13").innerHTML = document.getElementById("htmlInput13").value;
                 });
             </script>
+           <p><b>Instrucción clave:</b> <code>document.getElementById("innerHTMLTarget13").innerHTML = document.getElementById("htmlInput13").value;</code></p>
         </div>
 
         <!-- Ejemplo 14: Atributos data-* (dataset) -->
@@ -343,6 +356,7 @@
                     this.textContent = `Clic N° ${clicks+1}`;
                 });
             </script>
+            <p><b>Instrucción clave:</b> <code>let clicks = parseInt(this.dataset.clicks) + 1;</code></p>
         </div>
 
         <!-- Ejemplo 15: Iterar sobre Nodos (querySelectorAll) -->
@@ -358,6 +372,7 @@
                     e.target.textContent = e.target.textContent === "Resaltar Todos" ? "Quitar Resaltado" : "Resaltar Todos";
                 });
             </script>
+            <p><b>Instrucciones clave:</b> <code>const items = document.querySelectorAll("#listaMultiple15 li");</code> y <code>items.forEach(item => item.classList.toggle("highlighted-list-item"));</code></p>
         </div>
 
         <!-- Ejemplo 16: Manejar Envío Formulario (preventDefault) -->
@@ -378,6 +393,7 @@
                     alert(`Formulario interceptado! Email: ${document.getElementById("emailInput16").value}`);
                 });
             </script>
+            <p><b>Instrucción clave:</b> <code>event.preventDefault();</code></p>
         </div>
 
         <!-- Ejemplo 17: DOM Traversal (Navegación) -->
@@ -394,6 +410,7 @@
                 document.getElementById("findParent17").addEventListener("click", () => { clearH17(); target17.parentElement?.classList.add("traversal-highlight"); });
                 document.getElementById("findSibling17").addEventListener("click", () => { clearH17(); target17.nextElementSibling?.classList.add("traversal-highlight"); });
             </script>
+            <p><b>Instrucciones clave:</b> <code>target17.parentElement?.classList.add("traversal-highlight");</code> y <code>target17.nextElementSibling?.classList.add("traversal-highlight");</code></p>
         </div>
 
         <!-- Ejemplo 18: Insertar Antes (insertBefore) -->
@@ -412,6 +429,7 @@
                     if(targetN){ const newItem = document.createElement("li"); newItem.textContent = inputTxt; newItem.style.backgroundColor = '#cfe2ff'; list18.insertBefore(newItem, targetN); document.getElementById("textInsert18").value = "";}
                 });
             </script>
+           <p><b>Instrucción clave:</b> <code>list18.insertBefore(newItem, targetN);</code></p>
         </div>
 
          <!-- Ejemplo 19: Reemplazar Elemento (replaceWith) -->
@@ -427,6 +445,7 @@
                     if(targetP){ const newH = document.createElement("h4"); newH.textContent = "¡Reemplazado!"; newH.style.color = "purple"; targetP.replaceWith(newH); e.target.disabled = true; }
                 });
             </script>
+           <p><b>Instrucción clave:</b> <code>targetP.replaceWith(newH);</code></p>
         </div>
 
          <!-- Ejemplo 20: Clonar Nodo (cloneNode) -->
@@ -443,6 +462,7 @@
                     const cloned = src20.cloneNode(true); count20++; cloned.id=""; cloned.classList.add("cloned-item"); cloned.appendChild(document.createTextNode(` (Clon #${count20})`)); target20.appendChild(cloned);
                 });
             </script>
+            <p><b>Instrucción clave:</b> <code>const cloned = src20.cloneNode(true);</code></p>
         </div>
 
         <!-- Ejemplo 21: Leer Estilo Computado -->

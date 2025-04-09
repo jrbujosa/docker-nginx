@@ -150,6 +150,34 @@ $postArrayString = htmlspecialchars(var_export($_POST, true), ENT_QUOTES, 'UTF-8
         <p style="font-size: 0.8em; color: #666; margin-top: 15px;">
             * Se consideran "definidas" las variables cuyo valor no es una cadena vacía (''), null, false o 0.
         </p>
+<div>
+<p> Código simplificado de la página</p>
+<p> Código ejecutado en el servidor web o en el servidor PHP</p>
+<pre>
+&lt;?php
+// Recuento de datos GET y POST
+$get_total = count($_GET);
+$post_total = count($_POST);
+
+// Datos GET y POST en string para mostrar
+$get_datos = htmlspecialchars(var_export($_GET, true));
+$post_datos = htmlspecialchars(var_export($_POST, true));
+?&gt;
+&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;&lt;title&gt;Datos Recibidos&lt;/title&gt;&lt;/head&gt;
+&lt;body&gt;
+  &lt;h1&gt;Datos Recibidos&lt;/h1&gt;
+  &lt;p&gt;GET: &lt;?php echo $get_total; ?&gt; variables&lt;/p&gt;
+  &lt;pre&gt;&lt;?php echo $get_datos; ?&gt;&lt;/pre&gt;
+  &lt;p&gt;POST: &lt;?php echo $post_total; ?&gt; variables&lt;/p&gt;
+  &lt;pre&gt;&lt;?php echo $post_datos; ?&gt;&lt;/pre&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+
+</pre>
+</div>
+
     </div>
 
 </body>

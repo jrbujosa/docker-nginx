@@ -215,6 +215,24 @@
         </form>
     </div>
 
+<div>
+
+<pre>
+&lt;form id="dataForm" action="datos_form.php" method="get"&gt;
+    &lt;p&gt;Método:
+        &lt;label&gt;&lt;input type="radio" name="http_method" value="get" checked&gt;GET&lt;/label&gt;
+        &lt;label&gt;&lt;input type="radio" name="http_method" value="post"&gt;POST&lt;/label&gt;
+    &lt;/p&gt;
+    &lt;label&gt;Nombre: &lt;input type="text" name="nombre" required placeholder="Nombre"&gt;&lt;/label&gt;
+    &lt;label&gt;Apellido: &lt;input type="text" name="apellido" required placeholder="Apellido"&gt;&lt;/label&gt;
+    &lt;label&gt;Edad: &lt;input type="number" name="edad" required min="1" placeholder="Edad"&gt;&lt;/label&gt;
+    &lt;label&gt;Correo: &lt;input type="email" name="correo" required placeholder="Email"&gt;&lt;/label&gt;
+    &lt;button type="submit"&gt;Enviar&lt;/button&gt;
+&lt;/form&gt;
+</pre>
+
+</div>
+
     <!-- *** SCRIPT PARA CAMBIAR EL MÉTODO DEL FORMULARIO *** -->
     <script>
         // Seleccionar el formulario y los botones de radio

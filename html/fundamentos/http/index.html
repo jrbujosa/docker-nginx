@@ -75,6 +75,16 @@ Servidor esperando peticiones...
 
     <!-- Sección de Explicaciones (Reordenada y con nuevas secciones) -->
     <div class="explanations">
+
+        <h2>Ejemplo de GET y POST</h2>
+
+        <div class="explanation-block">
+
+<p> <a href="/examples/html/form1/datos_form.html"> Ejemplo de formulario con Get y Post</a> </p>
+
+        </div>
+
+
         <h2>Nociones generales sobre GET y POST</h2>
 
         <div class="explanation-block">
@@ -104,37 +114,8 @@ Servidor esperando peticiones...
             <p>Este simulador se centra en los casos básicos de GET y POST.</p>
         </div>
 
-        <div class="explanation-block">
-            <h3>3. GET vs. POST: Visibilidad, Seguridad y Datos (¡Importante!)</h3>
-            
-            <ul>
-                <li><strong>GET:</strong> Los datos se añaden a la <strong>URL</strong> como parámetros de consulta (query parameters), después del signo `?` (ej: `/buscar?term=libro&page=2`).
-                    <ul>
-                        <li><strong>Visibilidad:</strong> ¡Sí! Estos datos son visibles en la barra de direcciones del navegador, en el historial, en los logs del servidor y pueden ser cacheados o guardados en marcadores fácilmente.</li>
-                        <li><strong>Limitaciones:</strong> Las URLs tienen una longitud máxima (aunque varía según el navegador/servidor, suele ser alrededor de 2000 caracteres), limitando la cantidad de datos. No es adecuado para enviar datos binarios.</li>
-                        <li><strong>Uso Ideal:</strong> Para solicitar datos, realizar búsquedas, o cualquier operación donde los parámetros no sean sensibles y sea útil poder enlazar o guardar la URL exacta. Se considera una operación *idempotente* (repetirla produce el mismo resultado).</li>
-                    </ul>
-                </li>
-                <li><strong>POST:</strong> Los datos se envían dentro del <strong>cuerpo (body)</strong> de la petición HTTP.
-                    <ul>
-                        <li><strong>Visibilidad:</strong> Los datos <strong>no son visibles</strong> directamente en la URL, historial o marcadores. Esto ofrece una capa de *privacidad visual* respecto a GET.</li>
-                        <li><strong>Capacidad:</strong> No tiene límites prácticos en la cantidad de datos que puede enviar (aunque los servidores pueden imponer límites). Adecuado para datos extensos o binarios (como subir archivos, aunque eso usa un `Content-Type` específico).</li>
-                        <li><strong>Uso Ideal:</strong> Para enviar datos que modifican el estado en el servidor (crear un usuario, publicar un comentario, procesar una compra), enviar datos sensibles o grandes cantidades de información. Generalmente *no es idempotente*.</li>
-                    </ul>
-                </li>
-                <li><strong>¿Y el Cifrado (Encriptación)?</strong> Aquí está la clave:
-                    <ul>
-                        <li><strong>Ni GET ni POST cifran los datos por sí mismos.</strong></li>
-                        <li>El cifrado lo proporciona **HTTPS (HTTP sobre TLS/SSL)**. Cuando usas `https://...`, TODA la comunicación HTTP (incluyendo la URL completa con los parámetros GET y el cuerpo POST) se cifra durante la transmisión entre el cliente y el servidor.</li>
-                        <li><strong>Por lo tanto, para proteger datos sensibles (contraseñas, datos bancarios), SIEMPRE debes usar HTTPS, independientemente de si usas GET o POST.</strong></li>
-                        <li>Aunque HTTPS cifra los parámetros GET en tránsito, estos *aún pueden quedar registrados en logs del servidor (después de descifrarse) y en el historial del navegador*. Por eso, **POST sobre HTTPS** es la práctica estándar para enviar datos realmente sensibles.</li>
-                    </ul>
-                </li>
-            </ul>
-        </div>
-
-        <div class="explanation-block">
-             <h3>4. Tabla Comparativa: GET vs. POST</h3>
+         <div class="explanation-block">
+             <h3>3. Tabla Comparativa: GET vs. POST</h3>
              <p>Un resumen rápido de las diferencias clave:</p>
              <table class="comparison-table">
                  <thead>

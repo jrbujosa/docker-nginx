@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Revisión de los conceptos más importantes de este sitio web</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            line-height: 1.5;
+            margin: 20px;
+            background-color: #fdfdfd;
+        }
+        h1 {
+            border-bottom: 2px solid #eee;
+            padding-bottom: 10px;
+            margin-top: 1.5em; /* Añadido margen superior a H1 */
+        }
+        h2 {
+            margin-top: 2em;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 5px;
+            color: #333;
+        }
+        ul, ol { /* Aplicar a ambos tipos de lista */
+            margin-left: 20px;
+        }
+        li {
+            margin-bottom: 0.8em;
+        }
+        code {
+            background-color: #f0f0f0;
+            padding: 2px 5px;
+            border-radius: 3px;
+            font-family: monospace;
+            font-size: 0.95em;
+        }
+        strong {
+            font-weight: bold;
+        }
+         /* Estilo muy básico para listas anidadas */
+        ul ul, ol ol, ul ol, ol ul {
+             margin-left: 25px;
+             margin-top: 0.5em;
+        }
+        /* Estilo para subsecciones dentro de un tema */
+        .subsection-title {
+            font-weight: bold;
+            margin-top: 1em;
+            display: block; /* Para que ocupe su propia línea */
+        }
+
+        /* Estilos para la Tabla de Contenidos */
+        .tabla-de-contenido {
+            border: 1px solid #ddd;
+            background-color: #f9f9f9;
+            padding: 15px 20px;
+            margin-bottom: 30px;
+            border-radius: 4px;
+        }
+        .tabla-de-contenido h3 {
+            margin-top: 0;
+            margin-bottom: 15px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 8px;
+        }
+        .tabla-de-contenido ol {
+            list-style-type: decimal; /* Usar números */
+            padding-left: 20px; /* Ajustar padding si se usa ol */
+            margin-left: 0; /* Resetear margen izquierdo para <ol> dentro de ToC */
+        }
+        .tabla-de-contenido li {
+            margin-bottom: 5px;
+        }
+        .tabla-de-contenido a {
+            text-decoration: none;
+            color: #0056b3; /* Azul */
+        }
+        .tabla-de-contenido a:hover,
+        .tabla-de-contenido a:focus {
+            text-decoration: underline;
+            color: #003d80; /* Azul más oscuro */
+        }
+
+    </style>
+</head>
+<body>
+    <h1>Revisión de los conceptos más importantes de este sitio web</h1>
+    <!-- INICIO: Tabla de Contenidos -->
+    <div class="tabla-de-contenido">
+        <h3>Tabla de Contenidos</h3>
+        <ol>
+            <li><a href="#tema-1">El DOM (Document Object Model)</a></li>
+            <li><a href="#tema-2">Estructura de Carpetas y Rutas en un Sitio Web</a></li>
+            <li><a href="#tema-3">Manejo de Eventos con JavaScript (Event Listeners)</a></li>
+            <li><a href="#tema-4">CSS: Cascada, Especificidad y Herencia</a></li>
+            <li><a href="#tema-5">El Modelo de Caja (Box Model) en CSS</a></li>
+            <li><a href="#tema-6">Manipulación Segura del Contenido HTML (<code>innerHTML</code> vs. Alternativas)</a></li>
+            <li><a href="#tema-7">Métodos HTTP: GET vs. POST</a></li>
+            <li><a href="#tema-8">JavaScript Asíncrono (Conceptos Básicos con <code>fetch</code>)</a></li>
+            <li><a href="#tema-9">WebSockets: Comunicación Bidireccional</a></li>
+            <li><a href="#tema-10">Almacenamiento Web: Cookies vs LocalStorage vs SessionStorage</a></li>
+        </ol>
+    </div>
+    <!-- FIN: Tabla de Contenidos -->
+
+ 
+
+    <h2 id="tema-1">1. El DOM (Document Object Model)</h2>
+    <ul>
+        <li><strong>Propósito del DOM:</strong>
+            <ul>
+                <li>¿Por qué necesita el navegador transformar el código HTML en una estructura diferente (el DOM) para poder trabajar con la página?</li>
+            </ul>
+        </li>
+        <li><strong>Definición y Estructura:</strong>
+            <ul>
+                <li>¿Qué es el DOM?</li>
+                <li>¿Qué significa que el DOM sea una estructura de "árbol"?</li>
+                <li>Menciona al menos tres tipos comunes de nodos que se pueden encontrar en el árbol DOM.</li>
+            </ul>
+        </li>
+        <li><strong>Proceso de Creación (Parsing):</strong>
+            <ul>
+                <li>¿Qué es el "parsing" (análisis sintáctico) de HTML?</li>
+            </ul>
+        </li>
+        <li><strong>Acceso y Visualización:</strong>
+            <ul>
+                <li>¿Cuál es el objeto principal en JavaScript que representa todo el documento y sirve como punto de entrada para acceder al DOM?</li>
+                <li>¿Cómo puedes inspeccionar visualmente la estructura del DOM de cualquier página web que visitas?</li>
+            </ul>
+        </li>
+        <li><strong>Manipulación Básica con JavaScript:</strong>
+            <ul>
+                <li>¿Qué tipo de valor devuelve <code>document.getElementById('unIdEspecifico')</code> si encuentra el elemento? ¿Y si no lo encuentra?</li>
+                <li>Menciona al menos tres tipos de acciones que JavaScript puede realizar sobre el DOM.</li>
+            </ul>
+        </li>
+    </ul>
+
+    <h2 id="tema-2">2. Estructura de Carpetas y Rutas en un Sitio Web</h2>
+    <ul>
+        <li><strong>Organización del Proyecto:</strong>
+            <ul>
+                <li>¿Por qué es importante mantener una estructura de carpetas organizada en un proyecto web?</li>
+                <li>Nombra 2 o 3 carpetas comunes (y su contenido) que encontrarías en la raíz de un proyecto web sencillo.</li>
+            </ul>
+        </li>
+
+        <li><span class="subsection-title">Rutas Relativas y Absolutas del Sitio:</span>
+            <ul>
+                <li>¿Qué significa <code>./</code> al principio de una ruta relativa?</li>
+                <li>¿Qué significa <code>../</code> al principio de una ruta relativa?</li>
+                <li>¿Qué indica una ruta que comienza directamente con una barra inclinada <code>/</code> (por ejemplo, <code>/images/logo.png</code>), en el contexto de una URL o un enlace en una página web? ¿Desde dónde considera el navegador que empieza esa ruta?</li>
+                <li>Si te encuentras en el archivo <code>proyecto/index.html</code>, ¿cómo escribirías la ruta relativa para enlazar una imagen ubicada en <code>proyecto/assets/images/logo.png</code>?</li>
+                <li>Si te encuentras en el archivo <code>proyecto/pages/about.html</code>, ¿cómo escribirías la ruta relativa para enlazar la hoja de estilos principal ubicada en <code>proyecto/css/style.css</code>?</li>
+                <li>Desde <code>proyecto/pages/about.html</code>, ¿cómo enlazarías a <code>proyecto/contact/form.html</code>?</li>
+            </ul>
+        </li>
+
+        <li><strong>Convenciones de Nomenclatura:</strong>
+            <ul>
+                <li>¿Qué es la convención "kebab-case" y por qué se recomienda para nombres de archivos/carpetas web?</li>
+            </ul>
+        </li>
+
+        <li><span class="subsection-title">Relación con Servidor Web y Docker:</span>
+            <ul>
+                <li>En la configuración de un servidor web como Nginx, ¿qué representa la directiva <code>root</code> (o <code>DocumentRoot</code> en Apache), por ejemplo <code>root /var/www/html;</code>? ¿Qué relación tiene con las rutas que empiezan por <code>/</code>?</li>
+                <li>Cuando ejecutas un servidor web dentro de un contenedor Docker, ¿por qué ese servidor, por defecto, no puede acceder directamente a los archivos de tu proyecto que están en tu máquina local (ej: en la carpeta <code>usuario/mi-proyecto/html</code>)?</li>
+                <li>¿Qué mecanismo proporciona Docker para 'conectar' una carpeta de tu máquina host (donde está tu código fuente) con una carpeta dentro del contenedor (donde el servidor web espera encontrar los archivos)? ¿Cómo se llama comúnmente esta conexión en Docker Compose?</li>
+                <li>En una definición de volumen dentro de <code>docker-compose.yml</code> como <code>volumes: - ./mi-proyecto-web:/var/www/html</code>, ¿qué representa la parte <code>./mi-proyecto-web</code> y qué representa <code>/var/www/html</code>?</li>
+            </ul>
+        </li>
+    </ul>
+
+    <h2 id="tema-3">3. Manejo de Eventos con JavaScript (Event Listeners)</h2>
+    <ul>
+        <li><strong>Concepto Fundamental:</strong>
+            <ul>
+                <li>¿Qué es un "event listener" en JavaScript y HTML?</li>
+                <li>¿Cuál es el propósito principal de usar event listeners?</li>
+            </ul>
+        </li>
+        <li><strong>Implementación Básica:</strong>
+            <ul>
+                <li>Describe los 3 pasos esenciales para añadir un event listener a un elemento HTML usando JavaScript.</li>
+                <li>¿Sobre qué objeto se utiliza el método <code>addEventListener()</code>?</li>
+            </ul>
+        </li>
+        <li><strong>Tipos Comunes de Eventos:</strong>
+            <ul>
+                <li>Menciona 3 ejemplos comunes de eventos.</li>
+            </ul>
+        </li>
+        <li><strong>El Objeto Evento (Concepto Básico):</strong>
+            <ul>
+                <li>Cuando se ejecuta la función "handler" de un evento, ¿recibe algún parámetro con información sobre el evento?</li>
+            </ul>
+        </li>
+    </ul>
+
+    <h2 id="tema-4">4. CSS: Cascada, Especificidad y Herencia</h2>
+    <ul>
+        <li><strong>La Cascada CSS:</strong>
+            <ul>
+                <li>¿Cuál es el propósito de la "Cascada" en CSS?</li>
+            </ul>
+        </li>
+        <li><strong>Especificidad:</strong>
+            <ul>
+                <li>¿Qué es la especificidad en CSS y cuándo entra en juego?</li>
+                <li>Ordena de mayor a menor especificidad: Selector de etiqueta, Selector de clase, Selector de ID.</li>
+                <li>¿Dónde se sitúan los estilos en línea (<code>style="..."</code>) en términos de especificidad?</li>
+                <li>¿Qué hace <code>!important</code> y por qué generalmente se debe evitar?</li>
+            </ul>
+        </li>
+        <li><strong>Herencia:</strong>
+            <ul>
+                <li>¿Qué significa la "herencia" en CSS?</li>
+                <li>Da un ejemplo de una propiedad CSS que normalmente se hereda y una que no.</li>
+            </ul>
+        </li>
+    </ul>
+
+    <h2 id="tema-5">5. El Modelo de Caja (Box Model) en CSS</h2>
+    <ul>
+        <li><strong>Concepto:</strong>
+            <ul>
+                <li>¿Cómo representa CSS a cada elemento HTML en términos de diseño espacial?</li>
+            </ul>
+        </li>
+        <li><strong>Componentes:</strong>
+            <ul>
+                <li>Nombra y describe brevemente las 4 áreas del Modelo de Caja CSS (interior a exterior).</li>
+            </ul>
+        </li>
+        <li><strong>Impacto en el Diseño:</strong>
+            <ul>
+                <li>¿Qué área(s) añaden espacio <strong>dentro</strong> del borde?</li>
+                <li>¿Qué área(s) añaden espacio <strong>fuera</strong> del borde?</li>
+                <li>¿Cómo afecta <code>box-sizing: border-box;</code> al cálculo del tamaño (ancho/alto)?</li>
+            </ul>
+        </li>
+    </ul>
+
+    <h2 id="tema-6">6. Manipulación Segura del Contenido HTML (<code>innerHTML</code> vs. Alternativas)</h2>
+    <ul>
+        <li><strong>Uso de <code>innerHTML</code>:</strong>
+            <ul>
+                <li>¿Qué permite hacer la propiedad <code>innerHTML</code>?</li>
+            </ul>
+        </li>
+        <li><strong>Riesgos de Seguridad:</strong>
+            <ul>
+                <li>¿Cuál es el principal peligro de usar <code>innerHTML</code> con contenido no confiable?</li>
+            </ul>
+        </li>
+        <li><strong>Alternativas Seguras:</strong>
+            <ul>
+                <li>Si solo necesitas insertar texto, ¿qué propiedad es más segura que <code>innerHTML</code>?</li>
+                <li>Si necesitas crear elementos HTML programáticamente, ¿qué métodos del DOM usarías?</li>
+            </ul>
+        </li>
+    </ul>
+
+    <h2 id="tema-7">7. Métodos HTTP: GET vs. POST</h2>
+    <ul>
+        <li><strong>Contexto:</strong>
+            <ul>
+                <li>¿Qué son GET y POST en el contexto de HTTP?</li>
+            </ul>
+        </li>
+        <li><strong>Usos Principales:</strong>
+            <ul>
+                <li>¿Para qué se usa comúnmente GET?</li>
+                <li>¿Para qué se usa comúnmente POST?</li>
+            </ul>
+        </li>
+        <li><strong>Diferencias Clave (Nivel Básico):</strong>
+            <ul>
+                <li>¿Dónde se envían los datos en GET?</li>
+                <li>¿Dónde se envían los datos en POST?</li>
+                <li>¿Cuál es más adecuado para información sensible (contraseñas) y por qué?</li>
+                <li>¿Las solicitudes GET suelen tener límite de longitud de datos?</li>
+            </ul>
+        </li>
+    </ul>
+
+    <h2 id="tema-8">8. JavaScript Asíncrono (Conceptos Básicos con <code>fetch</code>)</h2>
+    <ul>
+        <li><strong>Necesidad de Asincronía:</strong>
+            <ul>
+                <li>¿Por qué operaciones como <code>fetch</code> deben ser asíncronas en el navegador?</li>
+            </ul>
+        </li>
+        <li><strong>Promesas (<code>Promise</code>):</strong>
+            <ul>
+                <li>Cuando llamas a <code>fetch(url)</code>, ¿qué devuelve inmediatamente?</li>
+                <li>¿Qué representa una <code>Promise</code>?</li>
+            </ul>
+        </li>
+        <li><strong>Manejo con <code>async/await</code>:</strong>
+            <ul>
+                <li>¿Dentro de qué tipo de función puedes usar <code>await</code>?</li>
+                <li>¿Cuál es el efecto de usar <code>await</code> antes de una <code>Promise</code>?</li>
+                <li>Si obtienes una respuesta con <code>fetch</code> y sabes que es JSON, ¿qué método llamas sobre la respuesta para extraer los datos?</li>
+                <li>¿El método <code>.json()</code> devuelve los datos directamente o una <code>Promise</code>?</li>
+            </ul>
+        </li>
+        <li><strong>Manejo de Errores Básico:</strong>
+            <ul>
+                <li>Cuando usas <code>async/await</code>, ¿cómo manejas errores?</li>
+            </ul>
+        </li>
+    </ul>
+
+    <!-- === TEMAS PREVIAMENTE AÑADIDOS === -->
+
+    <h2 id="tema-9">9. WebSockets: Comunicación Bidireccional</h2>
+    <ul>
+        <li><strong>Concepto Fundamental:</strong>
+            <ul>
+                <li>¿Cuál es la principal diferencia entre la comunicación HTTP tradicional y la comunicación mediante WebSockets?</li>
+                <li>¿Qué significa que una conexión WebSocket sea "bidireccional" y "persistente"?</li>
+            </ul>
+        </li>
+        <li><strong>Inicio de la Conexión (Handshake):</strong>
+            <ul>
+                <li>¿Cómo se inicia una conexión WebSocket? ¿Utiliza HTTP en algún momento?</li>
+                <li>¿Qué significan los esquemas de URL <code>ws://</code> y <code>wss://</code>?</li>
+            </ul>
+        </li>
+         <li><strong>Casos de Uso:</strong>
+            <ul>
+                <li>Menciona dos ejemplos de aplicaciones web donde el uso de WebSockets sería especialmente beneficioso.</li>
+            </ul>
+        </li>
+    </ul>
+
+    <h2 id="tema-10">10. Almacenamiento Web: Cookies vs LocalStorage vs SessionStorage</h2>
+    <ul>
+        <li><strong>Comparativa Básica:</strong>
+            <ul>
+                <li>¿Cuál de estos tres mecanismos (Cookies, LocalStorage, SessionStorage) envía automáticamente sus datos al servidor con cada petición HTTP?</li>
+                <li>¿Cuál de ellos tiene la mayor capacidad de almacenamiento?</li>
+                <li>¿Cuál de ellos borra sus datos automáticamente cuando se cierra la pestaña o el navegador?</li>
+            </ul>
+        </li>
+        <li><strong>Persistencia y Acceso:</strong>
+            <ul>
+                <li>¿Hasta cuándo persisten los datos en LocalStorage?</li>
+            </ul>
+        </li>
+        <li><strong>Inspección en Navegador:</strong>
+            <ul>
+                <li>¿En qué pestaña de las Herramientas de Desarrollo (DevTools) del navegador puedes inspeccionar el contenido de Cookies, LocalStorage y SessionStorage?</li>
+            </ul>
+        </li>
+    </ul>
+    <!-- === FIN TEMAS === -->
+
+</body>
+</html>

@@ -1,53 +1,312 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Arquitectura del Sitio</title>
+    <!-- Asumiendo que tienes un style.css global, si no, los estilos base irían aquí -->
+    <!-- <link rel="stylesheet" href="style.css"> -->
+    <style>
+        /* Estilos básicos generales (simulando un style.css) */
+        body {
+            font-family: sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px; /* Añadido padding general */
+            background-color: #fdfdfd;
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            margin-top: 1.5em;
+            margin-bottom: 0.8em;
+            color: #333;
+        }
+
+        h2 {
+             border-bottom: 2px solid #eee;
+             padding-bottom: 0.3em;
+        }
+
+        p {
+            margin-bottom: 1em;
+        }
+
+        pre {
+            background-color: #f0f0f0;
+            border: 1px solid #ddd;
+            padding: 15px;
+            border-radius: 4px;
+            overflow-x: auto; /* Para manejar contenido largo */
+            font-family: monospace;
+            white-space: pre; /* Mantiene el formato del código */
+        }
+
+        code { /* Estilo para código en línea */
+            background-color: #e8e8e8;
+            padding: 2px 5px;
+            border-radius: 3px;
+            font-family: monospace;
+            font-size: 0.9em;
+        }
+
+        pre code { /* No aplicar doble fondo a code dentro de pre */
+             background-color: transparent;
+             padding: 0;
+             border-radius: 0;
+             font-size: inherit; /* Heredar tamaño de pre */
+        }
+
+
+        a {
+            color: #007bff;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        .nota {
+            font-style: italic;
+            color: #555;
+            background-color: #fffacd; /* LemonChiffon */
+            border-left: 4px solid #f0e68c; /* Khaki */
+            padding: 10px 15px;
+            margin: 15px 0;
+            border-radius: 0 4px 4px 0;
+        }
+
+
+        /* --- ESTILOS ESPECÍFICOS PARA arquitectura.html --- */
+
+        /* ESTILOS: Tabla de Contenidos (Ya existentes) */
+        .tabla-contenidos {
+            background-color: #f0f8ff; /* AliceBlue */
+            border: 1px solid #add8e6; /* LightBlue */
+            padding: 15px 20px;
+            margin-bottom: 30px;
+            border-radius: 5px;
+        }
+        .tabla-contenidos h3 {
+            margin-top: 0;
+            margin-bottom: 15px;
+            color: #4682b4; /* SteelBlue */
+            border-bottom: 1px solid #b0c4de; /* LightSteelBlue */
+            padding-bottom: 5px;
+        }
+        .tabla-contenidos ul {
+            list-style-type: none;
+            padding-left: 0;
+            margin-bottom: 0;
+        }
+        .tabla-contenidos ul ul {
+            list-style-type: circle;
+            padding-left: 25px;
+            margin-top: 5px;
+        }
+        .tabla-contenidos li {
+            margin-bottom: 8px;
+        }
+        .tabla-contenidos a {
+            text-decoration: none;
+            color: #1e90ff; /* DodgerBlue */
+            transition: color 0.2s ease;
+        }
+        .tabla-contenidos a:hover,
+        .tabla-contenidos a:focus {
+            color: #4169e1; /* RoyalBlue */
+            text-decoration: underline;
+        }
+
+        /* ESTILOS: Imagen Principal (Ya existentes) */
+        .arquitectura-imagen-principal {
+            display: block;
+            max-width: 100%;
+            height: auto;
+            margin: 25px auto;
+            border: 1px solid #eee;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        /* ESTILOS: Contenedor General de Arquitectura (Ya existente) */
+        /* .arquitectura-view {
+             padding: 10px; /* Puedes añadir padding si es necesario */
+        /* } */
+
+        /* ESTILOS: Tabla de Calidad Técnica (Ya existentes) */
+        .calidad-tecnica-table { /* Renombrado para evitar conflicto con tabla genérica */
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px; /* Añadido margen superior */
+            margin-bottom: 30px; /* Aumentado margen inferior */
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            background-color: #fff;
+        }
+        .calidad-tecnica-table th,
+        .calidad-tecnica-table td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #e0e0e0;
+            vertical-align: top; /* Alineación vertical */
+        }
+        .calidad-tecnica-table th {
+            background-color: #f0f0f0;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #555; /* Color de cabecera */
+        }
+        .calidad-tecnica-table tr:hover {
+            background-color: #f9f9f9;
+        }
+        .calidad-tecnica-table .rating-1 { color: #e74c3c; font-weight: bold; } /* Rojo */
+        .calidad-tecnica-table .rating-2 { color: #f39c12; font-weight: bold; } /* Naranja */
+        .calidad-tecnica-table .rating-3 { color: #3498db; font-weight: bold; } /* Azul */
+        .calidad-tecnica-table .rating-4 { color: #27ae60; font-weight: bold; } /* Verde */
+        .calidad-tecnica-table .rating-5 { color: #1abc9c; font-weight: bold; } /* Verde azulado */
+        .calidad-tecnica-table .justification {
+            font-size: 0.95em; /* Ligeramente más grande */
+            color: #444; /* Un poco más oscuro */
+            line-height: 1.5;
+        }
+        .calidad-tecnica-table .improvement {
+            font-style: italic;
+            color: #666; /* Gris medio */
+            font-size: 0.95em;
+            line-height: 1.5;
+        }
+        @media (max-width: 768px) {
+            .calidad-tecnica-table {
+                display: block;
+                overflow-x: auto;
+                white-space: nowrap; /* Previene que el texto se rompa */
+            }
+             .calidad-tecnica-table th,
+             .calidad-tecnica-table td {
+                 white-space: normal; /* Permite que el texto dentro de las celdas se ajuste */
+             }
+             /* Ajustar padding en móvil si es necesario */
+             .calidad-tecnica-table th,
+             .calidad-tecnica-table td {
+                 padding: 10px 8px;
+             }
+        }
+
+
+        /* --- INICIO: NUEVOS ESTILOS para la sección "Cómo cambiar..." --- */
+        .contenido-modificacion-guide {
+            margin-top: 40px; /* Más espacio antes de esta sección */
+            padding: 25px 30px; /* Más padding interno */
+            background-color: #f8f9fa; /* Gris muy claro, diferente a ToC */
+            border: 1px solid #dee2e6; /* Borde sutil */
+            border-radius: 6px; /* Bordes redondeados */
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05); /* Sombra muy ligera */
+        }
+
+        /* Estilos específicos para los elementos DENTRO de la guía */
+        .contenido-modificacion-guide h2 {
+            /* Hereda el estilo h2 general (con borde inferior) */
+            color: #0056b3; /* Azul oscuro para el título principal de la guía */
+            margin-top: 0; /* Quitar margen superior si es el primer elemento */
+            border-bottom: 2px solid #0056b3; /* Borde a juego con el color */
+        }
+
+        .contenido-modificacion-guide h3 {
+            color: #17a2b8; /* Cian para subtítulos */
+            border-bottom: 1px dashed #17a2b8; /* Línea punteada debajo */
+            padding-bottom: 5px;
+            margin-top: 2em; /* Más espacio antes de h3 */
+            margin-bottom: 1em;
+        }
+
+        .contenido-modificacion-guide h4 {
+            color: #6c757d; /* Gris oscuro para subtítulos de nivel 2 */
+            margin-top: 1.5em;
+            margin-bottom: 0.8em;
+            font-weight: 600; /* Un poco más de peso */
+        }
+
+        .contenido-modificacion-guide p {
+            line-height: 1.7; /* Mejorar legibilidad de párrafos */
+            color: #343a40; /* Color de texto principal un poco más oscuro */
+            margin-bottom: 1.2em;
+        }
+         .contenido-modificacion-guide p em { /* Énfasis dentro de la guía */
+            color: #dc3545; /* Rojo para destacar (¡Listo!) */
+            font-weight: bold;
+         }
+
+        .contenido-modificacion-guide ol,
+        .contenido-modificacion-guide ul {
+            margin-left: 25px; /* Indentación base */
+            margin-bottom: 1.2em;
+            padding-left: 20px; /* Espacio entre marcador y texto */
+        }
+        .contenido-modificacion-guide ul ul, /* Listas anidadas */
+        .contenido-modificacion-guide ol ol,
+        .contenido-modificacion-guide ul ol,
+        .contenido-modificacion-guide ol ul {
+             margin-left: 30px; /* Mayor indentación */
+             margin-top: 0.5em; /* Espacio antes de sublista */
+             margin-bottom: 0.8em;
+        }
+
+        .contenido-modificacion-guide li {
+            margin-bottom: 10px; /* Espacio entre items */
+            color: #343a40;
+        }
+
+        .contenido-modificacion-guide li strong { /* Texto en negrita dentro de listas */
+            color: #495057;
+        }
+
+        /* Estilo para el bloque <pre> dentro de la guía */
+        .contenido-modificacion-guide pre {
+            background-color: #e9ecef; /* Fondo ligeramente diferente */
+            border: 1px solid #ced4da;
+            padding: 15px;
+            border-radius: 4px;
+            margin-top: 10px; /* Espacio antes del bloque de código */
+            margin-bottom: 15px; /* Espacio después del bloque de código */
+            font-size: 0.9em; /* Tamaño de fuente ligeramente menor */
+            line-height: 1.5; /* Espaciado de línea en código */
+            color: #212529; /* Color de texto para el código */
+        }
+
+         /* Estilo para el código en línea <code> dentro de la guía */
+        .contenido-modificacion-guide code {
+             background-color: #d1ecf1; /* Fondo azul claro */
+             color: #0c5460; /* Texto azul oscuro */
+             padding: 3px 6px;
+             border-radius: 3px;
+             font-family: monospace;
+             font-size: 0.9em;
+             border: 1px solid #bee5eb; /* Borde sutil */
+        }
+         .contenido-modificacion-guide pre code { /* Resetear estilo de code dentro de pre */
+             background-color: transparent;
+             color: inherit;
+             padding: 0;
+             border-radius: 0;
+             border: none;
+             font-size: inherit;
+         }
+
+        .contenido-modificacion-guide hr {
+            border: 0;
+            height: 1px;
+            background-image: linear-gradient(to right, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.15), rgba(0, 0, 0, 0)); /* Separador más suave */
+            margin: 40px 0; /* Más espacio alrededor del separador */
+        }
+        /* --- FIN: NUEVOS ESTILOS --- */
+
+    </style>
+</head>
+<body>
+
 <!-- Contenido de fragments/arquitectura.html -->
 
 <!-- INICIO: Tabla de Contenidos -->
-<style>
-    /* Estilos para la Tabla de Contenidos */
-    .tabla-contenidos {
-        background-color: #f0f8ff; /* AliceBlue, un azul muy claro */
-        border: 1px solid #add8e6; /* LightBlue */
-        padding: 15px 20px;
-        margin-bottom: 30px;
-        border-radius: 5px;
-    }
-
-    .tabla-contenidos h3 {
-        margin-top: 0;
-        margin-bottom: 15px;
-        color: #4682b4; /* SteelBlue */
-        border-bottom: 1px solid #b0c4de; /* LightSteelBlue */
-        padding-bottom: 5px;
-    }
-
-    .tabla-contenidos ul {
-        list-style-type: none; /* Quita los puntos de la lista principal */
-        padding-left: 0;
-        margin-bottom: 0; /* Evita margen extra al final */
-    }
-
-    .tabla-contenidos ul ul {
-        list-style-type: circle; /* Estilo diferente para sublistas */
-        padding-left: 25px; /* Indentación para sublistas */
-        margin-top: 5px;
-    }
-
-    .tabla-contenidos li {
-        margin-bottom: 8px;
-    }
-
-    .tabla-contenidos a {
-        text-decoration: none;
-        color: #1e90ff; /* DodgerBlue */
-        transition: color 0.2s ease;
-    }
-
-    .tabla-contenidos a:hover,
-    .tabla-contenidos a:focus {
-        color: #4169e1; /* RoyalBlue */
-        text-decoration: underline;
-    }
-</style>
-
 <div class="tabla-contenidos">
     <h3>Tabla de Contenidos</h3>
     <ul>
@@ -58,11 +317,7 @@
                 <li><a href="#tabla-calidad">Análisis de Calidad Técnica (Tabla)</a></li>
             </ul>
         </li>
-        <li><a href="#flujo-control-detallado">Flujo de Control Detallado</a>
-            <ul>
-                <li><a href="#flujo-actores">Actores Principales</a></li>
-                <li><a href="#flujo-pasos">Flujo de Control (Pasos)</a></li>
-            </ul>
+        <li><a href="#como-cambiar-este-sitio">Cómo cambiar o añadir contenido en este sitio web</a>
         </li>
     </ul>
 </div>
@@ -80,9 +335,9 @@
 
 <h2 id="estructura-carpetas">Estructura de carpetas</h2>
 
-<div class="arquitectura-view">
+<div class="arquitectura-view"> <!-- Este div ahora contiene la estructura y el análisis inicial -->
     <p>Estructura de carpetas y archivos recomendada para este proyecto:</p>
-    <pre>
+    <pre><code>
 html/
 ├── index.html             <- Página principal (Contenedor)
 ├── style.css              <- Hoja de estilos principal
@@ -108,128 +363,20 @@ html/
 └── assets/                <- Recursos: imágenes, iconos, fuentes (opcional)
     └── images/
         └── logo.png
-        └── arquiitectura.jpg <- Tu imagen aquí
-    </pre>
-</br>
-</br>
+        └── arquitectura-docker-nginx.jpg <- Nombre correcto de la imagen
+    </code></pre>
+    <!-- Eliminado </br></br> -->
+
     <h2 id="analisis-calidad">Análisis de la Estructura de la Calidad Técnica de este sitio web</h2>
     <p class="nota">Esta estructura facilita la organización y el crecimiento del proyecto a largo plazo.</p>
 
     <p>Un aspecto clave de esta arquitectura es su <strong>facilidad para añadir nuevo contenido</strong>.  La clara separación en carpetas como <code>fragments/</code> y <code>examples/</code>, cada una con una semántica bien definida, simplifica enormemente la creación y la incorporación de nuevas secciones y ejemplos.  La construcción de páginas a partir de <strong>fragmentos HTML reutilizables</strong> agiliza el desarrollo y garantiza una mayor consistencia en el diseño.</p>
 
-    <p>Además, el uso de <strong>iframes</strong> para mostrar los ejemplos de HTML, CSS y JavaScript resulta especialmente conveniente para este tipo de repositorio.  Permite aislar cada ejemplo, evitando conflictos entre estilos y scripts, y facilitando su visualización y experimentación de forma independiente.</p>
+    <p>Además, el uso de <strong>iframes</strong> para mostrar los ejemplos de HTML, CSS y JavaScript resulta especialmente conveniente para este tipo de repositorio. Permite aislar cada ejemplo, evitando conflictos entre estilos y scripts, y facilitando su visualización y experimentación de forma independiente.</p>
 
     <h3 id="tabla-calidad">Análisis de Calidad Técnica</h3>
-    <style>
-        /* Estilos en línea para asegurar que la tabla se vea bien en el fragmento */
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 20px;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-            background-color: #fff;
-        }
-
-        th, td {
-            padding: 12px 15px;
-            text-align: left;
-            border-bottom: 1px solid #e0e0e0;
-        }
-
-        th {
-            background-color: #f0f0f0;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        tr:hover {
-            background-color: #f9f9f9;
-        }
-
-        .rating-1 { color: #e74c3c; }
-        .rating-2 { color: #f39c12; }
-        .rating-3 { color: #3498db; }
-        .rating-4 { color: #27ae60; }
-        .rating-5 { color: #1abc9c; }
-
-        @media (max-width: 768px) {
-            table {
-                display: block;
-                overflow-x: auto;
-            }
-            th, td {
-                white-space: nowrap;
-            }
-        }
-
-        .justification {
-            font-size: 0.9em;
-            color: #555;
-            line-height: 1.4;
-        }
-
-        .improvement {
-            font-style: italic;
-            color: #777;
-        }
-
-        /* --- NUEVO ESTILO PARA LA IMAGEN --- */
-        .arquitectura-imagen-principal {
-            display: block; /* Para poder centrarla con margen auto */
-            max-width: 100%; /* Asegura que sea responsiva y no se salga del contenedor */
-            height: auto; /* Mantiene la proporción */
-            margin: 25px auto; /* Centra horizontalmente y añade margen superior e inferior */
-            border: 1px solid #eee; /* Opcional: añade un borde sutil */
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1); /* Opcional: añade una sombra */
-        }
-        /* --- FIN NUEVO ESTILO --- */
-
-        /* Estilos para la sección de Flujo de Control añadida */
-        .flujo-control-section {
-            margin-top: 30px;
-            padding: 20px;
-            background-color: #f9f9f9;
-            border: 1px solid #eee;
-            border-radius: 5px;
-        }
-        /* Modificación para que el h3 dentro de flujo-control no herede el estilo del h3 de la ToC */
-        .flujo-control-section > h3 { /* Selector más específico */
-            margin-top: 0;
-            border-bottom: 1px solid #ddd;
-            padding-bottom: 10px;
-            margin-bottom: 15px;
-            color: #333; /* Color por defecto o el que prefieras */
-        }
-        .flujo-control-section ul,
-        .flujo-control-section ol {
-            margin-left: 20px; /* Indentación base para listas */
-        }
-        .flujo-control-section li {
-            margin-bottom: 10px;
-        }
-        .flujo-control-section ul ul,
-        .flujo-control-section ol ul,
-        .flujo-control-section ul ol,
-        .flujo-control-section ol ol {
-            margin-left: 30px; /* Indentación adicional para sublistas */
-            margin-top: 5px;
-        }
-        .flujo-control-section code {
-             background-color: #e8e8e8;
-             padding: 2px 4px;
-             border-radius: 3px;
-             font-family: monospace;
-        }
-        .flujo-control-section strong {
-             font-weight: bold;
-        }
-         .flujo-control-section em {
-             font-style: italic;
-         }
-
-    </style>
-    <table>
+    <!-- Aplicada clase específica a la tabla -->
+    <table class="calidad-tecnica-table">
         <thead>
             <tr>
                 <th>Criterio</th>
@@ -242,188 +389,198 @@ html/
           <tr>
             <th>DevOps y Despliegue</th>
             <td class="rating-4">4</td>
-            <td>Usa Docker y Docker Compose para la contenerización y orquestación. Se utiliza Nginx como proxy inverso, y se añade un servicio Node.js.</td>
+            <td class="justification">Usa Docker y Docker Compose para la contenerización y orquestación. Se utiliza Nginx como proxy inverso, y se añade un servicio Node.js.</td>
             <td class="improvement">Implementar una canalización CI/CD para despliegues automatizados. Considerar una solución de monitorización y registro más robusta.</td>
           </tr>
           <tr>
             <th>Arquitectura del Frontend</th>
             <td class="rating-4">4</td>
-            <td>Usa una clara separación de responsabilidades (HTML, CSS, JS). La carga basada en fragmentos promueve la modularidad.</td>
+            <td class="justification">Usa una clara separación de responsabilidades (HTML, CSS, JS). La carga basada en fragmentos promueve la modularidad.</td>
             <td class="improvement">Considerar un framework de frontend (React, Vue, Angular) para proyectos más grandes.</td>
           </tr>
           <tr>
             <th>Carga Asíncrona de Contenido (AJAX)</th>
             <td class="rating-4">4</td>
-            <td>La API <code>fetch</code> con <code>async/await</code> proporciona una buena experiencia de usuario. Se incluye manejo de errores.</td>
+            <td class="justification">La API <code>fetch</code> con <code>async/await</code> proporciona una buena experiencia de usuario. Se incluye manejo de errores.</td>
             <td class="improvement">Implementar un indicador de carga más robusto. Usar Axios para funciones avanzadas.</td>
           </tr>
           <tr>
             <th>Escalabilidad</th>
             <td class="rating-3">3</td>
-            <td>La configuración de Nginx ayuda a servir archivos estáticos de forma eficiente. La arquitectura de microservicios Node.js soporta la escalabilidad de la API.</td>
+            <td class="justification">La configuración de Nginx ayuda a servir archivos estáticos de forma eficiente. La arquitectura de microservicios Node.js soporta la escalabilidad de la API.</td>
             <td class="improvement">Implementar estrategias de caché (caché del navegador, CDN) para recursos estáticos. Evaluar la escalabilidad de la base de datos.</td>
           </tr>
           <tr>
             <th>JavaScript Code Quality</th>
             <td class="rating-3">3</td>
-            <td>Usa <code>DOMContentLoaded</code>, delegación de eventos e incluye manejo básico de errores. El código es legible.</td>
+            <td class="justification">Usa <code>DOMContentLoaded</code>, delegación de eventos e incluye manejo básico de errores. El código es legible.</td>
             <td class="improvement">Añadir más comentarios. Usar un linter (ESLint) y un formateador (Prettier).</td>
           </tr>
           <tr>
             <th>Estructura CSS y Mantenibilidad</th>
             <td class="rating-3">3</td>
-            <td>CSS bien estructurado con comentarios. Utiliza CSS Grid para el diseño. Media queries para diseño adaptable.</td>
+            <td class="justification">CSS bien estructurado con comentarios. Utiliza CSS Grid para el diseño. Media queries para diseño adaptable.</td>
             <td class="improvement">Considerar un preprocesador CSS (Sass, Less) o una solución CSS-in-JS. Usar una metodología CSS (BEM, OOCSS).</td>
           </tr>
           <tr>
             <th>Accesibilidad</th>
             <td class="rating-2">2</td>
-            <td>Características básicas de accesibilidad presentes.</td>
+            <td class="justification">Características básicas de accesibilidad presentes.</td>
             <td class="improvement">Realizar una auditoría de accesibilidad. Usar atributos ARIA. Asegurar un contraste de color adecuado.</td>
           </tr>
           <tr>
             <th>Seguridad</th>
             <td class="rating-2">2</td>
-            <td>Carga de contenido desde el mismo origen. No se muestra explícitamente la sanitización de la entrada.</td>
+            <td class="justification">Carga de contenido desde el mismo origen. No se muestra explícitamente la sanitización de la entrada.</td>
             <td class="improvement">Implementar validación y sanitización de la entrada. Usar una Política de Seguridad de Contenido (CSP).</td>
           </tr>
           <tr>
             <th>Pruebas</th>
             <td class="rating-1">1</td>
-            <td>No hay evidencia de pruebas automatizadas.</td>
+            <td class="justification">No hay evidencia de pruebas automatizadas.</td>
             <td class="improvement">Implementar una estrategia de pruebas (pruebas unitarias, pruebas de integración, pruebas de extremo a extremo).</td>
           </tr>
         </tbody>
     </table>
 
-    <!-- INICIO: Flujo de Control Detallado Añadido -->
-    <h2 id="flujo-control-detallado">Flujo de Control Detallado (Carga Inicial y Cambio de Sección)</h2>
-    <div class="flujo-control-section">
+</div> <!-- Fin de .arquitectura-view (para la parte superior) -->
 
-        <h3 id="flujo-actores">Actores Principales:</h3>
-        <ul>
-            <li><strong>Navegador Web:</strong> Es el programa (Chrome, Firefox, etc.) que solicita, recibe, interpreta y muestra la página web. Ejecuta el HTML, CSS y JavaScript.</li>
-            <li><strong>Usuario:</strong> La persona que interactúa con la página (en este caso, haciendo clic).</li>
-            <li><strong>Servidor Web:</strong> Donde están alojados los archivos (<code>index.html</code>, <code>style.css</code>, <code>script.js</code>, <code>fragments/*.html</code>). Responde a las peticiones del navegador enviando los archivos solicitados.</li>
-            <li><strong>Código HTML (<code>index.html</code>):</strong> Define la estructura inicial de la página.</li>
-            <li><strong>Código CSS (<code>style.css</code>):</strong> Define la apariencia visual.</li>
-            <li><strong>Código JavaScript (<code>script.js</code>):</strong> Define el comportamiento interactivo y dinámico de la página.</li>
-        </ul>
 
-        <h3 id="flujo-pasos">Flujo de Control:</h3>
-        <ol>
-            <li>
-                <strong>Solicitud Inicial (Usuario/Navegador):</strong>
-                <ul>
-                    <li>El usuario introduce la URL de <code>index.html</code> en el navegador o hace clic en un enlace que apunta a ella.</li>
-                    <li>El <strong>Navegador</strong> envía una solicitud HTTP GET al <strong>Servidor Web</strong> pidiendo el archivo <code>index.html</code>.</li>
-                </ul>
-            </li>
-            <li>
-                <strong>Respuesta del Servidor:</strong>
-                <ul>
-                    <li>El <strong>Servidor Web</strong> encuentra <code>index.html</code> y lo envía de vuelta al <strong>Navegador</strong>.</li>
-                </ul>
-            </li>
-            <li>
-                <strong>Procesamiento de <code>index.html</code> (Navegador):</strong>
-                <ul>
-                    <li>El <strong>Navegador</strong> comienza a <em>parsear</em> (interpretar) el código HTML de <code>index.html</code> de arriba abajo.</li>
-                    <li>Encuentra <code>link rel="stylesheet" href="style.css"</code> en el <code>head</code>: Inicia una solicitud al <strong>Servidor Web</strong> para obtener <code>style.css</code>. Mientras tanto, sigue parseando el HTML.</li>
-                    <li>Construye el DOM (Document Object Model): Crea una representación en memoria de la estructura de la página (header, aside con botones, main vacío, footer).</li>
-                    <li>Encuentra <code>script src="script.js" defer /script</code> justo antes de cerrar <code>/body</code>:
-                        <ul>
-                            <li>Gracias a <code>defer</code>, el <strong>Navegador</strong> inicia la solicitud al <strong>Servidor Web</strong> para obtener <code>script.js</code> de forma asíncrona (puede seguir parseando el HTML).</li>
-                            <li>El script <code>script.js</code> <em>no se ejecutará</em> hasta que el <strong>Navegador</strong> haya terminado de parsear <em>todo</em> el HTML (<code>index.html</code>), pero sí <em>antes</em> de que se dispare el evento <code>DOMContentLoaded</code>.</li>
-                        </ul>
-                    </li>
-                    <li>El <strong>Navegador</strong> muestra la estructura inicial definida en <code>index.html</code> (cabecera, barra lateral con botones, pie de página). El <code>main id="main-content"</code> está presente pero vacío. Aplica los estilos de <code>style.css</code> a medida que este se carga y parsea.</li>
-                </ul>
-            </li>
-            <li>
-                <strong>Ejecución de <code>script.js</code> (Navegador):</strong>
-                <ul>
-                    <li>Una vez que el HTML de <code>index.html</code> ha sido completamente parseado, el <strong>Navegador</strong> ejecuta el código de <code>script.js</code>.</li>
-                    <li><strong>Listener <code>DOMContentLoaded</code>:</strong> El código principal está dentro de <code>document.addEventListener('DOMContentLoaded', () => { ... });</code>. Esto asegura que el código interno solo se ejecute cuando el DOM inicial esté listo.</li>
-                    <li><strong>Obtención de Referencias:</strong> El <strong>script</strong> obtiene referencias a elementos importantes del DOM: <code>mainContent</code> (el <code>main</code>) y <code>sidebarButtons</code> (todos los botones con <code>data-fragment</code>).</li>
-                    <li><strong>Definición de Funciones:</strong> El <strong>script</strong> define las funciones <code>loadMainContent</code>, <code>showExerciseInIframe</code>, <code>updateActiveButton</code>. En este punto, solo las define, no las ejecuta (excepto las que se llaman en la inicialización).</li>
-                    <li><strong>Asignación de Event Listeners (Botones Sidebar):</strong> El <strong>script</strong> recorre cada botón en <code>sidebarButtons</code> y les añade un <em>escuchador de eventos</em> (<code>click</code>). Este escuchador está <em>preparado</em> para ejecutarse <em>cuando</em> el usuario haga clic en uno de esos botones. La función que se ejecutará al hacer clic llamará a <code>loadMainContent</code> con el <code>data-fragment</code> del botón y a <code>updateActiveButton</code>.</li>
-                    <li><strong>Asignación de Event Listener (Delegado en <code>mainContent</code>):</strong> El <strong>script</strong> añade un escuchador de eventos <code>click</code> al elemento <code>mainContent</code>. Este es un <em>listener delegado</em>, lo que significa que escuchará clics en cualquier elemento <em>dentro</em> de <code>mainContent</code>, incluso si esos elementos se añaden más tarde. Comprobará si el clic fue en un enlace con <code>data-url</code> para luego llamar a <code>showExerciseInIframe</code>.</li>
-                    <li><strong>Bloque de Inicialización (¡Clave para la carga inicial!):</strong>
-                        <ul>
-                            <li>El <strong>script</strong> busca si algún botón del sidebar tiene la clase <code>active</code> en el HTML inicial (<code>index.html</code>). Encuentra <code>button class="sidebar-button active" data-fragment="ejemplos-js.html" Ejemplos JS /button</code>.</li>
-                            <li>Obtiene el valor <code>data-fragment</code> de ese botón: <code>"ejemplos-js.html"</code>.</li>
-                            <li>Define <code>initialFragment = "ejemplos-js.html"</code>.</li>
-                            <li><strong>¡Llama a <code>loadMainContent(initialFragment)</code>!</strong> -> Se ejecuta <code>loadMainContent("ejemplos-js.html")</code>.</li>
-                        </ul>
-                    </li>
-                </ul>
-            </li>
-            <li>
-                <strong>Ejecución de <code>loadMainContent('ejemplos-js.html')</code> (Script/Navegador):</strong>
-                <ul>
-                    <li>La función <code>loadMainContent</code> es llamada por el bloque de inicialización del <strong>script</strong>.</li>
-                    <li>Actualiza <code>currentFragment</code> a <code>"ejemplos-js.html"</code>.</li>
-                    <li><strong>Muestra "Cargando...":</strong> El <strong>script</strong> modifica el <code>innerHTML</code> de <code>mainContent</code> para mostrar <code>p class="loading-message" Cargando... /p</code>. El <strong>Navegador</strong> actualiza la pantalla y el usuario ve "Cargando..." en la sección principal.</li>
-                    <li><strong>Petición <code>fetch</code>:</strong> El <strong>script</strong> usa <code>fetch('./fragments/ejemplos-js.html')</code> para pedirle al <strong>Servidor Web</strong> el contenido de ese fragmento HTML. El <strong>Navegador</strong> realiza la solicitud HTTP GET.</li>
-                    <li><strong>Respuesta del Servidor:</strong> El <strong>Servidor Web</strong> envía el contenido de <code>ejemplos-js.html</code>.</li>
-                    <li><strong>Procesamiento de la Respuesta:</strong>
-                        <ul>
-                            <li>El <strong>script</strong> recibe la respuesta.</li>
-                            <li>Verifica que fue exitosa (<code>response.ok</code>).</li>
-                            <li>Lee el contenido HTML como texto (<code>response.text()</code>).</li>
-                            <li><strong>Reemplaza Contenido:</strong> El <strong>script</strong> actualiza <em>de nuevo</em> el <code>innerHTML</code> de <code>mainContent</code>, esta vez reemplazando el "Cargando..." con el <em>contenido completo</em> de <code>ejemplos-js.html</code> (el <code>h2</code>, el <code>div#grid-container</code>, las tarjetas de ejemplos JS, etc.).</li>
-                            <li>El <strong>Navegador</strong> <em>renderiza</em> este nuevo HTML dentro del <code>main</code>. El usuario ahora ve la lista de ejemplos de JavaScript.</li>
-                            <li>El <strong>script</strong> ejecuta el post-procesamiento (asegurar que <code>#main-title</code> y <code>#grid-container</code> sean visibles, aunque probablemente ya lo serían).</li>
-                        </ul>
-                    </li>
-                </ul>
-            </li>
-            <li>
-                <strong>Interacción del Usuario (Clic en "Ejemplos HTML"):</strong>
-                <ul>
-                    <li>El <strong>Usuario</strong> hace clic en el botón del sidebar que dice "Ejemplos HTML". Este botón tiene el atributo <code>data-fragment="ejemplos-html.html"</code>.</li>
-                </ul>
-            </li>
-            <li>
-                <strong>Disparo del Event Listener (Navegador/Script):</strong>
-                <ul>
-                    <li>El <strong>Navegador</strong> detecta el evento <code>click</code> en ese botón específico.</li>
-                    <li>El <strong>Navegador</strong> invoca la función <em>escuchadora</em> que el <strong>script</strong> asoció a ese botón en el paso 4.</li>
-                    <li><strong>Dentro del Listener:</strong>
-                        <ul>
-                            <li>El <strong>script</strong> obtiene el <code>data-fragment</code> del botón clickeado: <code>"ejemplos-html.html"</code>.</li>
-                            <li><strong>Llama a <code>loadMainContent("ejemplos-html.html")</code></strong>.</li>
-                            <li><strong>Llama a <code>updateActiveButton(botonClickeado)</code></strong>.
-                                <ul>
-                                    <li>La función <code>updateActiveButton</code> (ejecutada por el <strong>script</strong>) quita la clase <code>active</code> del botón "Ejemplos JS" y la añade al botón "Ejemplos HTML". El <strong>Navegador</strong> actualiza la apariencia del sidebar.</li>
-                                </ul>
-                            </li>
-                        </ul>
-                    </li>
-                </ul>
-            </li>
-            <li>
-                <strong>Ejecución de <code>loadMainContent('ejemplos-html.html')</code> (Script/Navegador):</strong>
-                <ul>
-                    <li>La función <code>loadMainContent</code> se ejecuta <em>de nuevo</em>, ahora con <code>"ejemplos-html.html"</code>.</li>
-                    <li>Actualiza <code>currentFragment</code> a <code>"ejemplos-html.html"</code>.</li>
-                    <li><strong>Muestra "Cargando...":</strong> El <strong>script</strong> cambia el <code>innerHTML</code> de <code>mainContent</code> a "Cargando...". El <strong>Navegador</strong> lo muestra, reemplazando la lista de ejemplos JS.</li>
-                    <li><strong>Petición <code>fetch</code>:</strong> El <strong>script</strong> usa <code>fetch('./fragments/ejemplos-html.html')</code> para pedir el nuevo fragmento al <strong>Servidor Web</strong>. El <strong>Navegador</strong> hace la solicitud.</li>
-                    <li><strong>Respuesta del Servidor:</strong> El <strong>Servidor Web</strong> envía el contenido de <code>ejemplos-html.html</code>.</li>
-                    <li><strong>Procesamiento de la Respuesta:</strong>
-                        <ul>
-                            <li>El <strong>script</strong> recibe la respuesta, la valida y lee el texto HTML.</li>
-                            <li><strong>Reemplaza Contenido:</strong> El <strong>script</strong> actualiza el <code>innerHTML</code> de <code>mainContent</code> con el contenido de <code>ejemplos-html.html</code>.</li>
-                            <li>El <strong>Navegador</strong> <em>renderiza</em> el nuevo contenido HTML (el título y las tarjetas de ejemplos HTML) dentro del <code>main</code>. <strong>El usuario ve ahora la sección de ejemplos HTML.</strong></li>
-                            <li>El <strong>script</strong> ejecuta el post-procesamiento.</li>
-                        </ul>
-                    </li>
-                </ul>
-            </li>
-        </ol>
-        <p><strong>En resumen:</strong> El navegador carga la estructura básica, el script se ejecuta para cargar el contenido inicial (JS), y luego, ante un clic del usuario en "Ejemplos HTML", el script vuelve a ejecutarse para buscar y mostrar el fragmento HTML correspondiente en la sección principal.</p>
-    </div>
-    <!-- FIN: Flujo de Control Detallado Añadido -->
+<!-- INICIO: Sección de Guía con Nuevo Estilo -->
+<div class="contenido-modificacion-guide">
 
-</div> <!-- Fin de .arquitectura-view -->
+    <h2 id="como-cambiar-este-sitio">Cómo cambiar o añadir contenido en este sitio web</h2>
+    <p>Este manual te guiará para realizar dos tipos de actualizaciones en el sitio web del repositorio:</p>
+    <ol>
+        <li><strong>Añadir un nuevo ejemplo de código</strong> (HTML, CSS, JS) que se mostrará en las secciones
+            <code>Ejemplos...</code>.</li>
+        <li><strong>Añadir o modificar una página de información</strong> (como "Arquitectura", "Instalación" o una
+            nueva sección) accesible desde el menú lateral.</li>
+    </ol>
+
+    <hr>
+
+    <h3>Tipo 1: Añadir un Nuevo Ejemplo de Código (HTML/CSS/JS)</h3>
+    <p>Sigue estos pasos para agregar una nueva página de ejemplo que los usuarios puedan ver.</p>
+
+    <h4>Paso 1: Crear el Archivo del Ejemplo</h4>
+    <ol>
+        <li><strong>Decide qué tipo de ejemplo es:</strong> ¿HTML, CSS o JavaScript?</li>
+        <li><strong>Navega a la carpeta <code>examples</code>:</strong> Dentro de <code>html/</code>.</li>
+        <li><strong>Elige la subcarpeta correcta:</strong>
+            <ul>
+                <li>HTML: <code>examples/html/</code></li>
+                <li>CSS: <code>examples/css/</code></li>
+                <li>JS: <code>examples/js/</code></li>
+            </ul>
+        </li>
+        <li><em>(Opcional pero recomendado)</em> <strong>Crea una subcarpeta:</strong> Para organizar por tema (ej:
+            <code>examples/html/formularios/</code>).
+        </li>
+        <li><strong>Crea tu archivo <code>.html</code>:</strong> Dentro de la carpeta elegida, con el código del ejemplo
+            y un nombre descriptivo (ej: <code>formulario-contacto.html</code>).</li>
+    </ol>
+
+    <h4>Paso 2: Añadir la Tarjeta de Enlace en la Lista Correspondiente</h4>
+    <ol>
+        <li><strong>Navega a la carpeta <code>fragments</code>:</strong> Dentro de <code>html/</code>.</li>
+        <li><strong>Abre el archivo <code>.html</code> de la lista:</strong>
+            <ul>
+                <li><code>ejemplos-html.html</code></li>
+                <li><code>ejemplos-css.html</code></li>
+                <li><code>ejemplos-js.html</code></li>
+            </ul>
+        </li>
+        <li><strong>Busca el contenedor:</strong> <code><div id="grid-container"></code>.</li>
+        <li>
+            <strong>Copia y pega una tarjeta existente:</strong> El bloque de código completo, como este ejemplo:
+
+            <pre>
+&lt;div class="ejemplo-card"&gt;
+    &lt;h3&gt;Navegación&lt;/h3&gt;
+    &lt;p&gt;Navegación entre páginas en distintas carpetas.&lt;/p&gt;
+    &lt;a data-url="./examples/html/navega/carpeta1/pagina1.html" data-title="CSS-Tricks: Guía Grid"&gt;Ver Ejercicio&lt;/a&gt;
+&lt;/div&gt;
+</pre>
+        </li>
+        <li><strong>Modifica la tarjeta copiada:</strong>
+            <ul>
+                <li> Cambia el texto dentro de <code><h3></code> al título de la tarjeta.</li>
+                <li> Escribe una breve descripción dentro de <code><p></code>.</li>
+                <li> Modifica el atributo <code>data-url</code>
+                    para que apunte a la ruta <strong>relativa y correcta</strong> de tu archivo creado en el Paso 1
+                    (ej: <code>data-url="./examples/html/formularios/formulario-contacto.html"</code>).
+                </li>
+                <li> <em>(Opcional)</em> Cambia el atributo <code>data-title</code> (título que podría usarse en el iframe o modal) y el texto del enlace ("Ver Ejercicio").</li>
+            </ul>
+        </li>
+        <li><strong>Guarda el archivo</strong> del fragmento (ej: <code>ejemplos-html.html</code>).</li>
+    </ol>
+    <p><em>¡Listo (Tipo 1)! Al recargar y navegar a la sección correspondiente, verás tu nuevo ejemplo.</em></p>
+
+    <hr>
+
+    <h3>Tipo 2: Añadir o Modificar una Página de Información</h3>
+    <p>Sigue estos pasos si quieres añadir una nueva sección informativa al menú lateral o modificar una existente.</p>
+
+    <h4>Opción A: Modificar una Página de Información Existente</h4>
+    <ol>
+        <li><strong>Navega a la carpeta <code>fragments</code>:</strong> Dentro de <code>html/</code>.</li>
+        <li><strong>Busca y abre el archivo <code>.html</code></strong> correspondiente (ej:
+            <code>arquitectura.html</code>, <code>instalacion.html</code>).
+        </li>
+        <li><strong>Edita el contenido HTML</strong> como necesites. Asegúrate de mantener la estructura básica si existe (como un `<h2>` al inicio y un contenedor si lo hay).</li>
+        <li><strong>Guarda el archivo.</strong> Los cambios se reflejarán la próxima vez que se cargue esa sección.</li>
+    </ol>
+
+    <h4>Opción B: Añadir una Nueva Página de Información (Nueva Sección)</h4>
+    <ol>
+        <li><strong>Paso 1: Crear el Archivo del Fragmento de Contenido</strong>
+            <ol type="a">
+                <li>Navega a <code>html/fragments/</code>.</li>
+                <li>Crea un nuevo archivo <code>.html</code> con un nombre descriptivo (ej: <code>buenas-practicas.html</code>).</li>
+                <li>Añade el contenido HTML dentro de este nuevo archivo. Se recomienda empezar con un encabezado principal para la sección, por ejemplo:
+
+<pre>
+&lt;h2 id="main-title"&gt;Titulo del fragmento&lt;/h2&gt;
+&lt;div class="arquitectura-view"&gt;
+&lt;!-- Aquí va todo el contenido de, por ejemplo "buenas-practicas.html", que aparecerá en la sección main de index.html --&gt;
+&lt;/div&gt;
+</pre>
+
+
+                    Asegúrate de que el `id` del `h2` sea único si planeas enlazarlo desde una tabla de contenidos interna.
+                </li>
+                <li>Guarda este nuevo archivo.</li>
+            </ol>
+        </li>
+        <li><strong>Paso 2: Añadir un Botón en el Menú Lateral</strong>
+            <ol type="a">
+                <li>Abre el archivo principal: <code>html/index.html</code>.</li>
+                <li>Localiza el menú lateral (probablemente una lista <code><ul></code> dentro de un <code><nav></code> o <code><aside></code>).</li>
+                <li>Busca un elemento de lista <code><li></code> existente con un botón, por ejemplo:
+<pre><code>&lt;li&gt;&lt;button class="sidebar-button" data-fragment="arquitectura.html"&gt;Arquitectura&lt;/button&gt;&lt;/li&gt;</code></pre>
+                </li>
+                <li>Copia esa línea <code><li>...</li></code> completa y pégala donde quieras que aparezca el nuevo botón en el menú.</li>
+                <li>Modifica la línea copiada:
+                    <ul>
+                        <li>Cambia el <strong>texto del botón</strong> (entre <code>></code> y <code></button></code>) al nombre de tu nueva sección (ej: "Buenas Prácticas").</li>
+                        <li>Cambia el valor del atributo <code>data-fragment</code> para que coincida <strong>exactamente</strong> con el nombre del archivo que creaste en el Paso 1 (ej: <code>data-fragment="buenas-practicas.html"</code>).</li>
+                    </ul>
+                    El resultado sería algo como:
+                    <pre><code class="language-html"><li><button class="sidebar-button" data-fragment="buenas-practicas.html">Buenas Prácticas</button></li></code></pre>
+                </li>
+                <li>Guarda el archivo <code>index.html</code>.</li>
+            </ol>
+        </li>
+    </ol>
+    <p><em>¡Listo (Tipo 2)! Al recargar la página principal (<code>index.html</code>), verás el nuevo botón en el menú lateral. Al hacer clic en él, se cargará el contenido de tu nuevo archivo de fragmento.</em></p>
+
+    <hr>
+
+    <p>Con estos pasos, puedes mantener el sitio web actualizado tanto con nuevos ejemplos prácticos como con información relevante para los usuarios, manteniendo la estructura organizada del proyecto.</p>
+
+</div> <!-- Fin de .contenido-modificacion-guide -->
+
+</body>
+</html>

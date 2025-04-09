@@ -288,7 +288,60 @@
     </script>
 
     <!-- INICIO: Sección de Explicación del Flujo de Control -->
+
     <div class="explanation-section">
+
+<div>
+<h2> Codigo principal Async/Await</h2>
+<pre>
+        async function fetchData(dataType) {
+             // Mostrar "Cargando..." en la tabla mientras se obtienen los datos
+             dataTable.innerHTML = '<thead><tr><th>Cargando...</th></tr></thead><tbody></tbody>';
+             errorMessageDiv.textContent = ''; // Limpiar errores anteriores
+
+            try {
+                // Añadir un pequeño retraso simulado (opcional, para ver el "Cargando...")
+                // await new Promise(resolve => setTimeout(resolve, 300));
+
+                const response = await fetch(`/examples/js/api-js/index.php?tipo=${dataType}`);
+
+                if (!response.ok) {
+                    // Intentar leer el mensaje de error del cuerpo si es JSON
+                    let errorMsg = `Error al cargar los datos: ${response.status} ${response.statusText}`;
+                    try {
+                        const errorData = await response.json();
+                        if (errorData && errorData.error) {
+                             errorMsg += ` - Servidor dice: ${errorData.error}`;
+                        }
+                    } catch (e) {
+                        // No hacer nada si el cuerpo no es JSON válido
+                    }
+                    throw new Error(errorMsg);
+                }
+
+                const data = await response.json();
+
+                if (data && Array.isArray(data) && data.length > 0) {
+                    displayData(data);
+                } else if (data && data.error) { // Comprobar error JSON incluso con respuesta 200 OK
+                    errorMessageDiv.textContent = `Error del servidor: ${data.error}`;
+                    dataTable.innerHTML = '<thead></thead><tbody></tbody>'; // Limpiar tabla
+                } else if (data && Array.isArray(data) && data.length === 0) {
+                     errorMessageDiv.textContent = 'No se encontraron datos para este tipo.';
+                     dataTable.innerHTML = '<thead></thead><tbody></tbody>'; // Limpiar tabla
+                } else {
+                     errorMessageDiv.textContent = 'Respuesta inesperada del servidor o datos vacíos.';
+                     dataTable.innerHTML = '<thead></thead><tbody></tbody>'; // Limpiar tabla
+                }
+
+            } catch (error) {
+                errorMessageDiv.textContent = `Error: ${error.message}`;
+                dataTable.innerHTML = '<thead></thead><tbody></tbody>'; // Limpiar tabla en caso de error de red/fetch
+            }
+        }
+
+</pre>
+</div>
         <h2>Explicación del Flujo de Control</h2>
 <p> Este flujo demuestra una interacción cliente-servidor típica usando AJAX (específicamente con fetch): el frontend maneja la interfaz y la interacción, solicita datos al backend cuando es necesario, y el backend procesa la lógica de negocio (en este caso, leer archivos) y devuelve los datos al frontend para su visualización.</p>
 
