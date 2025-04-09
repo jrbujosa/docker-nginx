@@ -90,8 +90,8 @@
     <div class="tabla-de-contenido">
         <h3>Tabla de Contenidos</h3>
         <ol>
-            <li><a href="#tema-1">El DOM (Document Object Model)</a></li>
-            <li><a href="#tema-2">Estructura de Carpetas y Rutas en un Sitio Web</a></li>
+            <li><a href="#tema-1">Estructura de carpetas y rutas relativas</a></li>
+            <li><a href="#tema-2">El DOM (Document Object Model)</a></li>
             <li><a href="#tema-3">Manejo de Eventos con JavaScript (Event Listeners)</a></li>
             <li><a href="#tema-4">CSS: Cascada, Especificidad y Herencia</a></li>
             <li><a href="#tema-5">El Modelo de Caja (Box Model) en CSS</a></li>
@@ -106,40 +106,8 @@
 
  
 
-    <h2 id="tema-1">1. El DOM (Document Object Model)</h2>
-    <ul>
-        <li><strong>Propósito del DOM:</strong>
-            <ul>
-                <li>¿Por qué necesita el navegador transformar el código HTML en una estructura diferente (el DOM) para poder trabajar con la página?</li>
-            </ul>
-        </li>
-        <li><strong>Definición y Estructura:</strong>
-            <ul>
-                <li>¿Qué es el DOM?</li>
-                <li>¿Qué significa que el DOM sea una estructura de "árbol"?</li>
-                <li>Menciona al menos tres tipos comunes de nodos que se pueden encontrar en el árbol DOM.</li>
-            </ul>
-        </li>
-        <li><strong>Proceso de Creación (Parsing):</strong>
-            <ul>
-                <li>¿Qué es el "parsing" (análisis sintáctico) de HTML?</li>
-            </ul>
-        </li>
-        <li><strong>Acceso y Visualización:</strong>
-            <ul>
-                <li>¿Cuál es el objeto principal en JavaScript que representa todo el documento y sirve como punto de entrada para acceder al DOM?</li>
-                <li>¿Cómo puedes inspeccionar visualmente la estructura del DOM de cualquier página web que visitas?</li>
-            </ul>
-        </li>
-        <li><strong>Manipulación Básica con JavaScript:</strong>
-            <ul>
-                <li>¿Qué tipo de valor devuelve <code>document.getElementById('unIdEspecifico')</code> si encuentra el elemento? ¿Y si no lo encuentra?</li>
-                <li>Menciona al menos tres tipos de acciones que JavaScript puede realizar sobre el DOM.</li>
-            </ul>
-        </li>
-    </ul>
 
-    <h2 id="tema-2">2. Estructura de Carpetas y Rutas en un Sitio Web</h2>
+    <h2 id="tema-1">1. Estructura de Carpetas y Rutas en un Sitio Web</h2>
     <ul>
         <li><strong>Organización del Proyecto:</strong>
             <ul>
@@ -171,6 +139,38 @@
                 <li>Cuando ejecutas un servidor web dentro de un contenedor Docker, ¿por qué ese servidor, por defecto, no puede acceder directamente a los archivos de tu proyecto que están en tu máquina local (ej: en la carpeta <code>usuario/mi-proyecto/html</code>)?</li>
                 <li>¿Qué mecanismo proporciona Docker para 'conectar' una carpeta de tu máquina host (donde está tu código fuente) con una carpeta dentro del contenedor (donde el servidor web espera encontrar los archivos)? ¿Cómo se llama comúnmente esta conexión en Docker Compose?</li>
                 <li>En una definición de volumen dentro de <code>docker-compose.yml</code> como <code>volumes: - ./mi-proyecto-web:/var/www/html</code>, ¿qué representa la parte <code>./mi-proyecto-web</code> y qué representa <code>/var/www/html</code>?</li>
+            </ul>
+        </li>
+    </ul>
+    <h2 id="tema-2">2. El DOM (Document Object Model)</h2>
+    <ul>
+        <li><strong>Propósito del DOM:</strong>
+            <ul>
+                <li>¿Por qué necesita el navegador transformar el código HTML en una estructura diferente (el DOM) para poder trabajar con la página?</li>
+            </ul>
+        </li>
+        <li><strong>Definición y Estructura:</strong>
+            <ul>
+                <li>¿Qué es el DOM?</li>
+                <li>¿Qué significa que el DOM sea una estructura de "árbol"?</li>
+                <li>Menciona al menos tres tipos comunes de nodos que se pueden encontrar en el árbol DOM.</li>
+            </ul>
+        </li>
+        <li><strong>Proceso de Creación (Parsing):</strong>
+            <ul>
+                <li>¿Qué es el "parsing" (análisis sintáctico) de HTML?</li>
+            </ul>
+        </li>
+        <li><strong>Acceso y Visualización:</strong>
+            <ul>
+                <li>¿Cuál es el objeto principal en JavaScript que representa todo el documento y sirve como punto de entrada para acceder al DOM?</li>
+                <li>¿Cómo puedes inspeccionar visualmente la estructura del DOM de cualquier página web que visitas?</li>
+            </ul>
+        </li>
+        <li><strong>Manipulación Básica con JavaScript:</strong>
+            <ul>
+                <li>¿Qué tipo de valor devuelve <code>document.getElementById('unIdEspecifico')</code> si encuentra el elemento? ¿Y si no lo encuentra?</li>
+                <li>Menciona al menos tres tipos de acciones que JavaScript puede realizar sobre el DOM.</li>
             </ul>
         </li>
     </ul>
