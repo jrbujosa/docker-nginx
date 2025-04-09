@@ -153,22 +153,45 @@
     </ul>
 
     <!-- ========== NUEVAS SECCIONES AÑADIDAS ========== -->
+    <h3>Ubicación de la etiqueta &lt;script&gt; y su impacto en la ejecución del JavaScript</h3>
+        <p>
+            La posición de la etiqueta &lt;script&gt; dentro del HTML es crucial y afecta el comportamiento del navegador al parsear y renderizar la página:
+        </p>
+        <ul>
+            <li>
+                <strong>Ubicación tradicional (&lt;script&gt; en &lt;head&gt; o en el cuerpo, sin atributos):</strong>  Cuando el navegador encuentra una etiqueta &lt;script&gt;&lt;/script&gt; sin el atributo &lt;defer&gt;, detiene el parsing del HTML, descarga el script (si es un script externo referenciado con <code>src</code>), y lo ejecuta inmediatamente. Esto es un comportamiento *síncrono* y *bloqueante*.  Significa que el navegador no continuará parseando el resto del HTML hasta que el script se haya descargado y ejecutado por completo.  Esto puede retrasar significativamente la visualización y la interactividad de la página, especialmente si el script es grande o está ubicado en un servidor lento.
+            </li>
+            <li>
+                <strong>&lt;script defer&gt; (Script Diferido):</strong> El atributo &lt;defer&gt; indica al navegador que descargue el script en segundo plano (asíncronamente) *sin detener el parsing del HTML*.  El script diferido se ejecutará solo después de que el navegador haya completado el parsing de todo el documento HTML y construido el DOM.  Los scripts con &lt;defer&gt; se ejecutan en el orden en que aparecen en el documento HTML.  `defer` es útil para scripts que necesitan acceder al DOM completo pero no son críticos para la renderización inicial.
+            </li>
+            <li>
+                <strong>Buena Práctica:  &lt;script&gt; antes de &lt;/body&gt; (Sin &lt;defer&gt;):</strong>  Una práctica común es colocar la etiqueta &lt;script&gt; (sin &lt;defer&gt;) justo antes de la etiqueta de cierre del cuerpo (&lt;/body&gt;).  Esto permite que el navegador parsee y renderice la mayor parte del HTML antes de ejecutar el script, mejorando la percepción de rendimiento.  Sin embargo, el script aún se descargará y ejecutará sincrónicamente, bloqueando el parsing del final del HTML.
+            </li>
+        </ul>
+    
+        <p>
+        En resumen, la ubicación del script y el uso del atributo `defer` influyen directamente en el flujo de carga y ejecución del JavaScript. La elección de la estrategia adecuada depende de los requisitos de cada página web para garantizar una carga rápida y una experiencia de usuario fluida. Considera lo siguiente:
+        </p>
+    
+        <ul>
+        <li> ¿El script necesita acceder al DOM? Si no, puede colocarse en el `head` y marcarse como `async`.</li>
+        <li>¿El script depende de que el DOM esté completamente cargado? Usa `defer` o coloca el script justo antes de &lt;/body&gt;.</li>
+        <li>¿Es crucial que el script se ejecute lo antes posible? Colócalo en el `head` sin atributos, pero sé consciente de su impacto en el rendimiento.</li>
+        </ul>
 
-    <h3>Definición de API y la Naturaleza del DOM como API</h3>
-    <p>
-        Una <strong>API (Application Programming Interface / Interfaz de Programación de Aplicaciones)</strong> es un conjunto de reglas, definiciones, protocolos y herramientas que permiten que diferentes componentes de software se comuniquen entre sí. Piensa en ella como un "contrato" que define cómo un software puede solicitar servicios o datos de otro. Por ejemplo, cuando usas una app del tiempo en tu móvil, esa app probablemente utiliza una API para pedir los datos meteorológicos a un servidor externo.
-    </p>
-    <p>
-        <strong>¿Por qué el DOM es una API?</strong> El DOM encaja perfectamente en esta definición:
-    </p>
-    <ul>
-        <li>Define un conjunto estándar de <strong>objetos</strong> para representar el documento (como `Document`, `Element`, `Node`, `Text`).</li>
-        <li>Define las <strong>propiedades</strong> de esos objetos (como `element.id`, `node.nodeType`, `element.textContent`).</li>
-        <li>Define los <strong>métodos</strong> (funciones) que se pueden usar para interactuar con esos objetos (como `document.getElementById()`, `element.appendChild()`, `node.removeChild()`).</li>
-    </ul>
-    <p>
-        En esencia, el DOM es la API que el navegador expone para que los lenguajes de scripting (principalmente JavaScript) puedan "hablar" con la estructura de la página web, leerla y manipularla de forma estandarizada y predecible. Es independiente del lenguaje de programación, aunque en el contexto web, su uso más común es con JavaScript.
-    </p>
+<p>async: Si el script no depende del DOM y no necesita ejecutarse en un orden específico, async es una mejor opción. Los scripts con async se descargan asíncronamente y se ejecutan tan pronto como están disponibles, sin bloquear el parsing del HTML. Son ideales para scripts de análisis, publicidad o widgets de terceros.</p>
+
+        <h3>Consideraciones Adicionales</h3>
+            <ul>
+                <li>
+                   Si varios scripts con  &lt;defer&gt;, se ejecutarán en el orden en que aparecen en el código HTML.
+                </li>
+                 <li>El uso de  <code>async</code> hace que el script se ejecute de forma asíncrona y se ejecutará tan pronto como se descargue. El orden de ejecución no está garantizado.
+                </li>
+            </ul>
+    
+
+  
 
     <h3>El Objeto `document` y su Rol Central</h3>
     <p>

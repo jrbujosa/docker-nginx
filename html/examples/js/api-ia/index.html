@@ -65,6 +65,46 @@
     <input type="text" id="prompt" name="prompt"><br><br>
     <button onclick="enviarConsulta()">Enviar Consulta</button>
     <div id="respuesta"></div>
+    <h2>Código fuente de esta página</h2>
+    <di><pre>
+        &lt;body&gt;
+        &lt;h1&gt;Interactuando con la API de Gemma 3&lt;/h1&gt;
+        &lt;label for="prompt"&gt;Introduce tu consulta:&lt;/label&gt;&lt;br&gt;
+        &lt;input type="text" id="prompt" name="prompt"&gt;&lt;br&gt;&lt;br&gt;
+        &lt;button onclick="enviarConsulta()"&gt;Enviar Consulta&lt;/button&gt;
+        &lt;div id="respuesta"&gt;&lt;/div&gt;
+        &lt;script&gt;
+            async function enviarConsulta() {
+                const prompt = document.getElementById("prompt").value;
+                const respuestaDiv = document.getElementById("respuesta");
+                respuestaDiv.innerText = "Cargando...";
+                try {
+                    const response = await fetch('api.php', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            prompt: prompt
+                        })
+                    });
+    
+                    if (!response.ok) {
+                        const error = await response.json();
+                        respuestaDiv.innerText = `Error del Backend (PHP): ${response.status} - ${error.error || 'Detalles no disponibles'}`;
+                        return;
+                    }
+    
+                    const data = await response.json();
+                    respuestaDiv.innerText = JSON.stringify(data, null, 2);
+    
+                } catch (error) {
+                    respuestaDiv.innerText = `Error de conexión: ${error.message}`;
+                }
+            }
+        &lt;/script&gt;
+    &lt;/body&gt;    
+    </pre></di>
     <script>
         async function enviarConsulta() {
             const prompt = document.getElementById("prompt").value;
