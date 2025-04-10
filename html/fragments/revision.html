@@ -191,13 +191,12 @@
                     <code>volumes: - ./mi-proyecto-web:/var/www/html</code>, ¿qué representa la parte
                     <code>./mi-proyecto-web</code> y qué representa <code>/var/www/html</code>?
                 </li>
-                <li>Un servidor web Nginx se ejecuta dentro de un contenedor Docker. Dentro del contenedor, la página web index.html se encuentra en la ruta
-                    /docker-nginx/html/pages/index.html.
+                <li> <p>Un servidor web Nginx se ejecuta dentro de un contenedor Docker, creado con docker-compose.xml en la carpeta /docker-nginx. Suponte que la página web index.html se encuentra en la ruta  /docker-nginx/html/pages/index.html.</p>
 
-                    ¿Por qué la visualización del archivo directamente en el navegador Chrome abriendo el archivo
+                    <p>¿Por qué la visualización del archivo directamente en el navegador Chrome abriendo el archivo
                     /docker-nginx/html/pages/index.html (desde el sistema de archivos local) puede diferir de la
                     visualización de la misma página accediendo a ella a través de localhost:8080/pages/index.html
-                    (donde 8080 es el puerto expuesto por el contenedor Docker)?
+                    (donde 8080 es el puerto expuesto por el contenedor Docker)?</p>
                 </li>
             </ul>
     </ul>

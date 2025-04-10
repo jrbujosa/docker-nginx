@@ -70,6 +70,45 @@
         </div>
 
         <h2>Explicaciones Detalladas</h2>
+        <details>
+            <summary>Comunicación sincróna y asíncrona con HTTP</summary>
+<h2>Tipos de Comunicación HTTP</h2>
+
+<p>La siguiente tabla ilustra las diferentes formas en que un cliente (como un navegador web) puede comunicarse con un servidor web utilizando el protocolo HTTP, específicamente los métodos GET y POST. Se distinguen dos tipos de comunicación: sincrónica, donde el cliente espera una respuesta completa antes de continuar, y asincrónica, que permite al cliente continuar procesando mientras espera la respuesta del servidor (generalmente utilizando técnicas como async/await o promesas). La tabla proporciona ejemplos comunes de cómo se implementa cada tipo de comunicación en el desarrollo web.</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Tipo de Comunicación</th>
+      <th>Sincrónico</th>
+      <th>Asincrónico (con <code>async/await</code> o promesas)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>GET</strong></td>
+      <td>
+        &lt;a&gt; (enlaces a otras páginas)<br>
+        &lt;form method="GET"&gt; (envío tradicional de formularios que recargan la página)
+      </td>
+      <td>
+        <code>fetch</code> API con <code>async/await</code> o promesas (ej: <code>async function getData() { const response = await fetch('/api/data'); const data = await response.json(); return data; }</code>)<br>
+        
+      </td>
+    </tr>
+    <tr>
+      <td><strong>POST</strong></td>
+      <td>
+        &lt;form method="POST"&gt; (envío tradicional de formularios que recargan la página)
+      </td>
+      <td>
+        <code>fetch</code> API con <code>async/await</code> o promesas (ej: <code>async function postData(data) { const response = await fetch('/api/submit', { method: 'POST', body: JSON.stringify(data) }); const result = await response.json(); return result; }</code>)<br>
+       </td>
+    </tr>
+  </tbody>
+</table>
+        </details>
+
 
         <details>
             <summary>¿Por Qué Asincronía? El Problema del Bloqueo</summary>
@@ -79,42 +118,6 @@
             <p><code>fetch</code> es la API moderna estándar en JavaScript para realizar solicitudes de red (HTTP) de forma asíncrona.</p>
         </details>
 
-        <details>
-            <summary>Métodos HTTP: GET vs. POST (y `fetch`)</summary>
-            <p>HTTP (HyperText Transfer Protocol) define varios métodos para indicar la acción deseada sobre un recurso. Los más comunes en desarrollo web son GET y POST.</p>
-            <ul>
-                <li><strong>GET:</strong>
-                    <ul>
-                        <li><strong>Propósito:</strong> Solicitar y recuperar datos de un recurso específico. Es como decir "dame esta información".</li>
-                        <li><strong>Uso:</strong> Navegar a una página (clic en enlace `<a>`), buscar, obtener datos para mostrar.</li>
-                        <li><strong>Datos:</strong> Si se envían parámetros, van en la URL (ej: `/buscar?q=termino`).</li>
-                        <li><strong>Idempotente:</strong> Hacer la misma solicitud GET múltiples veces debería tener el mismo efecto que hacerla una sola vez (no cambia datos en el servidor).</li>
-                        <li><strong>Visibilidad:</strong> Visible en la URL, historial del navegador, logs del servidor.</li>
-                        <li><strong>Cache:</strong> Puede ser cacheado por el navegador o proxies.</li>
-                        <li><strong>`fetch` por defecto:</strong> Si no especificas `method` en `fetch`, usa GET.
-                           <code>fetch('/api/data') // Es un GET</code></li>
-                    </ul>
-                </li>
-                <li><strong>POST:</strong>
-                    <ul>
-                        <li><strong>Propósito:</strong> Enviar datos a un servidor para crear un nuevo recurso o realizar una acción que cambie el estado. Es como decir "toma estos datos y haz algo con ellos".</li>
-                        <li><strong>Uso:</strong> Enviar formularios de registro, crear un nuevo post en un blog, subir un archivo.</li>
-                        <li><strong>Datos:</strong> Van en el cuerpo (body) de la solicitud HTTP, no directamente en la URL.</li>
-                        <li><strong>Idempotente:</strong> Generalmente no es idempotente. Enviar el mismo POST dos veces podría crear dos recursos idénticos.</li>
-                        <li><strong>Visibilidad:</strong> Los datos del cuerpo no son visibles directamente en la URL o historial (más seguro para datos sensibles, aunque la conexión debe ser HTTPS).</li>
-                        <li><strong>Cache:</strong> No se cachea por defecto.</li>
-                        <li><strong>`fetch` con POST:</strong> Debes especificarlo explícitamente y configurar cabeceras y cuerpo.
-                           <pre><code class="small-code">fetch('/api/users', {
-  method: 'POST',
-  headers: {
-    'Content-Type': 'application/json' // Indica que envías JSON
-  },
-  body: JSON.stringify({ name: 'Ana', role: 'dev' }) // Convierte el objeto a JSON string
-})</code></pre></li>
-                    </ul>
-                </li>
-            </ul>
-        </details>
 
         <details>
             <summary>El Modelo de Concurrencia: Desglose del Diagrama</summary>
