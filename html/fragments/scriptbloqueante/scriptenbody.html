@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Demostración de Script Bloqueante en Head</title>
+
+
+
+    <!-- Este estilo y el body no se procesarán hasta que script_bloqueante.js termine -->
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 20px;
+            color: #333;
+        }
+
+        .content {
+            padding: 20px;
+            border: 1px solid #ccc;
+            background-color: white;
+            box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .importante {
+            color: red;
+            font-weight: bold;
+        }
+    </style>
+
+</head>
+
+<body>
+    <div class="content">
+        <h1>Página de Demostración</h1>
+        <p>Si estás viendo este contenido, significa que <code class="importante">script_bloqueante.js</code> (que
+            estaba en el <code><head></code>) ya ha terminado de descargarse y ejecutarse.</p>
+        <p>El navegador <span class="importante">NO RENDERIZÓ NADA de este
+
+                <body>
+            </span> hasta que ese script finalizó, demostrando el bloqueo.</p>
+    </div>
+    <!-- Script externo que simulará una carga/ejecución larga -->
+    <script src="script_bloqueante.js"></script>
+
+</body>
+
+</html>

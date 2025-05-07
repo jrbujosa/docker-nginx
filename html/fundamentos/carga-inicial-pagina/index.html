@@ -157,6 +157,8 @@
         <p>
             La posición de la etiqueta &lt;script&gt; dentro del HTML es crucial y afecta el comportamiento del navegador al parsear y renderizar la página:
         </p>
+        <p><a href="/fragments/scriptbloqueante/scriptenhead.html">Script en el head /fragments/scriptbloqueante/scriptenhead.html</a></p>
+        <p><a href="/fragments/scriptbloqueante/scriptenbody.html">Script en el body /fragments/scriptbloqueante/scriptenbody.html</a></p>
         <ul>
             <li>
                 <strong>Ubicación tradicional (&lt;script&gt; en &lt;head&gt; o en el cuerpo, sin atributos):</strong>  Cuando el navegador encuentra una etiqueta &lt;script&gt;&lt;/script&gt; sin el atributo &lt;defer&gt;, detiene el parsing del HTML, descarga el script (si es un script externo referenciado con <code>src</code>), y lo ejecuta inmediatamente. Esto es un comportamiento *síncrono* y *bloqueante*.  Significa que el navegador no continuará parseando el resto del HTML hasta que el script se haya descargado y ejecutado por completo.  Esto puede retrasar significativamente la visualización y la interactividad de la página, especialmente si el script es grande o está ubicado en un servidor lento.
