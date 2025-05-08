@@ -1,326 +1,561 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // --- Referencias a Elementos del DOM ---
-    const simulateBtn = document.getElementById('simulate-btn');
-    const resultDiv = document.getElementById('result-div');
-    const consoleLogDiv = document.getElementById('console-log');
-    const codeSnippetEl = document.getElementById('code-snippet');
+  // --- Referencias a Elementos del DOM ---
+  const resetBtn = document.getElementById('reset-btn');
+  const prevStepBtn = document.getElementById('prev-step-btn');
+  const nextStepBtn = document.getElementById('next-step-btn');
+  const simulateErrorCheckbox = document.getElementById('simulate-error-checkbox');
 
-    // Referencias para visualización (simplificada)
-    const callStackDiv = document.getElementById('call-stack-content');
-    const webApisDiv = document.getElementById('web-apis-content');
-    const callbackQueueDiv = document.getElementById('callback-queue-content');
-    const allDiagramBoxes = document.querySelectorAll('.diagram-box'); // Para quitar resaltado
+  const resultDiv = document.getElementById('result-div');
+  const consoleLogDiv = document.getElementById('console-log');
+  const codeSnippetEl = document.getElementById('code-snippet');
+  const currentStepTextEl = document.getElementById('current-step-text');
 
-    // --- Código de Ejemplo SIMPLIFICADO a Mostrar (Async/Await) ---
-    // Este es el código que el estudiante verá y debe ser fácil de entender.
-    const exampleCode = `
-// --- Código de Ejemplo Simplificado (Async/Await) ---
-async function obtenerDatos() {
-  // 1. Informar al usuario que la operación ha comenzado
-  logToConsole("Iniciando solicitud de datos...", "info");
-  resultDiv.textContent = 'Cargando datos...'; // Muestra estado en la UI
+  const callStackDiv = document.getElementById('call-stack-content');
+  const webApisDiv = document.getElementById('web-apis-content');
+  const callbackQueueDiv = document.getElementById('callback-queue-content');
 
-  try {
-    // 2. Definir la URL (simulada en este caso)
-    const urlSimulada = '/api/datos-simulados';
-    logToConsole(\`Intentando obtener datos de: \${urlSimulada}\`);
+  // --- Estado de la Simulación ---
+  let simulationSteps = [];
+  let currentStepIndex = -1;
+  let isErrorSimulation = false;
 
-    // 3. Llamar a fetch y ESPERAR la respuesta inicial (asíncrono)
-    //    'await' pausa ESTA FUNCIÓN (no el navegador) hasta que
-    //    la promesa de simulatedFetch se resuelva o rechace.
-    const respuesta = await simulatedFetch(urlSimulada);
-    logToConsole("Respuesta inicial recibida del servidor (simulado).");
+  // --- Código de Ejemplo Numerado ---
+  const exampleCodeLines = [
+      /* 00 */ "// --- Código de Ejemplo (Async/Await) ---",
+      /* 01 */ "async function obtenerDatos() {",
+      /* 02 */ "  logToConsole('1. Iniciando solicitud...', 'info');",
+      /* 03 */ "  resultDiv.textContent = 'Cargando datos...';",
+      /* 04 */ "",
+      /* 05 */ "  try {",
+      /* 06 */ "    const url = '/api/datos-simulados';",
+      /* 07 */ "    logToConsole(\`2. Intentando fetch de: \${url}\`);",
+      /* 08 */ "",
+      /* 09 */ "    // 'await' pausa obtenerDatos() aquí",
+      /* 10 */ "    const respuesta = await simulatedFetch(url);",
+      /* 11 */ "    logToConsole('5. Promesa de fetch resuelta. Respuesta recibida.');",
+      /* 12 */ "",
+      /* 13 */ "    if (!respuesta.ok) {",
+      /* 14 */ "      throw new Error(\`Error HTTP simulado: \${respuesta.status}\`);",
+      /* 15 */ "    }",
+      /* 16 */ "",
+      /* 17 */ "    // 'await' pausa obtenerDatos() de nuevo",
+      /* 18 */ "    const datos = await respuesta.json();",
+      /* 19 */ "    logToConsole('8. Promesa de .json() resuelta. Datos parseados.');",
+      /* 20 */ "",
+      /* 21 */ "    logToConsole('9. ¡Datos obtenidos con éxito!', 'success');",
+      /* 22 */ "    resultDiv.textContent = \`Éxito: \${JSON.stringify(datos)}\`;",
+      /* 23 */ "",
+      /* 24 */ "  } catch (error) {",
+      /* 25 */ "    logToConsole(\`Error atrapado: \${error.message}\`, 'error');",
+      /* 26 */ "    resultDiv.textContent = \`Fallo: \${error.message}\`;",
+      /* 27 */ "  }",
+      /* 28 */ "",
+      /* 29 */ "  logToConsole('10. Fin de obtenerDatos().', 'info');",
+      /* 30 */ "}",
+      /* 31 */ "",
+      /* 32 */ "// Llamada inicial para empezar la simulación",
+      /* 33 */ "obtenerDatos();"
+  ];
 
-    // 4. Verificar si la respuesta fue exitosa (código 2xx)
-    //    Es importante hacerlo SIEMPRE con fetch.
-    if (!respuesta.ok) {
-      // Si no fue ok, lanzar un error para que lo capture el 'catch'
-      throw new Error(\`Error simulado del servidor: status \${respuesta.status}\`);
-    }
-
-    // 5. Leer el cuerpo de la respuesta como JSON y ESPERAR (también asíncrono)
-    //    'await' pausa ESTA FUNCIÓN hasta que .json() termine.
-    logToConsole("Procesando datos JSON de la respuesta...");
-    const datos = await respuesta.json();
-
-    // 6. ¡Éxito! Mostrar los datos obtenidos
-    logToConsole("¡Datos obtenidos con éxito!", "success");
-    resultDiv.textContent = \`Datos recibidos: \${JSON.stringify(datos)}\`;
-
-  } catch (error) {
-    // 7. Si ALGO falla en el bloque 'try' (la red, respuesta.ok=false,
-    //    error al parsear json), la ejecución salta directamente aquí.
-    logToConsole(\`Error durante la solicitud: \${error.message}\`, "error");
-    resultDiv.textContent = \`Error al cargar: \${error.message}\`;
+  function formatCodeSnippet() {
+      codeSnippetEl.innerHTML = exampleCodeLines.map((line, index) => {
+          return `<span id="code-line-${index}">${line.replace(/</g, "<").replace(/>/g, ">")}</span>`;
+      }).join('');
   }
 
-  // 8. (Opcional: Bloque finally omitido para simplicidad)
-  //    El código aquí se ejecutaría siempre, después del try o del catch.
-
-  logToConsole("Proceso de obtención de datos finalizado.", "info");
-  // La función termina aquí.
-}
-    `; // Fin del string exampleCode
-
-    // --- Función de Simulación de fetch (INTERNA - con logs y visualización) ---
-    // ESTA función SÍ interactúa con la visualización del Event Loop.
-    function simulatedFetch(url) {
-      const isError = Math.random() < 0.15; // 15% de probabilidad de error
-      const delay = 1500 + Math.random() * 2000; // Retraso entre 1.5s y 3.5s
-
-      // Log específico del simulador (no parte del código de ejemplo)
-      logToConsole(`SIMULADOR: Iniciando tarea Web API (fetch a ${url}). Duración: ${(delay / 1000).toFixed(1)}s`);
-      updateCallStack('fetch (interno)', 'add'); // Muestra brevemente en stack
-      updateWebAPIs(`Network Request: ${url}`, 'add'); // Mueve a Web APIs
-      updateCallStack('fetch (interno)', 'remove'); // Sale del stack
-
-      return new Promise((resolve, reject) => {
-        setTimeout(() => {
-          logToConsole(`SIMULADOR: Tarea Web API (${url}) completada.`);
-          updateWebAPIs(`Network Request: ${url}`, 'remove'); // Sale de Web APIs
-          updateQueue(`Callback de fetch (${url})`, 'add'); // Añadir a la cola
-
-          // Simula el Event Loop moviendo la tarea (cuando sea posible)
-          handleEventLoopTurn();
-
-          // Resuelve o rechaza la Promesa (esto hará que 'await' continúe o salte al catch)
-          if (isError) {
-            logToConsole("SIMULADOR: Callback de fetch -> Rechazando Promesa (error)", "error");
-            // Rechaza con un objeto que simule una respuesta NO ok
-             reject(new Error('Fallo de red simulado')); // Error de red
-             // O podrías resolver con una respuesta no-ok para probar el if(!respuesta.ok):
-             // resolve({ ok: false, status: 500, statusText: 'Internal Server Error', json: () => Promise.reject(new Error("Server error")) });
-          } else {
-            logToConsole("SIMULADOR: Callback de fetch -> Resolviendo Promesa (éxito)");
-            // Resuelve con un objeto Response simulado exitoso
-            resolve({
-              ok: true,
-              status: 200,
-              statusText: "OK",
-              json: () => simulatedJsonParse(url) // El método .json() también es asíncrono
-            });
+  // --- Funciones de Actualización de UI ---
+  function highlightCodeLine(lineNumber) {
+      document.querySelectorAll('#code-snippet span').forEach(span => span.classList.remove('highlight'));
+      if (lineNumber >= 0 && lineNumber < exampleCodeLines.length) {
+          const lineEl = document.getElementById(`code-line-${lineNumber}`);
+          if (lineEl) {
+              lineEl.classList.add('highlight');
           }
-        }, delay);
-      });
-    }
+      }
+  }
 
-    // --- Función de Simulación de response.json() (INTERNA - con logs y visualización) ---
-     function simulatedJsonParse(url) {
-         const parseDelay = 300 + Math.random() * 400; // Retraso corto para parsear
-
-         logToConsole(`SIMULADOR: Iniciando tarea Web API (parsing JSON). Duración: ${parseDelay.toFixed(0)}ms`);
-         updateCallStack('.json() (interno)', 'add');
-         updateWebAPIs('Parsing JSON', 'add');
-         updateCallStack('.json() (interno)', 'remove');
-
-
-         return new Promise((resolve) => {
-             setTimeout(() => {
-                logToConsole(`SIMULADOR: Tarea Web API (parsing) completada.`);
-                updateWebAPIs('Parsing JSON', 'remove');
-                updateQueue('Callback de .json()', 'add');
-
-                handleEventLoopTurn(); // Simula el Event Loop
-
-                // Resuelve la promesa de .json() con los datos simulados
-                resolve({
-                    message: `Datos procesados desde ${url}`,
-                    timestamp: new Date().toLocaleTimeString()
-                });
-             }, parseDelay);
-         });
-     }
-
-
-    // --- Funciones Auxiliares del Simulador (INTERNAS - para visualización) ---
-
-    function logToConsole(message, type = 'log') {
+  function logToConsoleView(message, type = 'log') {
       const logEntry = document.createElement('div');
       const timestamp = `[${new Date().toLocaleTimeString()}]`;
       logEntry.textContent = `${timestamp} ${message}`;
-      logEntry.className = type; // Añade clase para color CSS
-
+      logEntry.className = type;
       consoleLogDiv.appendChild(logEntry);
-      consoleLogDiv.scrollTop = consoleLogDiv.scrollHeight; // Auto-scroll
+      consoleLogDiv.scrollTop = consoleLogDiv.scrollHeight;
 
-      // Log real en la consola del navegador para depuración
-      if (type === 'error') console.error(`${timestamp} ${message}`);
-      else if (type === 'info' || type === 'success') console.info(`${timestamp} ${message}`);
-      else console.log(`${timestamp} ${message}`);
-    }
+      if (type === 'error') console.error(`${timestamp} (SIM) ${message}`);
+      else if (type === 'info' || type === 'success') console.info(`${timestamp} (SIM) ${message}`);
+      else console.log(`${timestamp} (SIM) ${message}`);
+  }
 
-    function updateVisualizer(div, content, action) {
-        highlightBox(div.parentElement.id); // Resalta la caja padre
-        const currentContent = div.innerHTML.replace('(Vacío)', '').replace('(Inactivo)', '').replace('(Vacía)', '');
-        let items = currentContent.split('<br>').filter(Boolean); // Divide por saltos de línea
+  function updateStackView(div, itemName, action, itemType = 'item', isPaused = false) {
+      let currentContent = div.innerHTML.replace(/\(Vacío\)|\(Inactivo\)|\(Vacía\)/g, '').trim();
+      let items = currentContent ? currentContent.split('</div>').filter(Boolean).map(item => item + '</div>') : [];
+      const classPaused = isPaused ? ' paused' : '';
 
-        if (action === 'add') {
-            items.unshift(`<div>${content}</div>`); // Añade al principio (simula stack LIFO)
-        } else if (action === 'remove') {
-            // Intenta quitar el item específico (simplificado: quita el primero)
-            items.shift();
-        }
-
-        if (items.length === 0) {
-            const parentId = div.parentElement.id;
-            if (parentId === 'call-stack') div.innerHTML = '(Vacío)';
-            else if (parentId === 'web-apis') div.innerHTML = '(Inactivo)';
-            else if (parentId === 'callback-queue') div.innerHTML = '(Vacía)';
-        } else {
-            div.innerHTML = items.join('<br>'); // Une con saltos de línea
-        }
-    }
-
-
-    // Funciones específicas de actualización para claridad
-     function updateCallStack(itemName, action) {
-         const content = action === 'add' ? `▶️ ${itemName}` : itemName;
-         updateVisualizer(callStackDiv, content, action);
-     }
-     function updateWebAPIs(taskName, action) {
-          const content = action === 'add' ? `⏳ ${taskName}` : taskName;
-         updateVisualizer(webApisDiv, content, action);
-     }
-     function updateQueue(callbackName, action) {
-          const content = action === 'add' ? `📋 ${callbackName}` : callbackName;
-         updateVisualizer(callbackQueueDiv, content, action);
-     }
-
-
-     // Simula un "turno" del Event Loop moviendo una tarea si es posible
-     function handleEventLoopTurn() {
-         // Esta es una simplificación extrema. El loop real es más complejo.
-         // Solo verificamos si la cola tiene algo y el stack está vacío (conceptualmente)
-         const firstCallbackHTML = callbackQueueDiv.innerHTML; // Lee el HTML
-         // Verifica si NO está vacío Y el stack SÍ está vacío
-         if (!firstCallbackHTML.includes('(Vacía)') && callStackDiv.innerHTML.includes('(Vacío)')) {
-             const taskNameMatch = firstCallbackHTML.match(/📋 (.*?)(?=<br>|$)/); // Extrae el nombre de la tarea
-             if (taskNameMatch && taskNameMatch[1]) {
-                const taskName = taskNameMatch[1].trim();
-                logToConsole(`~ EVENT LOOP: Call Stack vacío. Moviendo '${taskName}' de la Queue al Call Stack.`);
-                updateQueue(taskName, 'remove'); // Quita de la cola visualmente
-                // La ejecución real (y entrada al stack) la maneja el 'await' al continuar.
-                // Aquí solo simulamos el log del Event Loop.
-             }
-         }
-     }
-
-    // Resalta una caja del diagrama brevemente
-    function highlightBox(boxId) {
-        allDiagramBoxes.forEach(box => box.classList.remove('active')); // Quitar resaltado previo
-        const box = document.getElementById(boxId);
-        if (box) {
-            box.classList.add('active');
-            setTimeout(() => box.classList.remove('active'), 700); // Quitar después de 700ms
-        }
-    }
-
-
-    // --- Función Principal de Simulación (Handler del Botón) ---
-    async function handleSimulationClick() {
-      // 1. Limpiar estado previo de la UI
-      resultDiv.textContent = 'Esperando acción...';
-      consoleLogDiv.innerHTML = '';
-      callStackDiv.innerHTML = '(Vacío)';
-      webApisDiv.innerHTML = '(Inactivo)';
-      callbackQueueDiv.innerHTML = '(Vacía)';
-      allDiagramBoxes.forEach(box => box.classList.remove('active'));
-      simulateBtn.disabled = true; // Deshabilitar botón durante la simulación
-      simulateBtn.textContent = 'Simulación en Progreso...';
-
-      logToConsole("--- Iniciando Simulación ---", "info");
-
-      try {
-        // 2. Ejecutar la función de ejemplo ASÍNCRONA
-        //    Usamos `await` aquí para esperar a que toda la función
-        //    `obtenerDatos` (incluyendo sus propios awaits internos) termine
-        //    antes de habilitar el botón de nuevo.
-        await window.obtenerDatos(); // Llama a la función definida globalmente
-
-      } catch (outerError) {
-         // Captura errores inesperados FUERA del try/catch de obtenerDatos (poco probable aquí)
-         logToConsole(`ERROR INESPERADO EN EL SIMULADOR: ${outerError.message}`, "error");
-      } finally {
-        // 3. Tareas de limpieza final
-        logToConsole("--- Simulación Finalizada ---", "info");
-        simulateBtn.disabled = false; // Rehabilitar botón
-        simulateBtn.textContent = 'Iniciar Simulación GET (Async/Await)';
-      }
-    }
-
-    // --- Inicialización ---
-    codeSnippetEl.textContent = exampleCode; // Muestra el código SIMPLIFICADO
-    simulateBtn.addEventListener('click', handleSimulationClick);
-
-     // --- Hacer Funciones Globales / Crear Función Ejecutable ---
-     // Necesario para que el código dentro del string 'exampleCode' (cuando se ejecute)
-     // pueda llamar a nuestras funciones auxiliares (logToConsole, simulatedFetch, etc.)
-
-     // Exponer funciones auxiliares globales
-     window.logToConsole = logToConsole;
-     window.updateCallStack = updateCallStack; // Aunque no se usen en el ejemplo simplificado, las funciones internas sí
-     window.updateWebAPIs = updateWebAPIs;
-     window.updateQueue = updateQueue;
-     window.simulatedFetch = simulatedFetch;
-     window.resultDiv = resultDiv; // Para que la función pueda actualizarlo
-     window.handleEventLoopTurn = handleEventLoopTurn;
-     window.simulatedJsonParse = simulatedJsonParse;
-
-     // Crear la función 'obtenerDatos' ejecutable a partir del string SIMPLIFICADO
-     // Se usa `new Function` para crear la función desde el string.
-     // ¡Precaución con `new Function` por seguridad en aplicaciones reales!
-     try {
-         window.obtenerDatos = new Function(`
-             // Estas variables ahora acceden a las funciones globales que expusimos
-             const logToConsole = window.logToConsole;
-             const simulatedFetch = window.simulatedFetch;
-             const resultDiv = window.resultDiv;
-             const simulatedJsonParse = window.simulatedJsonParse; // Asegurarse de que esté disponible si se usa dentro
-
-             // Pegar aquí el CUERPO EXACTO de la función 'obtenerDatos' SIMPLIFICADA
-             // que definimos en la variable 'exampleCode'.
-             // Es crucial que este código coincida con lo que ve el usuario.
-             return (async function obtenerDatosInterno() {
-                // 1. Informar al usuario que la operación ha comenzado
-                logToConsole("Iniciando solicitud de datos...", "info");
-                resultDiv.textContent = 'Cargando datos...'; // Muestra estado en la UI
-
-                try {
-                  // 2. Definir la URL (simulada en este caso)
-                  const urlSimulada = '/api/datos-simulados';
-                  logToConsole(\`Intentando obtener datos de: \${urlSimulada}\`);
-
-                  // 3. Llamar a fetch y ESPERAR la respuesta inicial (asíncrono)
-                  const respuesta = await simulatedFetch(urlSimulada);
-                  logToConsole("Respuesta inicial recibida del servidor (simulado).");
-
-                  // 4. Verificar si la respuesta fue exitosa (código 2xx)
-                  if (!respuesta.ok) {
-                    throw new Error(\`Error simulado del servidor: status \${respuesta.status || 'desconocido'}\`); // Añadir fallback por si status no existe
+      if (action === 'add') {
+          const newItemHTML = `<div class="${itemType}${classPaused}">${itemName}</div>`;
+          if (div === callStackDiv || div === callbackQueueDiv) { // LIFO para Call Stack y Queue (visual)
+              items.unshift(newItemHTML);
+          } else {
+              items.push(newItemHTML); // FIFO para Web APIs (visual)
+          }
+      } else if (action === 'remove') {
+          // Intenta quitar por el nombre. Si hay duplicados, quita el primero que encuentre (LIFO).
+          let found = false;
+          items = items.filter(itemHTML => {
+              const existingItemName = itemHTML.replace(/<div class=".*?">|<\/div>/g, '');
+              if (!found && existingItemName === itemName) {
+                  found = true;
+                  return false; // Quitar este
+              }
+              return true; // Mantener este
+          });
+      } else if (action === 'clear') {
+          items = [];
+      } else if (action === 'updatePauseState') {
+          items = items.map(itemHTML => {
+              const existingItemName = itemHTML.replace(/<div class=".*?">|<\/div>/g, '');
+              if (existingItemName === itemName) {
+                  if (isPaused) {
+                      return itemHTML.replace(`class="${itemType}"`, `class="${itemType} paused"`)
+                                     .replace(`class="${itemType} "`, `class="${itemType} paused"`); // En caso de que ya tenga una clase
+                  } else {
+                      return itemHTML.replace(`class="${itemType} paused"`, `class="${itemType}"`);
                   }
+              }
+              return itemHTML;
+          });
+      }
 
-                  // 5. Leer el cuerpo de la respuesta como JSON y ESPERAR (también asíncrono)
-                  logToConsole("Procesando datos JSON de la respuesta...");
-                  const datos = await respuesta.json();
 
-                  // 6. ¡Éxito! Mostrar los datos obtenidos
-                  logToConsole("¡Datos obtenidos con éxito!", "success");
-                  resultDiv.textContent = \`Datos recibidos: \${JSON.stringify(datos)}\`;
+      if (items.length === 0) {
+          if (div === callStackDiv) div.innerHTML = '(Vacío)';
+          else if (div === webApisDiv) div.innerHTML = '(Inactivo)';
+          else if (div === callbackQueueDiv) div.innerHTML = '(Vacía)';
+      } else {
+          div.innerHTML = items.join('');
+      }
 
-                } catch (error) {
-                  // 7. Si ALGO falla en el bloque 'try'
-                  logToConsole(\`Error durante la solicitud: \${error.message}\`, "error");
-                  resultDiv.textContent = \`Error al cargar: \${error.message}\`;
-                }
+      if(action !== 'clear' && div.parentElement && action !== 'updatePauseState') { // No resaltar en updatePauseState
+          div.parentElement.classList.add('active');
+          setTimeout(() => div.parentElement.classList.remove('active'), 700);
+      }
+  }
 
-                logToConsole("Proceso de obtención de datos finalizado.", "info");
-             })(); // IIFE para asegurar que se ejecuta como async al ser llamada
-         `);
-     } catch (e) {
-         console.error("Error al crear la función dinámica:", e);
-         logToConsole("Error crítico al inicializar el simulador. Revisa la consola del navegador.", "error");
-         simulateBtn.disabled = true;
-         simulateBtn.textContent = 'Error de Inicialización';
-     }
 
-}); // Fin del DOMContentLoaded
+  function updateResultDiv(text) {
+      resultDiv.textContent = text;
+  }
+
+  function updateStepExplanation(text) {
+      currentStepTextEl.innerHTML = text;
+  }
+
+  // --- Definición de los Pasos de la Simulación ---
+  function defineSimulation(isError) {
+      simulationSteps = [
+          // 0: Estado Inicial
+          {
+              line: -1,
+              action: () => {
+                  updateResultDiv('Esperando acción...');
+                  logToConsoleView("Simulación iniciada/reiniciada. " + (isError ? "Modo ERROR activado." : "Modo ÉXITO activado."), "info");
+              },
+              desc: "<b>Estado Inicial:</b> Todo está listo. El código aún no se ha ejecutado."
+          },
+          // 1: Llamada a obtenerDatos()
+          {
+              line: 33, // obtenerDatos();
+              action: () => {
+                  updateStackView(callStackDiv, 'obtenerDatos()', 'add', 'item');
+                  logToConsoleView("Se llama a obtenerDatos(). La función entra al Call Stack.", "code_execution");
+              },
+              desc: "<b>Paso 1:</b> Se invoca <code>obtenerDatos()</code>. Esta función <code>async</code> se añade a la cima del <b>Call Stack</b>."
+          },
+          // 2: logToConsole('1. Iniciando...')
+          {
+              line: 2,
+              action: () => {
+                  updateStackView(callStackDiv, 'logToConsole()', 'add', 'item');
+                  logToConsoleView("Dentro de obtenerDatos(): Se llama a logToConsole(). Entra al Call Stack.", "code_execution");
+              },
+              desc: "<b>Paso 2:</b> Se ejecuta la primera línea dentro de <code>obtenerDatos()</code>, que es una llamada a <code>logToConsole()</code>. <code>logToConsole()</code> se añade al <b>Call Stack</b>."
+          },
+          {
+              line: 2,
+              action: () => {
+                  logToConsoleView("1. Iniciando solicitud...", "info");
+                  updateStackView(callStackDiv, 'logToConsole()', 'remove', 'item');
+                  logToConsoleView("logToConsole() termina y sale del Call Stack.", "code_execution");
+              },
+              desc: "<b>Paso 3:</b> <code>logToConsole()</code> muestra el mensaje y finaliza. Se quita del <b>Call Stack</b>."
+          },
+          // 3: resultDiv.textContent = ...
+          {
+              line: 3,
+              action: () => {
+                  updateResultDiv('Cargando datos...');
+                  logToConsoleView("Actualizando UI: resultDiv.textContent = 'Cargando datos...'", "code_execution");
+              },
+              desc: "<b>Paso 4:</b> Se actualiza el contenido del <code>resultDiv</code> en la página."
+          },
+          // 4: try { const url = ...
+          {
+              line: 6,
+              action: () => {
+                  logToConsoleView("Entrando al bloque try. Definiendo 'url'.", "code_execution");
+              },
+              desc: "<b>Paso 5:</b> El código entra en el bloque <code>try</code>. Se define la variable <code>url</code>."
+          },
+          // 5: logToConsole(\`2. Intentando fetch...\`)
+          {
+              line: 7,
+              action: () => {
+                  updateStackView(callStackDiv, 'logToConsole()', 'add', 'item');
+                  logToConsoleView("Se llama a logToConsole() de nuevo. Entra al Call Stack.", "code_execution");
+              },
+              desc: "<b>Paso 6:</b> Se llama a <code>logToConsole()</code> para indicar el intento de <code>fetch</code>."
+          },
+          {
+              line: 7,
+              action: () => {
+                  logToConsoleView("2. Intentando fetch de: /api/datos-simulados", "log");
+                  updateStackView(callStackDiv, 'logToConsole()', 'remove', 'item');
+                  logToConsoleView("logToConsole() termina y sale del Call Stack.", "code_execution");
+              },
+              desc: "<b>Paso 7:</b> <code>logToConsole()</code> muestra su mensaje y sale del <b>Call Stack</b>."
+          },
+          // 6: const respuesta = await simulatedFetch(url);
+          {
+              line: 10,
+              action: () => {
+                  updateStackView(callStackDiv, 'simulatedFetch()', 'add', 'item');
+                  logToConsoleView("Llamando a simulatedFetch(). Entra al Call Stack.", "code_execution");
+              },
+              desc: "<b>Paso 8:</b> Se llama a <code>simulatedFetch()</code>. Esta función (simulada) es asíncrona. Entra al <b>Call Stack</b>."
+          },
+          {
+              line: 10,
+              action: () => {
+                  updateStackView(webApisDiv, 'Tarea de Red (simulatedFetch)', 'add', 'item');
+                  logToConsoleView("simulatedFetch() inicia una 'Tarea de Red'. La tarea se pasa a las Web APIs.", "sim_internal");
+                  updateStackView(callStackDiv, 'simulatedFetch()', 'remove', 'item');
+                  updateStackView(callStackDiv, 'obtenerDatos()', 'updatePauseState', 'item', true); // Marcar como pausada
+                  logToConsoleView("simulatedFetch() devuelve Promesa y sale del Stack. `obtenerDatos()` se PAUSA aquí debido al `await`, esperando a `simulatedFetch`.", "sim_internal");
+              },
+              desc: `<b>Paso 9:</b> <code>simulatedFetch()</code> configura una tarea en las <b>Web APIs</b> (usando <code>setTimeout</code> internamente para simular el retraso de red).
+                  <ul>
+                      <li><code>simulatedFetch()</code> devuelve una Promesa y sale del <b>Call Stack</b>.</li>
+                      <li>La función <code>obtenerDatos()</code> llega al <code>await</code>. Ahora se <strong>pausa</strong> esperando que la Promesa de <code>simulatedFetch()</code> se resuelva.</li>
+                      <li><strong>Importante:</strong> Aunque nuestro simulador sigue mostrando <code>obtenerDatos()</code> en el 'Call Stack' (ahora en <i>cursiva/pausado</i> para indicar que está esperando), la función <code>obtenerDatos()</code> es <em>temporalmente eliminada</em> del Call Stack real del motor JavaScript. Esto libera al motor JavaScript.</li>
+                  </ul>`
+          },
+          // 7: Web API procesando...
+          {
+              line: 10,
+              action: () => {
+                  logToConsoleView("Web APIs: 'Tarea de Red (simulatedFetch)' en progreso...", "event_loop");
+              },
+              desc: `<b>Paso 10:</b> La función <code>obtenerDatos()</code> está <b>pausada</b> en la línea del <code>await simulatedFetch(url)</code>.
+                  <ul>
+                      <li>Las <b>Web APIs</b> (el navegador) están manejando la 'Tarea de Red' en segundo plano (el <code>setTimeout</code> de nuestro <code>simulatedFetch</code> está contando).</li>
+                      <li>El motor JavaScript está libre para hacer otras cosas si las hubiera (ejecutar otro código síncrono, manejar clics de usuario, etc.).</li>
+                  </ul>`
+          },
+          // 8: Web API termina, callback a la Queue
+          {
+              line: 10,
+              action: () => {
+                  updateStackView(webApisDiv, 'Tarea de Red (simulatedFetch)', 'remove', 'item');
+                  updateStackView(callbackQueueDiv, 'Callback de simulatedFetch', 'add', 'item');
+                  logToConsoleView("Web APIs: 'Tarea de Red (simulatedFetch)' completada. Su callback se añade a la Callback Queue.", "sim_internal");
+              },
+              desc: "<b>Paso 11:</b> La 'Tarea de Red' (el <code>setTimeout</code> dentro de <code>simulatedFetch</code>) termina. El navegador prepara la función de 'respuesta' (el callback que resuelve/rechaza la Promesa de <code>simulatedFetch</code>) y la pone en la <b>Callback Queue</b>."
+          },
+          // 9: Event Loop mueve callback al Call Stack
+          {
+              line: 10,
+              action: () => {
+                  logToConsoleView("Event Loop: Call Stack (real) está vacío. Verificando Microtask Queue (vacía), luego Callback Queue...", "event_loop");
+                  updateStackView(callbackQueueDiv, 'Callback de simulatedFetch', 'remove', 'item');
+                  updateStackView(callStackDiv, 'Callback de simulatedFetch', 'add', 'item'); // Este callback se ejecuta
+                  logToConsoleView("Event Loop: Moviendo 'Callback de simulatedFetch' de la Queue al Call Stack para ejecución.", "event_loop");
+              },
+              desc: "<b>Paso 12:</b> El <b>Event Loop</b> ve que el Call Stack (real) está vacío y que no hay Microtasks. Encuentra el 'Callback de simulatedFetch' en la <b>Callback Queue</b> y lo mueve al <b>Call Stack</b>. Este callback es el que resolverá (o rechazará) la Promesa que <code>obtenerDatos()</code> está esperando."
+          },
+          // 10: Código después del primer await (log, if !respuesta.ok)
+          ...(isError ? [ // PASOS DE ERROR PARA FETCH
+              {
+                  line: 10, // Aún conceptualmente en la línea del await
+                  action: () => {
+                      updateStackView(callStackDiv, 'Callback de simulatedFetch', 'remove', 'item'); // El callback termina
+                      updateStackView(callStackDiv, 'obtenerDatos()', 'updatePauseState', 'item', false); // Ya no está pausada, pero va al catch
+                      logToConsoleView("SIMULADOR: La Promesa de fetch fue rechazada (error simulado). El 'await' convierte esto en un error lanzado.", "error");
+                      // El error se propaga al catch de obtenerDatos()
+                      // updateStackView(callStackDiv, 'obtenerDatos()', 'remove'); // Se saca para re-añadir como "en catch" pero es más confuso
+                      // updateStackView(callStackDiv, 'obtenerDatos() [bloque catch]', 'add', 'item');
+                      logToConsoleView("Salto al bloque 'catch' de obtenerDatos() debido al error en `await`.", "code_execution");
+                  },
+                  desc: `<b>Paso 13 (Error):</b> El 'Callback de simulatedFetch' se ejecuta y rechaza la Promesa.
+                      <ul>
+                          <li>Debido al <code>await</code>, este rechazo se convierte en un error que se lanza dentro de <code>obtenerDatos()</code>.</li>
+                          <li>La ejecución de <code>obtenerDatos()</code> salta inmediatamente al bloque <code>catch</code>. La función <code>obtenerDatos()</code> sigue en el Call Stack.</li>
+                      </ul>`
+              },
+              {
+                  line: 25, // logToConsole(\`Error atrapado...\`)
+                  action: () => {
+                      updateStackView(callStackDiv, 'logToConsole()', 'add', 'item');
+                  },
+                  desc: "<b>Paso 14 (Error):</b> Dentro del bloque <code>catch</code>, se llama a <code>logToConsole()</code>."
+              },
+              {
+                  line: 25,
+                  action: () => {
+                      logToConsoleView("Error atrapado: Fallo de red simulado", "error");
+                      updateStackView(callStackDiv, 'logToConsole()', 'remove', 'item');
+                  },
+                  desc: "<b>Paso 15 (Error):</b> <code>logToConsole()</code> muestra el mensaje de error y sale del <b>Call Stack</b>."
+              },
+              {
+                  line: 26, // resultDiv.textContent = \`Fallo: \${error.message}\`;
+                  action: () => {
+                      updateResultDiv("Fallo: Fallo de red simulado");
+                  },
+                  desc: "<b>Paso 16 (Error):</b> Se actualiza <code>resultDiv</code> con el mensaje de error."
+              },
+          ] : [ // PASOS DE ÉXITO PARA FETCH
+              {
+                  line: 10, // Aún conceptualmente en la línea del await
+                  action: () => {
+                      updateStackView(callStackDiv, 'Callback de simulatedFetch', 'remove', 'item'); // El callback termina
+                      updateStackView(callStackDiv, 'obtenerDatos()', 'updatePauseState', 'item', false); // Ya no está pausada
+                      logToConsoleView("SIMULADOR: La Promesa de fetch fue resuelta. `obtenerDatos()` se reanuda.", "info");
+                  },
+                  desc: `<b>Paso 13 (Éxito):</b> El 'Callback de simulatedFetch' se ejecuta y resuelve la Promesa con un objeto 'respuesta' simulado.
+                      <ul>
+                          <li>El <code>await</code> recibe este valor, y la ejecución de <code>obtenerDatos()</code> se reanuda desde donde se pausó.</li>
+                          <li><code>obtenerDatos()</code> (que estaba esperando) vuelve a estar activa en el Call Stack.</li>
+                      </ul>`
+              },
+              {
+                  line: 11, // logToConsole('5. Promesa de fetch resuelta...')
+                  action: () => {
+                      updateStackView(callStackDiv, 'logToConsole()', 'add', 'item');
+                  },
+                  desc: "<b>Paso 14 (Éxito):</b> El código de <code>obtenerDatos()</code> continúa. Se llama a <code>logToConsole()</code>."
+              },
+              {
+                  line: 11,
+                  action: () => {
+                      logToConsoleView("5. Promesa de fetch resuelta. Respuesta recibida.", "log");
+                      updateStackView(callStackDiv, 'logToConsole()', 'remove', 'item');
+                  },
+                  desc: "<b>Paso 15 (Éxito):</b> <code>logToConsole()</code> termina y sale del <b>Call Stack</b>."
+              },
+              {
+                  line: 13, // if (!respuesta.ok)
+                  action: () => {
+                      logToConsoleView("Verificando 'respuesta.ok'. Es 'true' (simulado).", "code_execution");
+                  },
+                  desc: "<b>Paso 16 (Éxito):</b> Se comprueba si la respuesta fue exitosa. En este caso, simulamos que <code>respuesta.ok</code> es <code>true</code>."
+              },
+              // 11: const datos = await respuesta.json();
+              {
+                  line: 18,
+                  action: () => {
+                      updateStackView(callStackDiv, 'respuesta.json()', 'add', 'item'); // Este es el método simulado .json()
+                      logToConsoleView("Llamando a respuesta.json(). Entra al Call Stack.", "code_execution");
+                  },
+                  desc: "<b>Paso 17 (Éxito):</b> Se llama a <code>respuesta.json()</code> (nuestra versión simulada). Esta es otra operación asíncrona. Entra al <b>Call Stack</b>."
+              },
+              {
+                  line: 18, // Aún en la línea del await
+                  action: () => {
+                      updateStackView(webApisDiv, 'Tarea de Parseo JSON', 'add', 'item');
+                      logToConsoleView("respuesta.json() inicia 'Tarea de Parseo JSON'. Se pasa a Web APIs.", "sim_internal");
+                      updateStackView(callStackDiv, 'respuesta.json()', 'remove', 'item');
+                      updateStackView(callStackDiv, 'obtenerDatos()', 'updatePauseState', 'item', true); // Marcar como pausada de nuevo
+                      logToConsoleView("respuesta.json() devuelve Promesa y sale del Stack. `obtenerDatos()` se PAUSA de nuevo.", "sim_internal");
+                  },
+                  desc: `<b>Paso 18 (Éxito):</b> <code>respuesta.json()</code> (simulado) configura otra tarea en las <b>Web APIs</b> (otro <code>setTimeout</code>).
+                      <ul>
+                          <li>Devuelve una Promesa y sale del <b>Call Stack</b>.</li>
+                          <li><code>obtenerDatos()</code> se pausa otra vez esperando la Promesa de <code>.json()</code>. Vuelve a estar <i>cursiva/pausada</i> en el Call Stack visual.</li>
+                      </ul>`
+              },
+              {
+                  line: 18,
+                  action: () => { logToConsoleView("Web APIs: 'Tarea de Parseo JSON' en progreso...", "event_loop"); },
+                  desc: "<b>Paso 19 (Éxito):</b> Las <b>Web APIs</b> están 'parseando el JSON' (nuestro <code>setTimeout</code> está contando)."
+              },
+              {
+                  line: 18,
+                  action: () => {
+                      updateStackView(webApisDiv, 'Tarea de Parseo JSON', 'remove', 'item');
+                      updateStackView(callbackQueueDiv, 'Callback de .json()', 'add', 'item');
+                      logToConsoleView("Web APIs: 'Tarea de Parseo JSON' completada. Su callback a la Callback Queue.", "sim_internal");
+                  },
+                  desc: "<b>Paso 20 (Éxito):</b> La 'Tarea de Parseo JSON' termina. Su callback se añade a la <b>Callback Queue</b>."
+              },
+              {
+                  line: 18,
+                  action: () => {
+                      logToConsoleView("Event Loop: Call Stack (real) vacío. Verificando Queues...", "event_loop");
+                      updateStackView(callbackQueueDiv, 'Callback de .json()', 'remove', 'item');
+                      updateStackView(callStackDiv, 'Callback de .json()', 'add', 'item');
+                      logToConsoleView("Event Loop: Moviendo 'Callback de .json()' de la Queue al Call Stack.", "event_loop");
+                  },
+                  desc: "<b>Paso 21 (Éxito):</b> El <b>Event Loop</b> mueve el 'Callback de .json()' al <b>Call Stack</b>."
+              },
+              {
+                  line: 18, // Aún conceptualmente en la línea del await
+                  action: () => {
+                      updateStackView(callStackDiv, 'Callback de .json()', 'remove', 'item');
+                      updateStackView(callStackDiv, 'obtenerDatos()', 'updatePauseState', 'item', false); // Ya no está pausada
+                      logToConsoleView("SIMULADOR: La Promesa de .json() fue resuelta. `obtenerDatos()` se reanuda.", "info");
+                  },
+                  desc: `<b>Paso 22 (Éxito):</b> El 'Callback de .json()' resuelve la Promesa con los datos parseados.
+                      <ul>
+                          <li>El <code>await</code> recibe estos datos.</li>
+                          <li><code>obtenerDatos()</code> se reanuda y vuelve a estar activa en el Call Stack.</li>
+                      </ul>`
+              },
+              {
+                  line: 19, // logToConsole('8. Promesa de .json() resuelta...')
+                  action: () => { updateStackView(callStackDiv, 'logToConsole()', 'add', 'item'); },
+                  desc: "<b>Paso 23 (Éxito):</b> <code>obtenerDatos()</code> continúa. Se llama a <code>logToConsole()</code>."
+              },
+              {
+                  line: 19,
+                  action: () => {
+                      logToConsoleView("8. Promesa de .json() resuelta. Datos parseados.", "log");
+                      updateStackView(callStackDiv, 'logToConsole()', 'remove', 'item');
+                  },
+                  desc: "<b>Paso 24 (Éxito):</b> <code>logToConsole()</code> termina y sale del <b>Call Stack</b>."
+              },
+              {
+                  line: 21, // logToConsole('9. ¡Datos obtenidos con éxito!')
+                  action: () => { updateStackView(callStackDiv, 'logToConsole()', 'add', 'item'); },
+                  desc: "<b>Paso 25 (Éxito):</b> Se llama a <code>logToConsole()</code> para el mensaje de éxito."
+              },
+              {
+                  line: 21,
+                  action: () => {
+                      logToConsoleView("9. ¡Datos obtenidos con éxito!", "success");
+                      updateStackView(callStackDiv, 'logToConsole()', 'remove', 'item');
+                  },
+                  desc: "<b>Paso 26 (Éxito):</b> <code>logToConsole()</code> termina y sale del <b>Call Stack</b>."
+              },
+              {
+                  line: 22, // resultDiv.textContent = \`Éxito: ...\`;
+                  action: () => {
+                      updateResultDiv("Éxito: {\"message\":\"Datos simulados procesados\",\"timestamp\":\"ahora\"}");
+                  },
+                  desc: "<b>Paso 27 (Éxito):</b> Se actualiza <code>resultDiv</code> con los datos exitosos."
+              }
+          ]),
+
+          // 16: Fin del try/catch, logToConsole('10. Fin de obtenerDatos().')
+          {
+              line: 29,
+              action: () => {
+                  updateStackView(callStackDiv, 'logToConsole()', 'add', 'item');
+              },
+              desc: "<b>Paso final dentro de <code>obtenerDatos()</code>:</b> (Después del <code>try...catch</code>) Se llama a <code>logToConsole()</code> para el mensaje de finalización de la función."
+          },
+          {
+              line: 29,
+              action: () => {
+                  logToConsoleView("10. Fin de obtenerDatos().", "info");
+                  updateStackView(callStackDiv, 'logToConsole()', 'remove', 'item');
+              },
+              desc: "<b>Paso siguiente:</b> <code>logToConsole()</code> termina. El <b>Call Stack</b> se vacía de esta llamada."
+          },
+          // 17: obtenerDatos() termina
+          {
+              line: 30, // Fin de la función }
+              action: () => {
+                  updateStackView(callStackDiv, 'obtenerDatos()', 'remove', 'item');
+                  logToConsoleView("obtenerDatos() ha terminado completamente y sale del Call Stack.", "code_execution");
+              },
+              desc: "<b>Simulación Completa:</b> La función <code>obtenerDatos()</code> ha terminado su ejecución y se quita del <b>Call Stack</b>. El Call Stack ahora está vacío. La simulación ha finalizado."
+          },
+          {
+              line: -1,
+              action: () => {
+                  logToConsoleView("--- Simulación Finalizada ---", "info");
+              },
+              desc: "<b>Fin de la Simulación.</b> Puedes reiniciarla o explorar las explicaciones."
+          }
+      ];
+  }
+
+  // --- Lógica de Control de Pasos ---
+  function executeStep(index) {
+      if (index < 0 || index >= simulationSteps.length) return;
+
+      const step = simulationSteps[index];
+      highlightCodeLine(step.line);
+      if (step.action) step.action();
+      updateStepExplanation(step.desc || "Descripción no disponible.");
+
+      prevStepBtn.disabled = index === 0;
+      nextStepBtn.disabled = index === simulationSteps.length - 1;
+      currentStepIndex = index;
+  }
+
+  function resetSimulation() {
+      currentStepIndex = -1;
+      isErrorSimulation = simulateErrorCheckbox.checked;
+      defineSimulation(isErrorSimulation);
+
+      consoleLogDiv.innerHTML = '';
+      updateStackView(callStackDiv, null, 'clear');
+      updateStackView(webApisDiv, null, 'clear');
+      updateStackView(callbackQueueDiv, null, 'clear');
+      highlightCodeLine(-1);
+
+      executeStep(0);
+      nextStepBtn.disabled = false;
+      prevStepBtn.disabled = true;
+  }
+
+  function nextStep() {
+      if (currentStepIndex < simulationSteps.length - 1) {
+          executeStep(currentStepIndex + 1);
+      }
+  }
+
+  function prevStep() {
+      if (currentStepIndex > 0) {
+          const targetStep = currentStepIndex - 1;
+          const currentErrorState = isErrorSimulation;
+
+          consoleLogDiv.innerHTML = '';
+          updateStackView(callStackDiv, null, 'clear');
+          updateStackView(webApisDiv, null, 'clear');
+          updateStackView(callbackQueueDiv, null, 'clear');
+          highlightCodeLine(-1);
+          updateResultDiv('Esperando acción...');
+
+          isErrorSimulation = currentErrorState;
+          defineSimulation(isErrorSimulation);
+
+          for (let i = 0; i <= targetStep; i++) {
+              executeStep(i);
+          }
+      }
+  }
+
+  // --- Inicialización ---
+  formatCodeSnippet();
+  resetBtn.addEventListener('click', resetSimulation);
+  nextStepBtn.addEventListener('click', nextStep);
+  prevStepBtn.addEventListener('click', prevStep);
+  simulateErrorCheckbox.addEventListener('change', () => {
+      logToConsoleView("Modo de simulación de error cambiado. Se aplicará en el próximo 'Iniciar/Reiniciar'.", "info");
+  });
+
+  resetSimulation();
+});

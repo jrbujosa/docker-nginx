@@ -1,22 +1,35 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
+    <meta charset="UTF-8"> <!-- Corregido de UTF-P a UTF-8 -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Simulador Asincronía JavaScript</title>
+    <title>Simulador Asincronía JavaScript (Paso a Paso)</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <h1>Simulador Interactivo: Comprendiendo la Asincronía (fetch y Event Loop)</h1>
 
+    <div id="controls">
+        <button id="reset-btn">Iniciar / Reiniciar Simulación</button>
+        <button id="prev-step-btn" disabled>Paso Anterior</button>
+        <button id="next-step-btn" disabled>Siguiente Paso</button>
+        <label style="margin-left: 20px;">
+            <input type="checkbox" id="simulate-error-checkbox"> Simular Error en la Red
+        </label>
+    </div>
+
+    <div id="current-step-explanation-container" class="panel">
+        <h2>Explicación del Paso Actual:</h2>
+        <p id="current-step-text">Presiona "Iniciar / Reiniciar Simulación" y luego "Siguiente Paso" para comenzar.</p>
+    </div>
+
     <div id="simulator-container">
         <!-- Panel Izquierdo: Control y Código -->
         <div id="panel-control" class="panel">
-            <h2>Panel de Control y Código</h2>
-            <button id="simulate-btn">Iniciar Simulación GET (Async/Await)</button>
-            <p><strong>Código que se ejecutará:</strong></p>
+            <h2>Panel de Código</h2>
+            <p><strong>Código que se está "ejecutando":</strong></p>
             <pre><code id="code-snippet">
-// (El código se cargará aquí con JavaScript)
+    // (El código se cargará aquí con JavaScript)
             </code></pre>
             <p><strong>Resultado de la Operación:</strong></p>
             <div id="result-div" class="output-box">Esperando acción...</div>
@@ -27,7 +40,7 @@
             <h2>Modelo de Concurrencia y Event Loop</h2>
             <div class="event-loop-diagram">
                 <div class="diagram-box" id="call-stack">
-                    <strong>Call Stack (Pila)</strong>
+                    <strong>Call Stack (Pila de Llamadas)</strong>
                     <div id="call-stack-content" class="diagram-content">(Vacío)</div>
                 </div>
                 <div class="diagram-box" id="web-apis">
@@ -35,7 +48,7 @@
                     <div id="web-apis-content" class="diagram-content">(Inactivo)</div>
                 </div>
                 <div class="diagram-box" id="callback-queue">
-                    <strong>Callback Queue (Cola)</strong>
+                    <strong>Callback Queue (Cola de Tareas)</strong>
                     <div id="callback-queue-content" class="diagram-content">(Vacía)</div>
                 </div>
                  <div id="event-loop-icon">🔄<br>Event Loop</div>
@@ -54,216 +67,337 @@
 
     <div id="explanations">
         <h2>Ejemplo Async/Wait</h2>
-
         <div class="explanation-block">
-
-<p> <a href="/examples/js/api-js/bd.html"> Acceso a una API REST que devuelve información de usuarios, clientes y productos</a> </p>
-
-<p> <a href="/examples/js/github/index.html"> Explorador de Repositorios de GitHub.</a> </p>
-
-<p> <a href="/examples/js/api-ia/index.html"> Interacción con la API de Gemini a través de un backend intermedio implementado en PHP.</a> </p>
-
-<p> <a href="/examples/node/index.html"> Lista de Tareas Simple (API REST) con Node.js</a> </p>
-
-<p> <a href="/examples/js/api-js/lista-usuarios.html"> Lista de Usuarios (API REST) con Node.js </a> </p>
-
+            <p> <a href="/examples/js/api-js/bd.html"> Acceso a una API REST que devuelve información de usuarios, clientes y productos</a> </p>
+            <p> <a href="/examples/js/github/index.html"> Explorador de Repositorios de GitHub.</a> </p>
+            <p> <a href="/examples/js/api-ia/index.html"> Interacción con la API de Gemini a través de un backend intermedio implementado en PHP.</a> </p>
+            <p> <a href="/examples/node/index.html"> Lista de Tareas Simple (API REST) con Node.js</a> </p>
+            <p> <a href="/examples/js/api-js/lista-usuarios.html"> Lista de Usuarios (API REST) con Node.js </a> </p>
         </div>
 
         <h2>Explicaciones Detalladas</h2>
-        <details>
-            <summary>Comunicación sincróna y asíncrona con HTTP</summary>
-<h2>Tipos de Comunicación HTTP</h2>
 
-<p>La siguiente tabla ilustra las diferentes formas en que un cliente (como un navegador web) puede comunicarse con un servidor web utilizando el protocolo HTTP, específicamente los métodos GET y POST. Se distinguen dos tipos de comunicación: sincrónica, donde el cliente espera una respuesta completa antes de continuar, y asincrónica, que permite al cliente continuar procesando mientras espera la respuesta del servidor (generalmente utilizando técnicas como async/await o promesas). La tabla proporciona ejemplos comunes de cómo se implementa cada tipo de comunicación en el desarrollo web.</p>
+        <details open> <!-- Abierto por defecto para que sea lo primero que vean -->
+            <summary><strong>Fundamentos: ¿Cómo funciona la Asincronía en JavaScript?</strong></summary>
+            <p>JavaScript, por sí mismo, solo puede hacer una cosa a la vez (es "de un solo hilo"). Entonces, ¿cómo es que puede manejar tareas largas sin que toda la página se congele? Aquí está el secreto:</p>
 
-<table>
-  <thead>
-    <tr>
-      <th>Tipo de Comunicación</th>
-      <th>Sincrónico</th>
-      <th>Asincrónico (con <code>async/await</code> o promesas)</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td><strong>GET</strong></td>
-      <td>
-        &lt;a&gt; (enlaces a otras páginas)<br>
-        &lt;form method="GET"&gt; (envío tradicional de formularios que recargan la página)
-      </td>
-      <td>
-        <code>fetch</code> API con <code>async/await</code> o promesas (ej: <code>async function getData() { const response = await fetch('/api/data'); const data = await response.json(); return data; }</code>)<br>
-        
-      </td>
-    </tr>
-    <tr>
-      <td><strong>POST</strong></td>
-      <td>
-        &lt;form method="POST"&gt; (envío tradicional de formularios que recargan la página)
-      </td>
-      <td>
-        <code>fetch</code> API con <code>async/await</code> o promesas (ej: <code>async function postData(data) { const response = await fetch('/api/submit', { method: 'POST', body: JSON.stringify(data) }); const result = await response.json(); return result; }</code>)<br>
-       </td>
-    </tr>
-  </tbody>
-</table>
+            <h4>1. La "Magia" de la Asincronía: Delegación Inteligente</h4>
+            <p>La clave no es que JavaScript haga múltiples cosas al mismo tiempo, sino que <strong>delega</strong> las tareas largas (como pedir datos a un servidor con <code>fetch</code>, o esperar con <code>setTimeout</code>) a otras partes del entorno donde se ejecuta (generalmente el navegador web o Node.js).</p>
+            <ul>
+                <li><strong>JavaScript dice:</strong> "Navegador, por favor, haz esta petición de red (<code>fetch</code>) y avísame cuando termines."</li>
+                <li><strong>El Navegador (sus Web APIs):</strong> Se encarga de la tarea en segundo plano.</li>
+                <li><strong>JavaScript (mientras tanto):</strong> ¡Queda libre para hacer otras cosas! No se queda esperando.</li>
+                <li><strong>Cuando la tarea termina:</strong> El navegador prepara una función de "respuesta" (llamada <em>callback</em>) y la pone en una lista de espera (la Callback Queue).</li>
+                <li><strong>El Event Loop:</strong> Es un vigilante constante. Cuando ve que JavaScript no está ocupado (el Call Stack está vacío) y hay algo en la lista de espera, toma esa función de respuesta y se la da a JavaScript para que la ejecute.</li>
+            </ul>
+            <p>Así, JavaScript puede iniciar muchas tareas "largas" y seguir respondiendo a interacciones del usuario, manteniendo la página fluida.</p>
+
+            <h4>2. ¿Qué puede estar haciendo JavaScript mientras "espera" una tarea asíncrona?</h4>
+            <p>Cuando una función <code>async</code> está "pausada" en un <code>await</code> (esperando que una Promesa se resuelva), el motor de JavaScript <em>realmente</em> está libre. Podría estar haciendo:</p>
+            <ul>
+                <li><strong>Ejecutando otro código síncrono:</strong> Si en tu script principal, después de llamar a tu función <code>async</code>, tienes más código como <code>console.log("El script principal continúa...");</code>, ese código se ejecutaría.</li>
+                <li><strong>Respondiendo a interacciones del usuario:</strong> Si el usuario hace clic en un botón, mueve el ratón, o escribe, y tienes funciones (<em>event listeners</em>) para manejar esas acciones, esas funciones podrían ejecutarse. El navegador pone el <em>callback</em> del evento en la "Callback Queue", y el Event Loop lo pasará al Call Stack cuando esté libre.</li>
+                <li><strong>Ejecutando callbacks de temporizadores:</strong> Si tienes temporizadores (<code>setTimeout</code> o <code>setInterval</code>) que se cumplen, sus funciones <em>callback</em> se añaden a la "Callback Queue" y pueden ser ejecutadas.</li>
+                <li><strong>Procesando otras Promesas (tareas de alta prioridad):</strong> Si otras Promesas se resuelven, sus funciones <em>callback</em> (las que pones en <code>.then()</code> o las continuaciones de otros <code>await</code>) se ponen en una cola especial de "alta prioridad" (Microtask Queue) y se ejecutan tan pronto como el Call Stack esté libre, incluso antes que las tareas de la "Callback Queue" normal.</li>
+            </ul>
+
+            <h4>3. ¿Dónde se especifican estas "otras cosas" y en qué orden se hacen?</h4>
+            <ul>
+                <li><strong>Especificadas en tu código:</strong>
+                    <ul>
+                        <li>El "otro código síncrono" son simplemente las líneas siguientes en tu archivo <code>.js</code>.</li>
+                        <li>Los manejadores de eventos se definen con <code>elemento.addEventListener('click', function() { /* código aquí */ });</code>.</li>
+                        <li>Los temporizadores con <code>setTimeout(function() { /* código aquí */ }, tiempoDeEspera);</code>.</li>
+                        <li>Otras Promesas y sus manejadores <code>.then()</code> o <code>await</code> estarán en otras partes de tu código.</li>
+                    </ul>
+                </li>
+                <li><strong>Orden de ejecución (controlado por el Event Loop):</strong>
+                    <ol>
+                        <li><strong>Código Síncrono Inicial:</strong> Se ejecuta de arriba abajo.</li>
+                        <li><strong>Microtask Queue (Promesas, alta prioridad):</strong> Cuando el Call Stack se vacía, el Event Loop revisa esta cola. Si hay tareas, las ejecuta TODAS hasta que la cola esté vacía.</li>
+                        <li><strong>Actualización de Pantalla (Render):</strong> El navegador puede aprovechar para redibujar la página si es necesario.</li>
+                        <li><strong>Macrotask Queue (Callback Queue en el simulador - eventos, temporizadores):</strong> Si la Microtask Queue está vacía, el Event Loop toma UNA tarea de esta cola y la pasa al Call Stack para ejecutarla.</li>
+                        <li><strong>Repetir:</strong> El ciclo (Microtasks -> Render -> Un Macrotask) continúa.</li>
+                    </ol>
+                </li>
+            </ul>
+            <p><em>Nota: En nuestro simulador, para simplificar, la "Callback Queue" representa principalmente la Macrotask Queue.</em></p>
         </details>
 
+        <details>
+            <summary><strong>¿Qué son `async` y `await`? (Y la función `simulatedFetch`)</strong></summary>
+            <p><code>async</code> y <code>await</code> son palabras clave especiales en JavaScript que nos ayudan a trabajar con operaciones asíncronas (como pedir datos a un servidor) de una manera más limpia y fácil de leer. ¡Hacen que el código asíncrono parezca casi síncrono!</p>
+            <h4><code>async function</code></h4>
+            <ul>
+                <li>Al poner <code>async</code> antes de <code>function</code>, le dices a JavaScript dos cosas:
+                    <ol>
+                        <li>Esta función va a trabajar con operaciones asíncronas de una manera especial.</li>
+                        <li>Esta función <strong>siempre devolverá una Promesa</strong>. Si la función devuelve un valor normal (ej: <code>return 10;</code>), JavaScript automáticamente envolverá ese valor en una Promesa que se resuelve con <code>10</code>. Si la función lanza un error, la Promesa devuelta será rechazada con ese error.</li>
+                    </ol>
+                </li>
+            </ul>
+            <h4><code>await</code></h4>
+            <ul>
+                <li>La palabra clave <code>await</code> <strong>solo se puede usar DENTRO de una función <code>async</code></strong>.</li>
+                <li>Cuando pones <code>await</code> delante de una expresión que devuelve una Promesa (como <code>await fetch(url)</code>):
+                    <ol>
+                        <li>La ejecución de la función <code>async</code> se <strong>pausa</strong> en ese punto.</li>
+                        <li>JavaScript espera a que la Promesa se resuelva (se complete con éxito) o se rechace (falle).</li>
+                        <li><strong>Importante:</strong> Mientras está pausada, la función <code>async</code> es temporalmente retirada del Call Stack, permitiendo que el motor JavaScript ejecute otro código (ver la explicación "Fundamentos" de arriba).</li>
+                        <li>Si la Promesa se resuelve, <code>await</code> devuelve el valor con el que se resolvió (ej: el objeto `Response` de `fetch`).</li>
+                        <li>Si la Promesa se rechaza, <code>await</code> lanza un error, que puedes atrapar con un bloque <code>try...catch</code>.</li>
+                    </ol>
+                </li>
+            </ul>
+
+            <h4>Tabla de Usos Comunes de `await`</h4>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Operación Asíncrona</th>
+                        <th>Ejemplo con `await`</th>
+                        <th>Qué hace `await`</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Pedir datos con `fetch` (del navegador)</td>
+                        <td><code>const respuesta = await fetch(url);</code></td>
+                        <td>Pausa la función <code>async</code> hasta que el servidor responde y la Promesa de `fetch` se resuelve con un objeto `Response`.</td>
+                    </tr>
+                    <tr>
+                        <td>Leer el cuerpo de la respuesta como JSON</td>
+                        <td><code>const datos = await respuesta.json();</code></td>
+                        <td>Pausa hasta que el cuerpo de la respuesta se lee y se convierte a un objeto JavaScript. La Promesa de `.json()` se resuelve con esos datos.</td>
+                    </tr>
+                    <tr>
+                        <td>Leer el cuerpo de la respuesta como Texto</td>
+                        <td><code>const texto = await respuesta.text();</code></td>
+                        <td>Pausa hasta que el cuerpo de la respuesta se lee como una cadena de texto.</td>
+                    </tr>
+                    <tr>
+                        <td>Esperar un tiempo (con una Promesa personalizada)</td>
+                        <td><code>await new Promise(resolve => setTimeout(resolve, 1000));</code></td>
+                        <td>Pausa la función <code>async</code> durante 1 segundo (1000 milisegundos).</td>
+                    </tr>
+                    <tr>
+                        <td>Llamar a otra función `async`</td>
+                        <td><code>const resultado = await otraFuncionAsync();</code></td>
+                        <td>Pausa hasta que `otraFuncionAsync` (que también devuelve una Promesa) se complete y devuelva su resultado.</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h4>La Función `simulatedFetch` en Este Simulador</h4>
+            <p>En el código de este simulador (archivo <code>script.js</code>), verás una función llamada <code>simulatedFetch</code>. Esta función <strong>NO es la función <code>fetch</code> real del navegador</strong>. Es una función que hemos creado nosotros para <em>imitar</em> o <em>simular</em> cómo se comporta <code>fetch</code>:</p>
+            <ul>
+                <li>Devuelve una Promesa.</li>
+                <li>Simula un retraso de red usando <code>setTimeout</code> (una Web API real).</li>
+                <li>Puede simular aleatoriamente un éxito o un error.</li>
+                <li>Si tiene éxito, resuelve su Promesa con un objeto que se parece al objeto <code>Response</code> real (tiene una propiedad <code>ok</code> y un método <code>.json()</code>, que también es simulado y devuelve otra Promesa).</li>
+            </ul>
+            <p>Usamos <code>simulatedFetch</code> para poder controlar y visualizar el flujo asíncrono paso a paso dentro del simulador, sin hacer peticiones de red reales que podrían variar en tiempo o fallar inesperadamente.</p>
+        </details>
+
+
+        <details>
+            <summary>Comunicación Síncrona vs. Asíncrona (HTTP)</summary>
+            <p>Cuando tu navegador pide información a un servidor (como cuando visitas una página web o una app carga datos), usa un protocolo llamado HTTP.</p>
+            <ul>
+                <li><strong>Síncrono (como esperar en una fila):</strong> El navegador envía una petición y se queda ESPERANDO hasta que el servidor responda. Mientras espera, no puede hacer mucho más. Si tarda mucho, la página se siente "congelada".
+                    <ul>
+                        <li>Ejemplo: Hacer clic en un enlace normal <code><a href="..."></code> te lleva a otra página y tienes que esperar a que cargue por completo.</li>
+                    </ul>
+                </li>
+                <li><strong>Asíncrono (como pedir comida para llevar y seguir haciendo cosas):</strong> El navegador envía una petición, pero NO se queda esperando congelado. Sigue funcionando y haciendo otras cosas. Cuando el servidor responde, el navegador procesa esa respuesta. Esto hace que las páginas sean más fluidas.
+                    <ul>
+                        <li>Ejemplo: Usar <code>fetch</code> en JavaScript. Pides datos, la página sigue funcionando, y cuando los datos llegan, se muestran sin recargar todo.</li>
+                    </ul>
+                </li>
+            </ul>
+            <p>La tabla siguiente muestra ejemplos comunes:</p>
+            <table>
+              <thead>
+                <tr>
+                  <th>Tipo de Comunicación</th>
+                  <th>Síncrono</th>
+                  <th>Asincrónico (con <code>async/await</code> o promesas)</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>GET (Pedir datos)</strong></td>
+                  <td>
+                    <code><a></code> (enlaces que recargan la página)<br>
+                    <code><form method="GET"></code> (formularios que recargan)
+                  </td>
+                  <td>
+                    <code>fetch('/api/datos')</code> con <code>async/await</code>.<br>
+                    <em>(El navegador pide datos en segundo plano)</em>
+                  </td>
+                </tr>
+                <tr>
+                  <td><strong>POST (Enviar datos)</strong></td>
+                  <td>
+                    <code><form method="POST"></code> (formularios que recargan)
+                  </td>
+                  <td>
+                    <code>fetch('/api/enviar', { method: 'POST', ... })</code> con <code>async/await</code>.<br>
+                    <em>(El navegador envía datos en segundo plano)</em>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+        </details>
 
         <details>
             <summary>¿Por Qué Asincronía? El Problema del Bloqueo</summary>
-            <p>JavaScript, en su núcleo, es un lenguaje de un solo hilo (single-threaded). Esto significa que solo puede hacer una cosa a la vez. Si inicias una tarea que toma mucho tiempo (como descargar un archivo grande de un servidor) de forma síncrona, todo el navegador se congelaría. El usuario no podría hacer clic en botones, escribir o interactuar con la página hasta que esa tarea termine. ¡Sería una experiencia terrible!</p>
-            <p>La <strong>asincronía</strong> resuelve esto. Permite iniciar tareas largas (como llamadas de red con `fetch` o temporizadores con `setTimeout`) y dejar que se ejecuten en segundo plano (manejadas por el navegador a través de las Web APIs). Mientras tanto, JavaScript puede continuar ejecutando otro código, manteniendo la interfaz de usuario responsiva.</p>
-            <p>Cuando la tarea en segundo plano termina, su función de "respuesta" (callback) se pone en una cola. El Event Loop se encarga de mover esa función a la pila de llamadas (Call Stack) para que se ejecute, pero solo cuando la pila esté vacía.</p>
-            <p><code>fetch</code> es la API moderna estándar en JavaScript para realizar solicitudes de red (HTTP) de forma asíncrona.</p>
+            <p>Imagina que JavaScript es como un cocinero que solo puede hacer una cosa a la vez (es "single-threaded" o de un solo hilo).</p>
+            <p>Si le pides que haga una tarea muy larga de forma <strong>síncrona</strong> (como hornear un pastel que tarda una hora), el cocinero se queda esperando frente al horno sin hacer nada más. ¡Toda la cocina (tu página web) se paraliza! No podrías pedirle ni un vaso de agua (hacer clic en botones, escribir, etc.) hasta que el pastel esté listo.</p>
+            <p>La <strong>asincronía</strong> es como si el cocinero pudiera poner el pastel en el horno (una tarea larga que delega al horno, una Web API) y, mientras se hornea, dedicarse a otras cosas (atender otros pedidos, limpiar - es decir, ejecutar otro código JavaScript). Cuando el horno suena (la tarea termina y su callback llega a la Callback Queue), el cocinero (el Event Loop lo trae al Call Stack) va y saca el pastel.</p>
+            <p>En JavaScript, tareas como pedir datos a un servidor (<code>fetch</code>) o esperar un tiempo (<code>setTimeout</code>) pueden ser asíncronas. JavaScript las "delega" al navegador (a las Web APIs). Mientras el navegador se encarga de eso en segundo plano, JavaScript sigue ejecutando otro código, manteniendo tu página web funcional y sin congelarse.</p>
+            <p>Cuando la tarea en segundo plano termina, su "respuesta" (una función llamada callback) se pone en una "sala de espera" (la Callback Queue). El "portero" (Event Loop) la lleva a ejecutarse solo cuando el cocinero (Call Stack) esté libre.</p>
         </details>
 
-
         <details>
-            <summary>El Modelo de Concurrencia: Desglose del Diagrama</summary>
-            <p>El diagrama simplificado muestra los componentes clave que permiten a JavaScript manejar la asincronía en el entorno del navegador:</p>
+            <summary>El Modelo de Concurrencia: ¿Qué hace cada parte del diagrama?</summary>
+            <p>El diagrama te muestra cómo JavaScript maneja varias cosas "a la vez" (en realidad, gestionando tareas muy bien) sin bloquearse, usando estas partes:</p>
             <ul>
-                <li><strong>Call Stack (Pila de Llamadas):</strong>
+                <li><strong>Call Stack (Pila de Llamadas - "El Cocinero Haciendo Algo"):</strong>
                     <ul>
-                        <li>Es donde se ejecuta el código JavaScript síncrono.</li>
-                        <li>Cuando se llama a una función, se añade ("push") a la cima de la pila.</li>
-                        <li>Cuando una función termina (`return` o fin), se quita ("pop") de la pila.</li>
-                        <li>Funciona bajo el principio LIFO (Last-In, First-Out): la última función en entrar es la primera en salir.</li>
-                        <li>Si la pila se llena demasiado (ej: recursión infinita), ocurre un "Stack Overflow".</li>
+                        <li>Aquí es donde se ejecuta tu código JavaScript, una instrucción tras otra.</li>
+                        <li>Cuando llamas a una función, se pone encima de la pila (como apilar platos).</li>
+                        <li>Cuando una función termina, se quita de la pila.</li>
+                        <li>Solo se hace una cosa a la vez en la cima de la pila.</li>
+                        <li>Si una función <code>async</code> usa <code>await</code>, se pausa y es *temporalmente retirada* del Call Stack mientras espera. Visualmente en este simulador, la mantenemos para indicar que está "en espera".</li>
                     </ul>
                 </li>
-                 <li><strong>Web APIs (APIs del Navegador):</strong>
+                 <li><strong>Web APIs (Ayudantes del Navegador - "El Horno, el Temporizador"):</strong>
                     <ul>
-                        <li>No son parte del motor JavaScript en sí, sino funcionalidades proporcionadas por el navegador.</li>
-                        <li>Incluyen: `fetch`, `setTimeout`, `setInterval`, manipulación del DOM, eventos (clics, etc.).</li>
-                        <li>Cuando llamas a una de estas APIs (ej: `fetch(url)`), el navegador toma el control de esa tarea y la ejecuta en segundo plano.</li>
-                        <li>Una vez que la tarea de la Web API termina (ej: se recibe la respuesta de red, o el temporizador expira), prepara una función (callback) para ser ejecutada.</li>
+                        <li>Son herramientas que el navegador ofrece, pero no son parte de JavaScript directamente (ej: <code>fetch</code> para pedir datos, <code>setTimeout</code> para esperar).</li>
+                        <li>Cuando JavaScript usa una Web API (ej: <code>fetch('url')</code>), le dice al navegador: "Oye, encárgate de esto".</li>
+                        <li>El navegador hace esa tarea en segundo plano (hornear el pastel, esperar). JavaScript no se queda esperando ahí.</li>
+                        <li>Cuando la Web API termina su trabajo (datos recibidos, tiempo cumplido), avisa preparando una función (callback).</li>
                     </ul>
                 </li>
-                 <li><strong>Callback Queue (Cola de Tareas / Task Queue):</strong>
+                 <li><strong>Callback Queue (Cola de Tareas / Task Queue - "La Fila de Espera"):</strong>
                     <ul>
-                        <li>Es una lista de espera para las funciones (callbacks) que están listas para ejecutarse después de que su tarea en la Web API haya terminado.</li>
-                        <li>Funciona bajo el principio FIFO (First-In, First-Out): la primera función en llegar a la cola es la primera en ser considerada para ejecución.</li>
-                        <li>Las funciones en esta cola esperan a que el Call Stack esté completamente vacío.</li>
-                        <li><em>(Nota avanzada: Existe también una Microtask Queue, prioritaria, para callbacks de Promesas como `.then()` y `await`, pero para simplificar, aquí las agrupamos conceptualmente).</em></li>
+                        <li>Es una lista de espera para las funciones (callbacks) que están listas para ejecutarse.</li>
+                        <li>Estas funciones vienen de las Web APIs que ya terminaron su trabajo (ej: el callback de un <code>setTimeout</code>, un manejador de evento de clic).</li>
+                        <li>Las funciones esperan aquí en orden (la primera que llega es la primera en ser considerada).</li>
+                        <li>Esperan a que el Call Stack (el cocinero) esté completamente vacío y que la cola de Microtasks (Promesas) también esté vacía.</li>
+                        <li><em>(Nota avanzada: Existe también una Microtask Queue, prioritaria, para callbacks de Promesas como `.then()` y `await`, pero para simplificar, aquí las agrupamos conceptualmente o nos referimos a la Callback Queue para tareas de Web APIs como `setTimeout` o eventos).</em></li>
                     </ul>
                 </li>
-                <li><strong>Event Loop (Bucle de Eventos):</strong>
+                <li><strong>Event Loop (Bucle de Eventos - "El Portero Inteligente"):</strong>
                     <ul>
-                        <li>Es el corazón del modelo de concurrencia. Es un proceso que se ejecuta constantemente.</li>
-                        <li>Su trabajo es simple: ¿Está el Call Stack vacío?</li>
-                        <li>Si el Call Stack está vacío, revisa la Callback Queue (priorizando Microtasks si las hubiera).</li>
-                        <li>Si hay alguna función esperando en la cola, el Event Loop la toma (la primera) y la empuja ("push") al Call Stack para que se ejecute.</li>
-                        <li>Este ciclo continuo permite que las operaciones asíncronas se integren de nuevo en el flujo de ejecución síncrono sin bloquear.</li>
+                        <li>Es como un portero que mira constantemente: el Call Stack, la Microtask Queue y la Callback Queue (o Macrotask Queue).</li>
+                        <li>Su trabajo es:
+                            <ol>
+                                <li>¿El Call Stack está vacío?</li>
+                                <li>Si SÍ, ¿hay algo en la Microtask Queue (callbacks de Promesas)? Si SÍ, ejecuta TODAS las tareas de la Microtask Queue una por una.</li>
+                                <li>Si el Call Stack está vacío y la Microtask Queue también, ¿hay algo en la Callback Queue (eventos, setTimeout, etc.)? Si SÍ, toma la PRIMERA tarea y la pasa al Call Stack para que se ejecute.</li>
+                            </ol>
+                        </li>
+                        <li>Este ciclo se repite una y otra vez, muy rápido. Así es como las tareas asíncronas vuelven a ejecutarse sin bloquear el flujo principal.</li>
                     </ul>
                 </li>
             </ul>
         </details>
 
         <details>
-            <summary>Manejando la Respuesta (`fetch`)</summary>
-            <p>La función `fetch` inicia la solicitud de red y devuelve inmediatamente una <strong>Promesa</strong>. Una Promesa es un objeto que representa la eventual finalización (o fallo) de una operación asíncrona.</p>
-            <ul>
-                <li><strong>Objeto `Response`:</strong> Cuando la Promesa de `fetch` se resuelve con éxito (se recibe una respuesta del servidor, incluso si es un error HTTP como 404 o 500), lo hace con un objeto `Response`. Este objeto contiene información sobre la respuesta:
+            <summary>Manejando la Respuesta de `fetch` (Pedir Datos)</summary>
+            <p>Cuando usas <code>fetch(url)</code> para pedir datos (o nuestra función <code>simulatedFetch(url)</code> en este simulador):</p>
+            <ol>
+                <li><strong><code>fetch</code> devuelve una Promesa:</strong> Inmediatamente, <code>fetch</code> te da una "Promesa". Una Promesa es como un ticket que dice: "Te prometo que tendré un resultado para esto más tarde (ya sea éxito o error)". No te da los datos directamente.</li>
+                <li><strong>Esperar la Promesa (con `await`):</strong> Si usas `async function` y `await`, tu función se pausa en la línea del <code>await fetch(...)</code> hasta que la Promesa inicial se cumpla. Esto significa que el servidor ha respondido (o nuestra simulación ha terminado su "retraso").</li>
+                <li><strong>Objeto `Response`:</strong> Cuando la Promesa se cumple, obtienes un objeto `Response` (o un objeto simulado que se le parece). Este objeto tiene información sobre la respuesta:
                     <ul>
-                        <li>`response.ok`: Un booleano que es `true` si el código de estado HTTP está en el rango 200-299 (éxito).</li>
-                        <li>`response.status`: El código de estado numérico (ej: 200, 404, 500).</li>
-                        <li>`response.statusText`: El mensaje de estado (ej: "OK", "Not Found").</li>
-                        <li>`response.headers`: Un objeto para acceder a las cabeceras de la respuesta.</li>
+                        <li><code>response.ok</code>: Dice <code>true</code> si todo fue bien (códigos de estado 200-299), o <code>false</code> si hubo un error HTTP (como 404 - No encontrado, 500 - Error del servidor). En nuestra simulación, decidimos si es <code>true</code> o <code>false</code>.</li>
+                        <li><code>response.status</code>: El número del código de estado (ej: 200, 404).</li>
                     </ul>
                 </li>
-                <li><strong>Leer el Cuerpo (Body):</strong> El objeto `Response` no contiene directamente los datos del cuerpo. Proporciona métodos asíncronos (que también devuelven Promesas) para leerlo en diferentes formatos:
+                <li><strong>Leer los Datos Reales (el "cuerpo"):</strong> El objeto `Response` no tiene los datos directamente. Necesitas usar otro método asíncrono (que también devuelve una Promesa) para leer los datos:
                     <ul>
-                        <li>`response.json()`: Lee el cuerpo y lo parsea como JSON. Falla si el cuerpo no es JSON válido.</li>
-                        <li>`response.text()`: Lee el cuerpo como texto plano.</li>
-                        <li>`response.blob()`: Lee el cuerpo como un objeto Blob (datos binarios).</li>
-                        <li><code>await response.json()</code> o <code>response.json().then(datos => ...)</code></li>
+                        <li><code>await response.json()</code>: Si esperas datos en formato JSON (muy común en APIs). En nuestra simulación, <code>simulatedFetch</code> devuelve un objeto con un método <code>.json()</code> que también es simulado y devuelve otra Promesa.</li>
+                        <li><code>await response.text()</code>: Si esperas texto plano.</li>
+                    </ul>
+                    Tu función se pausará de nuevo en este `await` hasta que los datos se hayan leído y procesado.
+                </li>
+                <li><strong>Manejo de Errores (¡Muy Importante!):</strong>
+                    <ul>
+                        <li><strong>Errores de Red:</strong> Si no hay conexión a internet (o nuestra simulación decide fallar así), `fetch` fallará y la Promesa será "rechazada". Un bloque `try...catch` atrapará este error.</li>
+                        <li><strong>Errores HTTP (ej: 404, 500):</strong> `fetch` NO considera un error HTTP (como 404) como un fallo de la Promesa inicial. La Promesa se cumple, pero `response.ok` será `false`. ¡Debes comprobar `response.ok` tú mismo!
+                            <pre><code class="small-code">
+if (!response.ok) {
+  // Lanza un error para que lo capture el 'catch'
+  throw new Error(`Error HTTP: ${response.status}`);
+}
+// Si llegas aquí, response.ok es true
+const data = await response.json();
+                            </code></pre>
+                        </li>
+                        <li>El bloque <code>catch</code> en un <code>try...catch</code> es tu amigo para manejar cualquier problema que ocurra dentro del <code>try</code>.</li>
                     </ul>
                 </li>
-                <li><strong>Manejo de Errores:</strong> Es crucial manejar tanto los errores de red (no se pudo conectar) como los errores HTTP (respuesta recibida pero con estado de error).
-                    <ul>
-                        <li>Con `async/await`: Usa un bloque `try...catch`. El `catch` atrapará errores de red y errores lanzados manualmente (ej: `if (!response.ok) throw new Error(...)`).</li>
-                        <li>Con `.then()`: Usa un `.catch(error => ...)` al final de la cadena de promesas. Recuerda verificar `response.ok` dentro del `.then()` que recibe la respuesta.</li>
-                    </ul>
-                    <pre><code class="small-code">// Ejemplo con async/await
-try {
-  const response = await fetch(url);
-  if (!response.ok) {
-    throw new Error(`Error HTTP: ${response.status}`);
-  }
-  const data = await response.json();
-  // ... usar data
-} catch (error) {
-  console.error("Falló la solicitud:", error);
-}</code></pre>
-                </li>
-            </ul>
+            </ol>
         </details>
 
         <details>
-            <summary>Depuración con Chrome DevTools (o similar)</summary>
-            <p>Las herramientas de desarrollador del navegador son esenciales para trabajar con JavaScript y solicitudes de red.</p>
+            <summary>Depuración con Herramientas del Navegador (DevTools)</summary>
+            <p>Las "Herramientas para Desarrolladores" (DevTools) de tu navegador son tus mejores amigas para entender y arreglar código JavaScript.</p>
             <ul>
-                <li><strong>Abrir DevTools:</strong> Presiona `F12` en Chrome/Edge/Firefox, o haz clic derecho en la página y selecciona "Inspeccionar" o "Inspeccionar elemento".</li>
+                <li><strong>Abrir DevTools:</strong> Usualmente con la tecla `F12`. O clic derecho en la página -> "Inspeccionar".</li>
                 <li><strong>Pestaña `Console` (Consola):</strong>
                     <ul>
-                        <li>Muestra los mensajes de `console.log()`, `console.warn()`, `console.error()`.</li>
-                        <li>Muestra errores de JavaScript que ocurren en la página.</li>
-                        <li>Puedes escribir y ejecutar código JavaScript directamente aquí.</li>
-                        <li>Verás los logs de nuestro simulador aquí también (además de la consola simulada).</li>
+                        <li>Aquí ves los mensajes de `console.log()` (como los de nuestro simulador).</li>
+                        <li>Muestra errores de JavaScript que ocurren.</li>
+                        <li>Puedes escribir y probar código JavaScript aquí.</li>
                     </ul>
                 </li>
                 <li><strong>Pestaña `Network` (Red):</strong>
                     <ul>
-                        <li>Registra todas las solicitudes de red que realiza la página (HTTP, imágenes, CSS, JS).</li>
-                        <li>Para cada solicitud (`fetch` real), puedes ver: Método (GET/POST), URL, Código de estado, Cabeceras (Headers), Payload (datos enviados en POST), Respuesta (Response) del servidor.</li>
-                        <li>Es fundamental para depurar problemas con APIs: ¿Se envió la solicitud correctamente? ¿Qué respondió el servidor?</li>
-                        <li>*Nota: Nuestro simulador usa `setTimeout`, así que NO verás una entrada real en la pestaña Network para la operación simulada.*</li>
+                        <li>Muestra TODAS las peticiones de red que hace tu página (imágenes, scripts, y ¡las de `fetch`!).</li>
+                        <li>Para cada petición `fetch` real, puedes ver la URL, el método (GET/POST), las cabeceras, y la respuesta del servidor. ¡Súper útil para ver si tu API funciona!</li>
+                        <li><em>(Nota: Nuestro simulador usa <code>simulatedFetch</code> que funciona con <code>setTimeout</code>, así que NO verás una entrada de red real para la operación simulada aquí, ¡pero sí los `console.log` que la describen!)</em></li>
                     </ul>
                 </li>
                  <li><strong>Pestaña `Sources` (Fuentes):</strong>
                     <ul>
-                        <li>Permite ver los archivos fuente (HTML, CSS, JS) de la página.</li>
-                        <li>Puedes establecer **breakpoints** haciendo clic en el número de línea del código JS. La ejecución se pausará cuando llegue a ese punto.</li>
-                        <li>Mientras está pausado, puedes inspeccionar el valor de las variables, ver el **Call Stack** real en ese momento, y ejecutar el código paso a paso.</li>
+                        <li>Puedes ver los archivos de tu página (HTML, CSS, JS).</li>
+                        <li>Puedes poner **puntos de interrupción (breakpoints)** haciendo clic en el número de línea de tu código JS. Cuando el código llegue ahí, la ejecución se PAUSARÁ.</li>
+                        <li>Mientras está pausado, puedes ver el valor de las variables, el **Call Stack** real en ese momento, y avanzar paso a paso. ¡Es como una lupa para tu código!</li>
                     </ul>
                 </li>
             </ul>
         </details>
 
         <details>
-            <summary>Glosario de Términos</summary>
+            <summary>Glosario (Palabras Clave)</summary>
             <dl>
-                <dt>Síncrono</dt><dd>Las operaciones se ejecutan una después de la otra, en orden. Una operación debe terminar antes de que comience la siguiente. Puede causar bloqueo.</dd>
-                <dt>Asíncrono</dt><dd>Las operaciones pueden iniciarse y ejecutarse en segundo plano, permitiendo que otro código continúe. La finalización se maneja posteriormente (con callbacks, promesas, async/await).</dd>
-                <dt>Bloqueante</dt><dd>Una operación que impide que otro código (especialmente en el hilo principal) se ejecute hasta que ella misma termine. Típico de operaciones síncronas largas.</dd>
-                <dt>No Bloqueante</dt><dd>Una operación que no impide la ejecución de otro código mientras se realiza. Típico de operaciones asíncronas.</dd>
-                <dt>Callback</dt><dd>Una función que se pasa como argumento a otra función, para ser ejecutada más tarde, típicamente cuando una operación asíncrona se completa.</dd>
-                <dt>Promesa (Promise)</dt><dd>Un objeto que representa el resultado eventual (éxito o fallo) de una operación asíncrona. Permite encadenar operaciones con `.then()` y manejar errores con `.catch()`.</dd>
-                <dt>async/await</dt><dd>Sintaxis moderna (azúcar sintáctico sobre Promesas) que permite escribir código asíncrono que se lee de forma similar al código síncrono, usando `async` para definir la función y `await` para esperar la resolución de una Promesa.</dd>
-                <dt>fetch</dt><dd>API moderna del navegador para realizar solicitudes HTTP asíncronas. Devuelve Promesas.</dd>
-                <dt>API (Application Programming Interface)</dt><dd>Conjunto de reglas y protocolos que permiten que diferentes componentes de software se comuniquen entre sí (ej: Web APIs del navegador, APIs de servidores web).</dd>
-                <dt>HTTP (HyperText Transfer Protocol)</dt><dd>El protocolo fundamental para la transferencia de datos en la World Wide Web.</dd>
-                <dt>GET</dt><dd>Método HTTP para solicitar/recuperar datos de un servidor.</dd>
-                <dt>POST</dt><dd>Método HTTP para enviar datos a un servidor, usualmente para crear o modificar recursos.</dd>
-                <dt>Event Loop</dt><dd>Mecanismo en entornos como navegadores o Node.js que gestiona la ejecución de código, eventos y callbacks, permitiendo la concurrencia no bloqueante en un solo hilo.</dd>
-                <dt>Call Stack</dt><dd>Estructura de datos que rastrea las funciones en ejecución en un programa.</dd>
-                <dt>Callback Queue</dt><dd>Cola donde se almacenan los callbacks listos para ser ejecutados una vez que el Call Stack esté vacío.</dd>
-                <dt>Web APIs</dt><dd>Funcionalidades expuestas por el navegador (DOM, fetch, setTimeout, etc.) que pueden ejecutarse en segundo plano.</dd>
-                <dt>DOM (Document Object Model)</dt><dd>Representación en memoria de la estructura de un documento HTML/XML, que JavaScript puede manipular.</dd>
-                <dt>JSON (JavaScript Object Notation)</dt><dd>Formato ligero de intercambio de datos, fácil de leer para humanos y fácil de parsear para máquinas.</dd>
-                <dt>Idempotente</dt><dd>Una operación que produce el mismo resultado si se ejecuta una o múltiples veces.</dd>
+                <dt>Síncrono</dt><dd>Una cosa después de otra. La siguiente tarea no empieza hasta que la actual termina. Puede hacer que la página se "congele" si una tarea es larga.</dd>
+                <dt>Asíncrono</dt><dd>Permite iniciar tareas (especialmente las largas) y seguir con otras cosas. La finalización se maneja posteriormente.</dd>
+                <dt>Motor JavaScript</dt><dd>El programa (como V8 en Chrome) que interpreta y ejecuta tu código JavaScript. Es de un solo hilo.</dd>
+                <dt>Web APIs</dt><dd>Funcionalidades proporcionadas por el navegador (no por el motor JS en sí) como <code>fetch</code>, <code>setTimeout</code>, manipulación del DOM. Pueden ejecutarse en segundo plano.</dd>
+                <dt>Callback</dt><dd>Una función que se pasa como argumento a otra función, para ser ejecutada más tarde (ej: cuando una tarea asíncrona se completa).</dd>
+                <dt>Promesa (Promise)</dt><dd>Un objeto que representa un valor que estará disponible en el futuro (el resultado de una operación asíncrona, ya sea éxito o error).</dd>
+                <dt>async/await</dt><dd>Palabras clave en JavaScript que facilitan escribir código asíncrono que usa Promesas, haciéndolo parecer más síncrono.</dd>
+                <dt>fetch</dt><dd>La forma moderna en JavaScript para pedir datos a servidores (APIs) de forma asíncrona. Devuelve Promesas. En este simulador, usamos <code>simulatedFetch</code> para imitarla.</dd>
+                <dt>Event Loop</dt><dd>El "director de orquesta" que revisa las colas de tareas (Microtask y Macrotask/Callback Queue) y, si el Call Stack está libre, las pasa para que se ejecuten.</dd>
+                <dt>Call Stack</dt><dd>Donde se lleva la cuenta de qué función se está ejecutando ahora mismo. Si una función <code>async</code> está en <code>await</code>, técnicamente se retira del Call Stack.</dd>
+                <dt>Microtask Queue</dt><dd>Cola de alta prioridad para callbacks de Promesas resueltas. Se vacía completamente antes de pasar a la Macrotask Queue.</dd>
+                <dt>Callback Queue (o Macrotask Queue)</dt><dd>La "sala de espera" para callbacks de Web APIs como <code>setTimeout</code>, eventos de usuario, etc.</dd>
             </dl>
         </details>
 
          <details>
             <summary>Próximos Pasos / Para Explorar</summary>
              <ul>
-                 <li>Experimenta cambiando el tiempo de retraso en `simulatedFetch` en `script.js`.</li>
-                 <li>Intenta añadir otro botón para simular un error (modificando `simulatedFetch` para que a veces llame a `reject` o devuelva `ok: false`).</li>
-                 <li>Investiga la diferencia entre la Macro Task Queue y la Micro Task Queue (donde van las promesas).</li>
-                 <li>Intenta implementar la versión con `.then()` además de `async/await`.</li>
-                 <li>Explora cómo funcionaría una simulación de POST (necesitarías pasar `options` a `simulatedFetch`).</li>
+                 <li>Juega con la casilla "Simular Error en la Red" para ver cómo cambia el flujo.</li>
+                 <li>Observa atentamente cómo cada línea de código resaltada afecta el Call Stack, las Web APIs y la Callback Queue. Presta atención especial a los pasos donde <code>obtenerDatos()</code> está "pausada".</li>
+                 <li>Intenta predecir qué pasará en el siguiente paso antes de hacer clic en el botón.</li>
+                 <li>Abre las DevTools de tu navegador (F12) y mira la pestaña "Console" para ver los logs reales que también genera el simulador.</li>
+                 <li>Compara la explicación de `async/await` con el código del simulador. ¿Puedes identificar dónde se usa `await` y qué Promesa está esperando?</li>
              </ul>
         </details>
     </div>
