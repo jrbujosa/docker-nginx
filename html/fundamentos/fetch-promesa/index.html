@@ -91,7 +91,7 @@
                 <li><strong>El Event Loop:</strong> Es un vigilante constante. Cuando ve que JavaScript no está ocupado (el Call Stack está vacío) y hay algo en la lista de espera, toma esa función de respuesta y se la da a JavaScript para que la ejecute.</li>
             </ul>
             <p>Así, JavaScript puede iniciar muchas tareas "largas" y seguir respondiendo a interacciones del usuario, manteniendo la página fluida.</p>
-
+<p><a href="/fundamentos/fetch-promesa/conbloqueosinbloqueo/index.html">JS con y sin bloqueo /fundamentos/fetch-promesa/conbloqueosinbloqueo/index.html</a></p>
             <h4>2. ¿Qué puede estar haciendo JavaScript mientras "espera" una tarea asíncrona?</h4>
             <p>Cuando una función <code>async</code> está "pausada" en un <code>await</code> (esperando que una Promesa se resuelva), el motor de JavaScript <em>realmente</em> está libre. Podría estar haciendo:</p>
             <ul>
@@ -188,15 +188,21 @@
                 </tbody>
             </table>
 
-            <h4>La Función `simulatedFetch` en Este Simulador</h4>
-            <p>En el código de este simulador (archivo <code>script.js</code>), verás una función llamada <code>simulatedFetch</code>. Esta función <strong>NO es la función <code>fetch</code> real del navegador</strong>. Es una función que hemos creado nosotros para <em>imitar</em> o <em>simular</em> cómo se comporta <code>fetch</code>:</p>
+            <h4>La "Función" <code>simulatedFetch</code> en Este Simulador</h4>
+            <p>En el código de ejemplo que la simulación sigue, verás una llamada a una función <code>simulatedFetch(url)</code>. Es importante entender que <strong>en el archivo <code>script.js</code> de este simulador, no existe una función JavaScript real llamada <code>simulatedFetch</code> que se ejecute.</strong></p>
+            <p>En lugar de eso, la simulación misma (la secuencia de pasos que observas) <em>imita</em> o <em>simula</em> el comportamiento de cómo actuaría una función como <code>fetch</code> del navegador, pero de forma controlada:</p>
             <ul>
-                <li>Devuelve una Promesa.</li>
-                <li>Simula un retraso de red usando <code>setTimeout</code> (una Web API real).</li>
-                <li>Puede simular aleatoriamente un éxito o un error.</li>
-                <li>Si tiene éxito, resuelve su Promesa con un objeto que se parece al objeto <code>Response</code> real (tiene una propiedad <code>ok</code> y un método <code>.json()</code>, que también es simulado y devuelve otra Promesa).</li>
+                <li>El concepto de <code>simulatedFetch</code> en nuestra simulación representa una operación que devuelve una Promesa.</li>
+                <li>Se simula un retraso de red (los pasos del simulador gestionan el "tiempo" de esta operación conceptual, similar a cómo <code>setTimeout</code> podría usarse).</li>
+                <li>Su comportamiento (éxito o error de red) es controlado por la casilla "Simular Error en la Red" para este simulador:
+                    <ul>
+                        <li>Si la casilla no está marcada (simulación de éxito), los pasos simularán que la Promesa de <code>simulatedFetch</code> se resuelve con un objeto similar a una `Response` exitosa.</li>
+                        <li>Si la casilla está marcada (simulación de error de red), los pasos simularán que la Promesa de <code>simulatedFetch</code> es rechazada, lo que típicamente causa que un <code>await</code> lance un error y se active un bloque <code>catch</code>.</li>
+                    </ul>
+                </li>
+                <li>Si la simulación dicta un "éxito", la "Promesa de <code>simulatedFetch</code>" se resolverá con un objeto que se parece al objeto <code>Response</code> real (tendrá una propiedad <code>ok</code> y un método simulado <code>.json()</code>, que también devolverá conceptualmente otra Promesa).</li>
             </ul>
-            <p>Usamos <code>simulatedFetch</code> para poder controlar y visualizar el flujo asíncrono paso a paso dentro del simulador, sin hacer peticiones de red reales que podrían variar en tiempo o fallar inesperadamente.</p>
+            <p>Este enfoque nos permite controlar y visualizar el flujo asíncrono paso a paso de manera precisa dentro del simulador, sin depender de peticiones de red reales que podrían variar en tiempo o fallar inesperadamente fuera de nuestro control.</p>
         </details>
 
 

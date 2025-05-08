@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Explorando el Event Loop: Tareas Síncronas y Asíncronas</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            margin: 0;
+            background-color: #f4f7f6;
+            color: #333;
+            min-height: 100vh;
+            box-sizing: border-box;
+        }
+
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            max-width: 1100px;
+            margin-bottom: 25px;
+            padding: 0 10px;
+            box-sizing: border-box;
+        }
+
+        .page-header h1 {
+            color: #2c3e50;
+            margin: 0;
+            font-size: 1.8em;
+            text-align: left;
+            flex-grow: 1;
+        }
+
+        #mainTimerDisplay {
+            font-size: 2.2em;
+            font-weight: bold;
+            color: #16a085;
+            background-color: #fff;
+            padding: 8px 18px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-left: 20px;
+            white-space: nowrap;
+        }
+
+        .tasks-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+            width: 100%;
+            max-width: 1100px;
+            margin-bottom: 25px;
+            gap: 20px;
+        }
+
+        .task-column {
+            flex: 1;
+            min-width: 340px;
+            display: flex;
+            flex-direction: column;
+            align-items: center; /* Centra el contenido de la columna (título, button-counter-group, snippet) */
+            padding: 20px;
+            border: 1px solid #d1d8dd;
+            border-radius: 8px;
+            background-color: #ffffff;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.08);
+            text-align: center;
+        }
+
+        .task-column h2 {
+            font-size: 1.4em;
+            color: #34495e;
+            margin-top: 0;
+            margin-bottom: 15px;
+            width: 100%; /* Asegura que el título ocupe el ancho */
+        }
+
+        .button-counter-group { /* Nuevo contenedor para botón y contador */
+            display: flex;
+            align-items: center; /* Alinear botón y contador verticalmente */
+            justify-content: space-between; /* Espacio entre botón y contador */
+            width: 90%; /* Ancho del grupo */
+            margin-bottom: 15px;
+        }
+
+        .task-column button {
+            padding: 10px 15px; /* Ajustar padding si es necesario */
+            font-size: 0.95em;
+            font-weight: 500;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.2s ease, transform 0.1s ease;
+            /* width ahora es flexible dentro del button-counter-group */
+            flex-grow: 1; /* Permite que el botón crezca */
+            margin-right: 10px; /* Espacio entre botón y contador */
+        }
+        .task-column button:hover { opacity: 0.9; }
+        .task-column button:active { transform: scale(0.98); }
+
+        #botonBloqueante { background-color: #e74c3c; }
+        #botonBloqueante:hover { background-color: #c0392b; }
+        #botonAsincrono { background-color: #3498db; }
+        #botonAsincrono:hover { background-color: #2980b9; }
+        #botonMixto { background-color: #f1c40f; }
+        #botonMixto:hover { background-color: #f39c12; }
+
+        .counter-display {
+            font-size: 1.1em;
+            display: flex; /* Para alinear "#" y el valor */
+            align-items: center;
+        }
+        .counter-display .label { /* Para el "#" */
+            margin-right: 5px;
+            color: #555;
+        }
+        .counter-display .value {
+            font-size: 1.7em; /* Ligeramente más pequeño */
+            font-weight: bold;
+            color: #2980b9;
+            background-color: #ecf0f1;
+            padding: 4px 10px; /* Ligeramente más pequeño */
+            border-radius: 4px;
+            min-width: 25px; /* Ancho mínimo para el número */
+            text-align: center;
+        }
+
+
+        .code-snippet {
+            font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace;
+            font-size: 0.78em;
+            background-color: #2c3e50;
+            color: #ecf0f1;
+            padding: 10px;
+            border-radius: 5px;
+            white-space: pre-wrap;
+            word-break: break-all;
+            width: 90%; /* Ancho del snippet */
+            box-sizing: border-box;
+            max-height: 230px; /* Aumentar altura un poco más */
+            overflow-y: auto;
+            text-align: left;
+            border: 1px solid #4a6178;
+        }
+        .code-snippet .highlight { color: #f1c40f; font-weight: bold; }
+        .code-snippet .comment { color: #7f8c8d; font-style: italic; }
+        .code-snippet .keyword { color: #3498db; }
+        .code-snippet .function-name { color: #2ecc71; }
+        .code-snippet .string { color: #e67e22; } /* Para strings */
+
+
+        #logPanelContainer {
+            width: 100%;
+            max-width: 1100px;
+            border: 1px solid #d1d8dd;
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-top: 20px;
+        }
+        #logPanelHeader {
+            background-color: #e9ecef;
+            padding: 10px 15px;
+            font-weight: bold;
+            border-bottom: 1px solid #d1d8dd;
+            border-top-left-radius: 8px;
+            border-top-right-radius: 8px;
+        }
+        #logPanel {
+            height: 160px;
+            overflow-y: auto;
+            padding: 15px;
+            font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace;
+            font-size: 0.9em;
+            line-height: 1.5;
+            white-space: pre-wrap;
+            word-break: break-all;
+        }
+        .log-entry { padding: 3px 0; border-top: 1px dashed #e0e0e0; }
+        .log-entry:first-child { border-top: none; }
+
+        .explanation-container {
+            width: 100%;
+            max-width: 1100px;
+            margin-top: 30px;
+            padding: 20px;
+            background-color: #eaf2f8;
+            border: 1px solid #aed6f1;
+            border-radius: 8px;
+            box-sizing: border-box;
+        }
+        .explanation-container h2 { color: #2874a6; margin-top: 0; }
+        .explanation-container p, .explanation-container ul { line-height: 1.6; font-size: 0.95em; }
+        .explanation-container li { margin-bottom: 8px; }
+    </style>
+</head>
+<body>
+
+    <div class="page-header">
+        <h1>Explorando el Event Loop: Tareas Síncronas y Asíncronas</h1>
+        <div id="mainTimerDisplay">0.0</div>
+    </div>
+
+    <div class="tasks-container">
+        <div class="task-column">
+            <h2>Tarea Bloqueante</h2>
+            <div class="button-counter-group">
+                <button id="botonBloqueante">Ejecutar Bloqueo</button>
+                <div id="contadorBloqueanteDisplay" class="counter-display"><span class="label">#:</span><span class="value">0</span></div>
+            </div>
+            <pre id="codigoBloqueanteDisplay" class="code-snippet">Cargando...</pre>
+        </div>
+
+        <div class="task-column">
+            <h2>Tarea Asíncrona</h2>
+            <div class="button-counter-group">
+                <button id="botonAsincrono">Ejecutar Async (puede fallar)</button>
+                <div id="contadorAsincronoDisplay" class="counter-display"><span class="label">#:</span><span class="value">0</span></div>
+            </div>
+            <pre id="codigoAsincronoDisplay" class="code-snippet">Cargando...</pre>
+        </div>
+
+        <div class="task-column">
+            <h2>Acción Mixta</h2>
+            <div class="button-counter-group">
+                <button id="botonMixto">Ejecutar Mixta (puede fallar)</button>
+                <div id="contadorMixtoDisplay" class="counter-display"><span class="label">#:</span><span class="value">0</span></div>
+            </div>
+            <pre id="codigoMixtoDisplay" class="code-snippet">Cargando...</pre>
+        </div>
+    </div>
+
+    <div id="logPanelContainer">
+        <div id="logPanelHeader">Consola de Logs (Nuevos Arriba)</div>
+        <div id="logPanel"></div>
+    </div>
+
+    <div class="explanation-container">
+        <h2>¿Qué pretende este simulador?</h2>
+        <p>
+            Este simulador está diseñado para ilustrar visualmente conceptos clave sobre cómo JavaScript maneja
+            las tareas, especialmente la diferencia entre operaciones <strong>síncronas</strong> (bloqueantes) y
+            <strong>asíncronas</strong> (no bloqueantes) en el contexto del navegador.
+        </p>
+        <ul>
+            <li>
+                <strong>Temporizador Principal:</strong> Representa el hilo principal de JavaScript. Si se congela,
+                indica que el hilo principal está ocupado y no puede procesar otras tareas.
+            </li>
+            <li>
+                <strong>Tarea Bloqueante:</strong> Simula un script pesado síncrono. Observa cómo el temporizador y la UI se congelan.
+                Su contador (#) se actualiza DESPUÉS del bloqueo.
+            </li>
+            <li>
+                <strong>Tarea Asíncrona:</strong> Usa <code>async/await</code> para una operación de espera simulada. El hilo principal NO se bloquea.
+                Su contador (#) se actualiza DESPUÉS de que la operación asíncrona se completa (si tiene éxito). Puede fallar (ver consola).
+            </li>
+            <li>
+                <strong>Acción Mixta:</strong> Inicia una tarea asíncrona (sin <code>await</code>) y actualiza su contador (#) INMEDIATAMENTE.
+                La tarea asíncrona en segundo plano también puede fallar (ver consola).
+            </li>
+            <li>
+                <strong>Consola de Logs:</strong> Permite seguir el flujo de ejecución.
+            </li>
+        </ul>
+        <p>
+            Comprender esto es fundamental para crear aplicaciones web eficientes y responsivas.
+        </p>
+    </div>
+
+
+    <script>
+        let decimasDeSegundo = 0;
+        let contadorBloqueante = 0;
+        let contadorAsincrono = 0;
+        let contadorMixto = 0;
+
+        const mainTimerDisplay = document.getElementById('mainTimerDisplay');
+        const logPanel = document.getElementById('logPanel');
+
+        const botonBloqueante = document.getElementById('botonBloqueante');
+        const contadorBloqueanteDisplayValue = document.querySelector('#contadorBloqueanteDisplay .value');
+        const codigoBloqueanteDisplay = document.getElementById('codigoBloqueanteDisplay');
+
+        const botonAsincrono = document.getElementById('botonAsincrono');
+        const contadorAsincronoDisplayValue = document.querySelector('#contadorAsincronoDisplay .value');
+        const codigoAsincronoDisplay = document.getElementById('codigoAsincronoDisplay');
+
+        const botonMixto = document.getElementById('botonMixto');
+        const contadorMixtoDisplayValue = document.querySelector('#contadorMixtoDisplay .value');
+        const codigoMixtoDisplay = document.getElementById('codigoMixtoDisplay');
+
+        const originalConsoleLog = console.log;
+        function addLogToPanel(messageParts) {
+            const message = messageParts.map(part => typeof part === 'object' && part !== null ? JSON.stringify(part, null, 2) : String(part)).join(' ');
+            const logEntry = document.createElement('div');
+            logEntry.classList.add('log-entry');
+            logEntry.textContent = `[${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit', fractionalSecondDigits: 3 })}] ${message}`;
+            if (logPanel.firstChild) logPanel.insertBefore(logEntry, logPanel.firstChild);
+            else logPanel.appendChild(logEntry);
+            const entries = logPanel.querySelectorAll('.log-entry');
+            entries.forEach((entry, index) => entry.style.borderTop = (index === 0) ? 'none' : '1px dashed #e0e0e0');
+            logPanel.scrollTop = 0;
+        }
+        console.log = function(...args) {
+            originalConsoleLog.apply(console, args);
+            addLogToPanel(args);
+        };
+
+        setInterval(() => {
+            decimasDeSegundo++;
+            mainTimerDisplay.textContent = `${Math.floor(decimasDeSegundo / 10)}.${decimasDeSegundo % 10}`;
+        }, 100);
+
+        function tareaSincronaBloqueanteCore() {
+            console.log("BLOQUEANTE: Iniciando bucle (5s)...");
+            const tiempoDeBloqueo = 5000;
+            const inicio = Date.now();
+            while (Date.now() - inicio < tiempoDeBloqueo) { /* Bucle intensivo CPU */ }
+            console.log("BLOQUEANTE: Bucle finalizado.");
+        }
+
+        async function tareaAsincronaSimuladaConResultadoOFallo(nombreTarea = "TAREA_ASINCRONA") {
+            console.log(`${nombreTarea}: Iniciando operación simulada (3s)...`);
+            const tiempoDeEspera = 3000;
+            let resultadoSimulado = null;
+            try {
+                resultadoSimulado = await new Promise((resolve, reject) => {
+                    setTimeout(() => {
+                        if (Math.random() > 0.4) {
+                            resolve({ status: "éxito", data: `Datos de ${nombreTarea} obtenidos!` });
+                        } else {
+                            reject(new Error(`Fallo simulado en la operación de ${nombreTarea}.`));
+                        }
+                    }, tiempoDeEspera);
+                });
+                console.log(`${nombreTarea}: Operación completada con ${resultadoSimulado.status}. Datos: "${resultadoSimulado.data}"`);
+                return { exito: true, datos: resultadoSimulado.data };
+            } catch (error) {
+                console.error(`${nombreTarea}: Error atrapado - ${error.message}`);
+                return { exito: false, error: error.message };
+            } finally {
+                console.log(`${nombreTarea}: Bloque finally ejecutado. Operación finalizada.`);
+            }
+        }
+
+        botonBloqueante.addEventListener('click', () => {
+            console.log("Botón BLOQUEANTE: Pulsado.");
+            tareaSincronaBloqueanteCore();
+            contadorBloqueante++;
+            contadorBloqueanteDisplayValue.textContent = contadorBloqueante;
+            console.log(`Botón BLOQUEANTE: Contador actualizado a ${contadorBloqueante}.`);
+        });
+
+        botonAsincrono.addEventListener('click', async () => {
+            console.log("Botón ASÍNCRONO: Pulsado.");
+            const resultado = await tareaAsincronaSimuladaConResultadoOFallo("ASINCRONO_DEDICADO");
+            if (resultado.exito) {
+                contadorAsincrono++;
+                contadorAsincronoDisplayValue.textContent = contadorAsincrono;
+                console.log(`Botón ASÍNCRONO: Contador actualizado a ${contadorAsincrono} tras éxito.`);
+            } else {
+                console.log(`Botón ASÍNCRONO: No se actualiza contador debido a: "${resultado.error}"`);
+            }
+        });
+
+        botonMixto.addEventListener('click', () => { // No necesita ser async si no usamos await directamente aquí
+            console.log("Botón MIXTO: Pulsado.");
+            tareaAsincronaSimuladaConResultadoOFallo("MIXTO_ASYNC_BG").then(resultadoBg => {
+                if (resultadoBg.exito) {
+                    console.log(`MIXTO_ASYNC_BG (en .then): Tarea en segundo plano tuvo éxito. Datos: "${resultadoBg.datos}"`);
+                } else {
+                    console.error(`MIXTO_ASYNC_BG (en .then): Tarea en segundo plano falló: "${resultadoBg.error}"`);
+                }
+            });
+            console.log("Botón MIXTO: Tarea asíncrona (puede fallar) iniciada en segundo plano.");
+            contadorMixto++;
+            contadorMixtoDisplayValue.textContent = contadorMixto;
+            console.log(`Botón MIXTO: Contador actualizado a ${contadorMixto} (inmediato).`);
+        });
+
+        function poblarSnippets() {
+            codigoBloqueanteDisplay.innerHTML =
+`<span class="keyword">function</span> <span class="function-name">onClickBloqueante</span>() {
+  console.log(<span class="string">"Botón BLOQUEANTE: Pulsado."</span>);
+  <span class="comment">// --- Inicia tarea síncrona ---</span>
+  console.log(<span class="string">"BLOQUEANTE: Iniciando bucle (5s)..."</span>);
+  <span class="keyword">const</span> inicio = Date.now();
+  <span class="keyword">while</span> (Date.now() - inicio < 5000) { <span class="comment">/* Bloqueo */</span> }
+  console.log(<span class="string">"BLOQUEANTE: Bucle finalizado."</span>);
+  <span class="comment">// --- Fin tarea síncrona ---</span>
+
+  <span class="highlight">contadorBloqueante++;</span>
+  <span class="highlight">display.textContent = contadorBloqueante;</span>
+  console.log(<span class="string">\`Botón BLOQUEANTE: Contador actualizado a \${contadorBloqueante}.\`</span>);
+}`;
+
+            codigoAsincronoDisplay.innerHTML =
+`<span class="keyword">async function</span> <span class="function-name">onClickAsincrono</span>() {
+  console.log(<span class="string">"Botón ASÍNCRONO: Pulsado."</span>);
+  <span class="comment">// --- Inicia tarea asíncrona con await ---</span>
+  console.log(<span class="string">"ASINCRONO_DEDICADO: Iniciando operación simulada (3s)..."</span>);
+  <span class="keyword">let</span> resultado;
+  <span class="keyword">try</span> {
+    resultado = <span class="keyword">await new</span> Promise((resolve, reject) => {
+      setTimeout(() => {
+        <span class="keyword">if</span> (Math.random() > 0.4) {
+          resolve({ <span class="string">status</span>: <span class="string">"éxito"</span>, <span class="string">data</span>: <span class="string">"Datos de ASINCRONO_DEDICADO obtenidos!"</span> });
+        } <span class="keyword">else</span> {
+          reject(<span class="keyword">new</span> Error(<span class="string">"Fallo simulado en la operación de ASINCRONO_DEDICADO."</span>));
+        }
+      }, 3000);
+    });
+    console.log(<span class="string">\`ASINCRONO_DEDICADO: Operación completada con \${resultado.status}. Datos: "\${resultado.data}"\`</span>);
+
+    <span class="comment">// Actualización DESPUÉS del await y ÉXITO</span>
+    <span class="highlight">contadorAsincrono++;</span>
+    <span class="highlight">display.textContent = contadorAsincrono;</span>
+    console.log(<span class="string">\`Botón ASÍNCRONO: Contador actualizado a \${contadorAsincrono} tras éxito.\`</span>);
+
+  } <span class="keyword">catch</span> (error) {
+    console.error(<span class="string">\`ASINCRONO_DEDICADO: Error atrapado - \${error.message}\`</span>);
+    console.log(<span class="string">\`Botón ASÍNCRONO: No se actualiza contador debido a: "\${error.message}"\`</span>);
+  } <span class="keyword">finally</span> {
+    console.log(<span class="string">"ASINCRONO_DEDICADO: Bloque finally ejecutado. Operación finalizada."</span>);
+  }
+  <span class="comment">// --- Fin tarea asíncrona ---</span>
+}`;
+
+            codigoMixtoDisplay.innerHTML =
+`<span class="keyword">function</span> <span class="function-name">onClickMixto</span>() {
+  console.log(<span class="string">"Botón MIXTO: Pulsado."</span>);
+  <span class="comment">// --- 1. Iniciar tarea asíncrona (fire-and-forget) ---</span>
+  (<span class="keyword">async</span> () => { <span class="comment">// IIFE asíncrona para la tarea en BG</span>
+    console.log(<span class="string">"MIXTO_ASYNC_BG: Iniciando operación simulada (3s)..."</span>);
+    <span class="keyword">let</span> resultadoBg;
+    <span class="keyword">try</span> {
+      resultadoBg = <span class="keyword">await new</span> Promise((resolve, reject) => {
+        setTimeout(() => {
+          <span class="keyword">if</span> (Math.random() > 0.4) {
+            resolve({ <span class="string">status</span>: <span class="string">"éxito"</span>, <span class="string">data</span>: <span class="string">"Datos de MIXTO_ASYNC_BG obtenidos!"</span> });
+          } <span class="keyword">else</span> {
+            reject(<span class="keyword">new</span> Error(<span class="string">"Fallo simulado en la operación de MIXTO_ASYNC_BG."</span>));
+          }
+        }, 3000);
+      });
+      console.log(<span class="string">\`MIXTO_ASYNC_BG (en .then): Tarea en segundo plano tuvo éxito. Datos: "\${resultadoBg.data}"\`</span>);
+    } <span class="keyword">catch</span> (e) {
+      console.error(<span class="string">\`MIXTO_ASYNC_BG (en .then): Tarea en segundo plano falló: "\${e.message}"\`</span>);
+    } <span class="keyword">finally</span> {
+      console.log(<span class="string">"MIXTO_ASYNC_BG: Bloque finally ejecutado. Operación finalizada."</span>);
+    }
+  })();
+  console.log(<span class="string">"Botón MIXTO: Tarea asíncrona (puede fallar) iniciada en segundo plano."</span>);
+  <span class="comment">// --- Fin tarea asíncrona en BG ---</span>
+
+  <span class="comment">// --- 2. Actualizar contador INMEDIATAMENTE ---</span>
+  <span class="highlight">contadorMixto++;</span>
+  <span class="highlight">display.textContent = contadorMixto;</span>
+  console.log(<span class="string">\`Botón MIXTO: Contador actualizado a \${contadorMixto} (inmediato).\`</span>);
+}`;
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            poblarSnippets();
+            console.log("Página cargada. Entorno listo para demostración.");
+        });
+    </script>
+</body>
+</html>

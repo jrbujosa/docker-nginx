@@ -555,6 +555,7 @@ document.addEventListener('DOMContentLoaded', () => {
   prevStepBtn.addEventListener('click', prevStep);
   simulateErrorCheckbox.addEventListener('change', () => {
       logToConsoleView("Modo de simulación de error cambiado. Se aplicará en el próximo 'Iniciar/Reiniciar'.", "info");
+      resetSimulation(); // ¡Llamar a reset para que los nuevos pasos se carguen!
   });
 
   resetSimulation();
