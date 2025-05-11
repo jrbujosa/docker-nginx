@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chef Asíncrono y Event Loop (Paso a Paso con Explicaciones)</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 20px;
+            background-color: #f4f4f4;
+            padding-bottom: 150px; /* Espacio para la explicación fija */
+        }
+        .container {
+            display: flex;
+            gap: 20px;
+            align-items: flex-start;
+            width: 90%;
+            max-width: 1000px;
+            margin-bottom: 20px;
+        }
+        .chef-area, .event-loop-visualizer {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        .chef-area {
+            flex: 1;
+            text-align: center;
+        }
+        .event-loop-visualizer {
+            flex: 1.5;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        .box {
+            border: 1px solid #ccc;
+            padding: 10px;
+            min-height: 80px;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+        .box h3 {
+            margin-top: 0;
+            font-size: 1.1em;
+            color: #333;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 5px;
+            margin-bottom: 10px;
+        }
+        .task-item {
+            background-color: #e0e0e0;
+            padding: 5px 8px;
+            margin-bottom: 5px;
+            border-radius: 3px;
+            font-size: 0.9em;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .chef-image {
+            width: 100px;
+            height: 100px;
+            background-color: #ddd;
+            border-radius: 50%;
+            margin: 0 auto 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3em;
+            transition: transform 0.3s, background-color 0.3s;
+        }
+        .chef-image.active {
+            transform: scale(1.1);
+            background-color: #a7c7e7;
+        }
+        .thought-bubble {
+            display: none;
+            position: relative;
+            background: #fff;
+            border-radius: .4em;
+            padding: 10px;
+            margin: 10px auto;
+            border: 1px solid #ccc;
+            width: fit-content;
+        }
+        .thought-bubble:after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border: 15px solid transparent;
+            border-top-color: #fff;
+            border-bottom: 0;
+            border-left-color: #fff;
+            border-right-color: #fff;
+            margin-left: -15px;
+            margin-bottom: -15px;
+            filter: drop-shadow(0 1px 0px #ccc);
+        }
+        .pizza-station {
+            margin-top: 20px;
+            min-height: 60px;
+            border: 2px dashed #aaa;
+            padding: 10px;
+            border-radius: 5px;
+            font-style: italic;
+        }
+        .pizza-item {
+            display: inline-block;
+            font-size: 2em;
+            margin: 0 5px;
+            animation: popIn 0.3s ease-out;
+        }
+        @keyframes popIn {
+            0% { transform: scale(0.5); opacity: 0; }
+            70% { transform: scale(1.1); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        #status-message {
+            margin-top: 15px;
+            font-weight: bold;
+            color: #2c3e50;
+            min-height: 20px;
+        }
+        .buttons-container {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 20px;
+            margin-bottom: 20px; /* Espacio antes de la explicación */
+        }
+        button {
+            padding: 10px 15px;
+            font-size: 1em;
+            background-color: #5cb85c;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        button:hover:not(:disabled) {
+            background-color: #4cae4c;
+        }
+        button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+        .step-explanation-box {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background-color: #333;
+            color: #fff;
+            padding: 15px 20px;
+            box-sizing: border-box;
+            text-align: center;
+            font-size: 0.9em;
+            border-top: 2px solid #5cb85c;
+            min-height: 60px; /* Para asegurar que se vea algo incluso si no hay texto */
+        }
+        .step-explanation-box p {
+            margin: 0;
+        }
+        .step-explanation-box strong {
+            color: #5cb85c;
+        }
+    </style>
+</head>
+<body>
+    <h1>Modelo de Concurrencia y Event Loop: El Chef Asíncrono (Paso a Paso con Explicaciones)</h1>
+
+    <div class="container">
+        <div class="chef-area">
+            <h2>El Chef</h2>
+            <div id="chef" class="chef-image">🧑‍🍳</div>
+            <div id="thought-bubble" class="thought-bubble"></div>
+            <div id="pizza-station" class="pizza-station">Mesa de preparación vacía...</div>
+            <div id="status-message">Haz clic en "Preparar Pizza" para empezar.</div>
+        </div>
+
+        <div class="event-loop-visualizer">
+            <div id="call-stack" class="box">
+                <h3>Call Stack (Pila de Llamadas)</h3>
+                <div class="placeholder">(Vacío)</div>
+            </div>
+            <div id="web-apis" class="box">
+                <h3>Web APIs (Ayudantes / Horno)</h3>
+                <div class="placeholder">(Inactivo)</div>
+            </div>
+            <div id="callback-queue" class="box">
+                <h3>Callback Queue (Cola de Tareas Listas)</h3>
+                <div class="placeholder">(Vacía)</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="buttons-container">
+        <button id="start-pizza-btn">Preparar Pizza</button>
+        <button id="next-step-btn" disabled>Siguiente Paso</button>
+        <button id="reset-btn" disabled>Reiniciar Simulación</button>
+    </div>
+
+    <div id="step-explanation" class="step-explanation-box">
+        <p>Haz clic en "Preparar Pizza" para iniciar la simulación y ver las explicaciones aquí.</p>
+    </div>
+
+    <script>
+        const callStackDiv = document.getElementById('call-stack');
+        const webApisDiv = document.getElementById('web-apis');
+        const callbackQueueDiv = document.getElementById('callback-queue');
+        const chefDiv = document.getElementById('chef');
+        const thoughtBubbleDiv = document.getElementById('thought-bubble');
+        const pizzaStationDiv = document.getElementById('pizza-station');
+        const statusMessageDiv = document.getElementById('status-message');
+        const startBtn = document.getElementById('start-pizza-btn');
+        const nextStepBtn = document.getElementById('next-step-btn');
+        const resetBtn = document.getElementById('reset-btn');
+        const stepExplanationDiv = document.getElementById('step-explanation');
+
+        const FLOUR_FETCH_TIME = 3000; // ms
+
+        let currentStep = 0;
+        let flourTimeoutId = null;
+
+        const stepExplanations = [
+            "Estado inicial. Esperando la orden del chef.", // Paso 0 (antes de iniciar)
+            "<strong>Paso 1:</strong> Se llama a <code>prepararPizza()</code>. Esta función se añade al Call Stack. El chef empieza a trabajar.",
+            "<strong>Paso 2:</strong> Dentro de <code>prepararPizza()</code>, se llama a <code>buscarHarina()</code>. Esta nueva función se añade encima en el Call Stack. El chef se da cuenta de que necesita harina.",
+            "<strong>Paso 3:</strong> <code>buscarHarina()</code> necesita delegar la tarea de conseguir harina. Llama a <code>setTimeout(callbackHarinaLista, TIEMPO)</code>. <code>setTimeout</code> es una función del navegador (Web API) que ejecutará <code>callbackHarinaLista</code> después de <code>TIEMPO</code> milisegundos. La llamada a <code>setTimeout</code> se añade al Call Stack.",
+            "<strong>Paso 4:</strong> La tarea <code>setTimeout(...)</code> se pasa al navegador (Web APIs) para que gestione el temporizador. Ya no está en el Call Stack. El ayudante (Web API) empieza a 'buscar harina'.",
+            "<strong>Paso 5:</strong> La función <code>buscarHarina()</code> ha terminado su trabajo inmediato (delegar) y se quita del Call Stack. El chef espera el resultado del ayudante.",
+            "<strong>Paso 6:</strong> La función <code>prepararPizza()</code> también ha terminado su parte síncrona (ya delegó la harina) y se quita del Call Stack. El Call Stack está ahora vacío. El chef está 'libre' para otras tareas, pero en esta simulación, espera.",
+            "<strong>Paso 7:</strong> El <strong>Event Loop</strong> comprueba constantemente. Si el Call Stack está vacío y hay tareas en la Callback Queue, mueve la primera tarea de la Callback Queue al Call Stack. (Si la harina aún no ha 'llegado' al Callback Queue, el Event Loop esperará al siguiente clic).",
+            "<strong>Paso 8:</strong> (Asumiendo que la harina llegó y <code>callbackHarinaLista()</code> está en Call Stack) Se ejecuta <code>callbackHarinaLista()</code>. El chef recibe la harina y empieza a preparar la masa.",
+            "<strong>Paso 9:</strong> <code>callbackHarinaLista()</code> continúa. La masa está lista.",
+            "<strong>Paso 10:</strong> Dentro de <code>callbackHarinaLista()</code>, se llama a <code>añadirIngredientes()</code> de forma síncrona. Esta función se añade al Call Stack. El chef añade los ingredientes.",
+            "<strong>Paso 11:</strong> <code>añadirIngredientes()</code> termina y se quita del Call Stack. La pizza está casi lista.",
+            "<strong>Paso 12:</strong> <code>callbackHarinaLista()</code> ha terminado todo su trabajo y se quita del Call Stack. El Call Stack vuelve a estar vacío. ¡Pizza lista!"
+        ];
+
+        function updateStepExplanation(step) {
+            stepExplanationDiv.innerHTML = `<p>${stepExplanations[step] || "Explicación no disponible para este paso."}</p>`;
+        }
+
+
+        function updateBox(div, taskName, add = true, placeholderText = '(Vacío)') {
+            const placeholder = div.querySelector('.placeholder');
+            if (placeholder) placeholder.style.display = 'none';
+
+            if (add) {
+                const taskElement = document.createElement('div');
+                taskElement.className = 'task-item';
+                taskElement.textContent = taskName;
+                taskElement.id = 'task-' + taskName.replace(/[^\w]/g, '');
+                if (!div.querySelector('#' + taskElement.id)) {
+                    div.appendChild(taskElement);
+                }
+            } else {
+                const taskElement = div.querySelector('#task-' + taskName.replace(/[^\w]/g, ''));
+                if (taskElement) taskElement.remove();
+            }
+
+            if (div.querySelectorAll('.task-item').length === 0 && placeholder) {
+                placeholder.style.display = 'block';
+            }
+        }
+
+        function showThought(message) {
+            thoughtBubbleDiv.textContent = message;
+            thoughtBubbleDiv.style.display = 'block';
+        }
+
+        function hideThought() {
+            thoughtBubbleDiv.style.display = 'none';
+        }
+
+        function setChefActive(active) {
+            if (active) chefDiv.classList.add('active');
+            else chefDiv.classList.remove('active');
+        }
+        
+        function updateStatus(message) {
+            statusMessageDiv.textContent = message;
+        }
+
+        function resetSimulation() {
+            clearTimeout(flourTimeoutId);
+            flourTimeoutId = null;
+            
+            ['call-stack', 'web-apis', 'callback-queue'].forEach(id => {
+                const div = document.getElementById(id);
+                div.innerHTML = `<h3>${div.querySelector('h3').textContent}</h3><div class="placeholder">${id === 'web-apis' ? '(Inactivo)' : '(Vacío)'}</div>`;
+            });
+            pizzaStationDiv.innerHTML = 'Mesa de preparación vacía...';
+            hideThought();
+            setChefActive(false);
+            updateStatus('Haz clic en "Preparar Pizza" para empezar.');
+            
+            startBtn.disabled = false;
+            nextStepBtn.disabled = true;
+            resetBtn.disabled = true;
+            currentStep = 0;
+            updateStepExplanation(0); // Explicación inicial
+        }
+        
+        function iniciarSimulacion() {
+            resetSimulation();
+            startBtn.disabled = true;
+            nextStepBtn.disabled = false;
+            resetBtn.disabled = false;
+            currentStep = 0;
+            ejecutarSiguientePaso(); // Llama al primer paso
+        }
+
+        function ejecutarSiguientePaso() {
+            currentStep++;
+            updateStepExplanation(currentStep); // Actualiza la explicación ANTES de ejecutar la lógica del paso
+
+            switch (currentStep) {
+                case 1:
+                    updateStatus("Chef: ¡Empezando la pizza!");
+                    updateBox(callStackDiv, 'prepararPizza()', true);
+                    setChefActive(true);
+                    pizzaStationDiv.innerHTML = '<span class="pizza-item">🍕</span>';
+                    break;
+                case 2:
+                    updateStatus("Chef: Leyendo receta... ¡Necesito harina!");
+                    updateBox(callStackDiv, 'buscarHarina()', true);
+                    showThought("¡Necesito Harina!");
+                    break;
+                case 3:
+                    updateStatus("Chef: Mandando al ayudante por harina...");
+                    updateBox(callStackDiv, 'setTimeout(callbackHarinaLista, ...)', true);
+                    break;
+                case 4:
+                    updateStatus("Ayudante en camino por harina... (esto tomará " + FLOUR_FETCH_TIME/1000 + "s reales)");
+                    updateBox(webApisDiv, 'Buscando Harina (' + FLOUR_FETCH_TIME/1000 + 's)', true);
+                    updateBox(callStackDiv, 'setTimeout(callbackHarinaLista, ...)', false);
+                    
+                    flourTimeoutId = setTimeout(() => {
+                        if (currentStep > 0) { 
+                            updateBox(webApisDiv, 'Buscando Harina (' + FLOUR_FETCH_TIME/1000 + 's)', false);
+                            updateStatus("Ayudante: ¡Harina entregada a la cola de tareas!");
+                            pizzaStationDiv.innerHTML = '<span class="pizza-item">🍕</span> <span class="pizza-item" style="font-size:1em; vertical-align:middle;">🛍️🌾</span>';
+                            updateBox(callbackQueueDiv, 'callbackHarinaLista()', true);
+                            hideThought();
+                        }
+                    }, FLOUR_FETCH_TIME);
+                    break;
+                case 5:
+                    updateStatus("Chef: (Esperando que el ayudante regrese)... buscarHarina() terminó.");
+                    updateBox(callStackDiv, 'buscarHarina()', false);
+                    break;
+                case 6:
+                    updateStatus("Chef: (Esperando que el ayudante regrese)... prepararPizza() terminó su parte síncrona.");
+                    updateBox(callStackDiv, 'prepararPizza()', false);
+                    setChefActive(false);
+                    break;
+                case 7:
+                    updateStatus("Event Loop: Verificando Call Stack y Callback Queue...");
+                    const callStackEmpty = callStackDiv.querySelectorAll('.task-item').length === 0;
+                    const callbackQueueHasTasks = callbackQueueDiv.querySelectorAll('.task-item').length > 0;
+
+                    if (callStackEmpty && callbackQueueHasTasks) {
+                        const taskToMove = callbackQueueDiv.querySelector('.task-item');
+                        updateStatus(`Event Loop: Call Stack vacío. Moviendo '${taskToMove.textContent}' al Call Stack.`);
+                        updateBox(callbackQueueDiv, taskToMove.textContent, false);
+                        updateBox(callStackDiv, taskToMove.textContent, true);
+                        updateStepExplanation(currentStep); // Reafirmar la explicación de este paso si hay acción
+                    } else if (callStackEmpty && !callbackQueueHasTasks) {
+                        updateStatus("Event Loop: Call Stack vacío, pero Callback Queue también. Esperando tareas... (Clic en 'Siguiente Paso' cuando la harina haya llegado al Callback Queue)");
+                         updateStepExplanation(currentStep); // Explicación de espera
+                        currentStep--; 
+                    } else if (!callStackEmpty) {
+                         updateStatus("Event Loop: Call Stack ocupado. Esperando...");
+                         updateStepExplanation(currentStep); // Explicación de espera
+                         currentStep--; 
+                    }
+                    break;
+                case 8:
+                    setChefActive(true);
+                    updateStatus("Chef: ¡La harina ha llegado! A terminar la masa.");
+                    pizzaStationDiv.innerHTML = '<span class="pizza-item">🍕</span> + <span class="pizza-item">🌾</span>'; 
+                    break;
+                case 9:
+                    updateStatus("Chef: ¡Masa lista!");
+                    pizzaStationDiv.innerHTML = '<span class="pizza-item">🥯</span>';
+                    break;
+                case 10:
+                    updateStatus("Chef: Añadiendo ingredientes...");
+                    updateBox(callStackDiv, 'añadirIngredientes()', true);
+                    pizzaStationDiv.innerHTML = '<span class="pizza-item">🥯</span> + <span class="pizza-item">🍅</span> + <span class="pizza-item">🧀</span>';
+                    break;
+                case 11:
+                    updateStatus("Chef: ¡Pizza lista para hornear! (Horneada mágicamente rápido)");
+                    pizzaStationDiv.innerHTML = '<span class="pizza-item">🍕✨</span>';
+                    updateBox(callStackDiv, 'añadirIngredientes()', false);
+                    break;
+                case 12:
+                    updateStatus("¡Pizza Deliciosa Lista!");
+                    updateBox(callStackDiv, 'callbackHarinaLista()', false);
+                    setChefActive(false);
+                    nextStepBtn.disabled = true;
+                    resetBtn.disabled = false;
+                    break;
+                default:
+                    updateStatus("Fin de la simulación o paso desconocido.");
+                    updateStepExplanation(0); // Volver a la explicación inicial o una de fin.
+                    nextStepBtn.disabled = true;
+                    break;
+            }
+        }
+
+        startBtn.addEventListener('click', iniciarSimulacion);
+        nextStepBtn.addEventListener('click', ejecutarSiguientePaso);
+        resetBtn.addEventListener('click', resetSimulation);
+
+        resetSimulation(); // Estado inicial al cargar
+    </script>
+</body>
+</html>
