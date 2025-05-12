@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JS Flow Basic Viz - Simulador de Ejecución JS</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <h1>Simulador Básico de Ejecución JavaScript</h1>
+
+    <!-- Panel de Controles -->
+    <div id="controls-panel">
+        <label for="scenario-select">Escenario:</label>
+        <select id="scenario-select" aria-label="Seleccionar escenario de simulación">
+            <option value="sync">Llamadas Síncronas</option>
+            <option value="timeout">setTimeout Básico</option>
+            <option value="event">Event Listener Básico</option>
+        </select>
+
+        <button id="prev-step-button" title="Ir al paso anterior" disabled>< Paso Atrás</button>
+        <button id="next-step-button" title="Ejecutar siguiente paso"> Paso Siguiente ></button>
+        <button id="reset-button" title="Reiniciar simulación actual">Reset</button>
+
+        <button id="interaction-button" title="Simular click en el botón del ejemplo" style="display: none;">Simular Click en Botón</button>
+    </div>
+
+    <!-- Contenedor Principal para Código y Visualización -->
+    <div id="main-container">
+
+        <!-- Panel de Código -->
+        <div id="code-panel">
+            <h2>Código</h2>
+            <div class="code-box">
+                <h3>HTML Relevante</h3>
+                <pre><code id="html-code">(Selecciona un escenario)</code></pre>
+            </div>
+            <div class="code-box">
+                <h3>JavaScript</h3>
+                <pre><code id="js-code">(Selecciona un escenario)</code></pre>
+            </div>
+        </div>
+
+        <!-- Panel de Visualización -->
+        <div id="viz-panel">
+            <h2>Visualización del Motor JS</h2>
+
+            <div class="viz-section">
+                <h3>Call Stack (Pila de Llamadas)</h3>
+                <ul id="call-stack-list" aria-live="polite">
+                    <!-- (global) o frames de funciones aparecerán aquí -->
+                </ul>
+            </div>
+
+            <div class="viz-section">
+                <h3>Web APIs / Tareas en Background</h3>
+                <div id="web-apis-list" aria-live="polite">
+                    <!-- Timers, listeners activos aparecerán aquí -->
+                </div>
+            </div>
+
+            <div class="viz-section">
+                <div class="queue-label">
+                    <h3>Callback Queue (Cola de Tareas)</h3>
+                    <span id="event-loop-arrow" title="Actividad del Event Loop"></span>
+                </div>
+                <ul id="callback-queue-list" aria-live="polite">
+                    <!-- Callbacks listos para ejecutarse aparecerán aquí -->
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Panel de Salida (Consola) -->
+    <div id="console-panel">
+        <h2>Consola</h2>
+        <pre id="console-output" aria-live="polite"><!-- Salida de console.log() -->
+</pre>
+    </div>
+
+    <!-- Guía del Simulador -->
+    <div id="simulator-guide">
+        <h2>Cómo Funciona el Simulador</h2>
+        <p>
+            Este simulador te ayuda a visualizar cómo un navegador interpreta código HTML y ejecuta JavaScript,
+            centrándose en el flujo de ejecución síncrono y asíncrono.
+        </p>
+        <ul>
+            <li><strong>Panel de Código:</strong> Muestra el HTML relevante y el código JavaScript del escenario seleccionado. La línea de JavaScript que se está "ejecutando" o evaluando se resaltará.</li>
+            <li><strong>Panel de Visualización del Motor JS:</strong>
+                <ul>
+                    <li><strong>Call Stack (Pila de Llamadas):</strong> Representa la pila de ejecución. Cada vez que se llama a una función, se añade un "marco" (frame) a la cima. Cuando una función retorna, su marco se quita. Funciona bajo el principio LIFO (Last In, First Out). <code>(global)</code> representa el contexto de ejecución global.</li>
+                    <li><strong>Web APIs / Tareas en Background:</strong> Aquí se muestran las tareas que JavaScript delega al navegador, como <code>setTimeout</code> o la configuración de <code>addEventListener</code>. Estas operaciones no bloquean el hilo principal de JavaScript.</li>
+                    <li><strong>Callback Queue (Cola de Tareas):</strong> Cuando una tarea de Web API finaliza (ej: un timer se completa, ocurre un evento de click), su función de "callback" asociada se coloca en esta cola, esperando ser procesada. Funciona bajo el principio FIFO (First In, First Out).</li>
+                    <li><strong>Event Loop (Flecha):</strong> Es un proceso constante que revisa si la Pila de Llamadas (Call Stack) está vacía. Si lo está, y hay tareas en la Cola de Callbacks, mueve la primera tarea de la cola a la pila para su ejecución. La flecha se animará para indicar esta acción.</li>
+                </ul>
+            </li>
+            <li><strong>Panel de Consola:</strong> Muestra la salida generada por las sentencias <code>console.log()</code> en el código.</li>
+            <li><strong>Controles:</strong>
+                <ul>
+                    <li><strong>Escenario:</strong> Elige entre diferentes ejemplos para ver cómo se comportan.</li>
+                    <li><strong>Paso Atrás / Paso Siguiente:</strong> Navega por la ejecución del código paso a paso, hacia adelante o hacia atrás.</li>
+                    <li><strong>Reset:</strong> Reinicia la simulación del escenario actual a su estado inicial.</li>
+                    <li><strong>Simular Click en Botón:</strong> (Solo en el escenario "Event Listener Básico") Presiona este botón para simular un click del usuario en el botón del ejemplo, lo que añadirá el manejador del evento a la Callback Queue.</li>
+                </ul>
+            </li>
+        </ul>
+        <h3>Flujo General:</h3>
+        <ol>
+            <li>El código JavaScript se ejecuta línea por línea (síncrono).</li>
+            <li>Las funciones se apilan y desapilan en el Call Stack.</li>
+            <li>Operaciones como <code>setTimeout</code> o registrar un listener de evento son entregadas a las Web APIs del navegador y no bloquean la ejecución síncrona. El Call Stack se vacía rápidamente de estas llamadas de configuración.</li>
+            <li>Cuando la tarea de la Web API completa (timer finaliza, evento ocurre), su callback se encola en la Callback Queue.</li>
+            <li>El Event Loop constantemente monitorea: si el Call Stack está vacío, toma el primer callback de la Callback Queue y lo empuja al Call Stack para su ejecución.</li>
+        </ol>
+        <p>
+            ¡Experimenta con los diferentes escenarios para entender mejor estos conceptos fundamentales!
+        </p>
+    </div>
+
+    <script src="simulator.js" defer></script>
+
+</body>
+</html>
