@@ -1,3 +1,5 @@
+--- START OF FILE index.html ---
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -5,6 +7,35 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>JS Flow Basic Viz - Simulador de Ejecución JS</title>
     <link rel="stylesheet" href="style.css">
+    <style>
+        /* Estilos adicionales si son necesarios para la nueva sección */
+        #simulator-guide h4 {
+            margin-top: 1.5em;
+            margin-bottom: 0.5em;
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+        #simulator-guide .scenario-explanation {
+            background-color: #f8f9fa; /* Fondo ligeramente distinto */
+            padding: 15px;
+            border-radius: 5px;
+            border: 1px solid #e9ecef;
+            margin-bottom: 1em;
+        }
+         #simulator-guide code { /* Estilo para código inline en la guía */
+             background-color: #e9ecef;
+             padding: 2px 4px;
+             border-radius: 3px;
+             font-size: 0.9em;
+         }
+         #simulator-guide .explanation-point {
+             font-style: italic;
+             color: #5a5a5a;
+             margin-left: 10px;
+             display: block; /* Para que ocupe su propia línea */
+             margin-top: 5px;
+         }
+    </style>
 </head>
 <body>
 
@@ -20,7 +51,7 @@
         </select>
 
         <button id="prev-step-button" title="Ir al paso anterior" disabled>< Paso Atrás</button>
-        <button id="next-step-button" title="Ejecutar siguiente paso"> Paso Siguiente ></button>
+        <button id="next-step-button" title="Ejecutar siguiente paso"> Paso Siguiente ></button>
         <button id="reset-button" title="Reiniciar simulación actual">Reset</button>
 
         <button id="interaction-button" title="Simular click en el botón del ejemplo" style="display: none;">Simular Click en Botón</button>
@@ -28,8 +59,8 @@
 
     <!-- Contenedor Principal para Código y Visualización -->
     <div id="main-container">
-
-        <!-- Panel de Código -->
+        <!-- Código y Visualización aquí... -->
+         <!-- Panel de Código -->
         <div id="code-panel">
             <h2>Código</h2>
             <div class="code-box">
@@ -90,8 +121,12 @@
             <li><strong>Panel de Código:</strong> Muestra el HTML relevante y el código JavaScript del escenario seleccionado. La línea de JavaScript que se está "ejecutando" o evaluando se resaltará.</li>
             <li><strong>Panel de Visualización del Motor JS:</strong>
                 <ul>
-                    <li><strong>Call Stack (Pila de Llamadas):</strong> Representa la pila de ejecución. Cada vez que se llama a una función, se añade un "marco" (frame) a la cima. Cuando una función retorna, su marco se quita. Funciona bajo el principio LIFO (Last In, First Out). <code>(global)</code> representa el contexto de ejecución global.</li>
-                    <li><strong>Web APIs / Tareas en Background:</strong> Aquí se muestran las tareas que JavaScript delega al navegador, como <code>setTimeout</code> o la configuración de <code>addEventListener</code>. Estas operaciones no bloquean el hilo principal de JavaScript.</li>
+                    <li><strong>Call Stack (Pila de Llamadas):</strong> Representa la pila de ejecución. Cada vez que se llama a una función, se añade un "marco" (frame) a la cima. Cuando una función retorna, su marco se quita. Funciona bajo el principio LIFO (Last In, First Out).
+                        <span class="explanation-point"><strong>Nota sobre <code>(global)</code>:</strong> Este marco representa el Contexto de Ejecución Global, el entorno base donde se procesan las declaraciones de funciones/variables de alto nivel y se ejecuta el código que no está dentro de ninguna función. Es el primer marco en la pila y normalmente el último en salir (para el código síncrono). Las llamadas a funciones crean nuevos marcos *encima* de <code>(global)</code>.</span>
+                    </li>
+                    <li><strong>Web APIs / Tareas en Background:</strong> Aquí se muestran las tareas que JavaScript delega al navegador, como <code>setTimeout</code> o la configuración de <code>addEventListener</code>. Estas operaciones no bloquean el hilo principal de JavaScript.
+                        <span class="explanation-point"><strong>Nota sobre mensajes:</strong> Un mensaje como <code>Listener: click -> manejadorClick() - (Esperando...)</code> significa que el navegador ha registrado un *listener* para el evento <code>click</code> y espera a que ocurra. Un mensaje como <code>Timer: tareaTimer() - (Completado)</code> indica que la *espera* del temporizador ha finalizado en la Web API (aunque el callback aún no se haya ejecutado o ya haya terminado); el simulador lo mantiene como registro de que la API completó su tarea de temporización.</span>
+                    </li>
                     <li><strong>Callback Queue (Cola de Tareas):</strong> Cuando una tarea de Web API finaliza (ej: un timer se completa, ocurre un evento de click), su función de "callback" asociada se coloca en esta cola, esperando ser procesada. Funciona bajo el principio FIFO (First In, First Out).</li>
                     <li><strong>Event Loop (Flecha):</strong> Es un proceso constante que revisa si la Pila de Llamadas (Call Stack) está vacía. Si lo está, y hay tareas en la Cola de Callbacks, mueve la primera tarea de la cola a la pila para su ejecución. La flecha se animará para indicar esta acción.</li>
                 </ul>
@@ -102,18 +137,71 @@
                     <li><strong>Escenario:</strong> Elige entre diferentes ejemplos para ver cómo se comportan.</li>
                     <li><strong>Paso Atrás / Paso Siguiente:</strong> Navega por la ejecución del código paso a paso, hacia adelante o hacia atrás.</li>
                     <li><strong>Reset:</strong> Reinicia la simulación del escenario actual a su estado inicial.</li>
-                    <li><strong>Simular Click en Botón:</strong> (Solo en el escenario "Event Listener Básico") Presiona este botón para simular un click del usuario en el botón del ejemplo, lo que añadirá el manejador del evento a la Callback Queue.</li>
+                    <li><strong>Simular Click en Botón:</strong> (Solo en el escenario "Event Listener Básico") Presiona este botón para simular un click del usuario en el botón del ejemplo, lo que añadirá el manejador del evento a la Callback Queue (ver detalle más abajo).</li>
                 </ul>
             </li>
         </ul>
         <h3>Flujo General:</h3>
         <ol>
-            <li>El código JavaScript se ejecuta línea por línea (síncrono).</li>
-            <li>Las funciones se apilan y desapilan en el Call Stack.</li>
-            <li>Operaciones como <code>setTimeout</code> o registrar un listener de evento son entregadas a las Web APIs del navegador y no bloquean la ejecución síncrona. El Call Stack se vacía rápidamente de estas llamadas de configuración.</li>
+            <li>El código JavaScript (en el contexto <code>(global)</code> o en funciones) se ejecuta línea por línea (síncrono).</li>
+            <li>Las llamadas a funciones apilan nuevos marcos en el Call Stack. Los retornos los desapilan.</li>
+            <li>Operaciones como <code>setTimeout</code> o registrar un listener son entregadas a las Web APIs y no bloquean. El Call Stack se vacía rápidamente de estas llamadas de configuración.</li>
             <li>Cuando la tarea de la Web API completa (timer finaliza, evento ocurre), su callback se encola en la Callback Queue.</li>
             <li>El Event Loop constantemente monitorea: si el Call Stack está vacío, toma el primer callback de la Callback Queue y lo empuja al Call Stack para su ejecución.</li>
         </ol>
+
+        <!-- SECCIÓN ACTUALIZADA: Detalle de Escenarios -->
+        <h3>Detalle de Escenarios</h3>
+
+        <div class="scenario-explanation">
+            <h4>1. Llamadas Síncronas (<code>sync</code>)</h4>
+            <p><strong>Objetivo:</strong> Demostrar el funcionamiento básico del Call Stack con llamadas a funciones normales (síncronas).</p>
+            <p><strong>Qué observar:</strong></p>
+            <ul>
+                <li>Cómo <code>(global)</code>, <code>funcionA</code> y <code>funcionB</code> se añaden (push) y quitan (pop) de la Pila de Llamadas en orden LIFO.</li>
+                <li>La ejecución del código de alto nivel ocurre dentro del marco <code>(global)</code>.</li>
+                <li>Los mensajes en la Consola aparecen exactamente en el orden síncrono.</li>
+                <li>Las secciones Web APIs y Callback Queue permanecen vacías.</li>
+            </ul>
+            <p><strong>Interacción:</strong> Simplemente usa el botón <strong>"Paso Siguiente >"</strong>.</p>
+        </div>
+
+        <div class="scenario-explanation">
+            <h4>2. setTimeout Básico (<code>timeout</code>)</h4>
+            <p><strong>Objetivo:</strong> Mostrar cómo funciona una operación asíncrona simple con <code>setTimeout</code>.</p>
+             <p><strong>Qué observar:</strong></p>
+            <ul>
+                <li>La llamada a <code>setTimeout</code> delega la espera a las <strong>Web APIs</strong> (verás "Timer... X ms restantes").</li>
+                <li>El script principal (en <code>(global)</code>) continúa y finaliza, vaciando el Call Stack.</li>
+                <li>Cuando el timer termina en las Web APIs, el mensaje cambia a "(Completado)". Este mensaje **permanece** como registro de que la tarea de temporización de la API finalizó.</li>
+                <li>La Web API entonces añade el callback (<code>tareaTimer</code>) a la <strong>Callback Queue</strong>.</li>
+                <li>El <strong>Event Loop</strong> (flecha) lo mueve al Call Stack (porque está vacío).</li>
+                <li>Se ejecuta <code>tareaTimer</code>.</li>
+            </ul>
+             <p><strong>Interacción:</strong> Usa <strong>"Paso Siguiente >"</strong>. No se requiere interacción especial.</p>
+        </div>
+
+         <div class="scenario-explanation">
+            <h4>3. Event Listener Básico (<code>event</code>)</h4>
+            <p><strong>Objetivo:</strong> Simular cómo se manejan los eventos del usuario de forma asíncrona.</p>
+            <p><strong>Qué observar:</strong></p>
+            <ul>
+                 <li><code>addEventListener</code> registra el listener en las <strong>Web APIs</strong> (verás "Listener... (Esperando...)"). El Call Stack se vacía pronto.</li>
+                 <li>La aplicación está ahora inactiva, esperando el evento 'click'.</li>
+                 <li>**Cuándo pulsar "Simular Click en Botón":** Pulsa este botón **DESPUÉS** de que el Call Stack esté vacío y veas el mensaje <code>(Esperando...)</code> en las Web APIs.</li>
+                 <li>Al pulsar "Simular Click": El evento ocurre, la Web API añade el callback (<code>manejadorClick</code>) a la <strong>Callback Queue</strong>. El estado del Listener en Web APIs puede cambiar a "(Evento ocurrió!)" o similar.</li>
+                 <li>El <strong>Event Loop</strong> moverá <code>manejadorClick</code> al Call Stack.</li>
+                 <li>Se ejecuta <code>manejadorClick</code>.</li>
+            </ul>
+             <p><strong>Interacción:</strong></p>
+             <ol>
+                 <li>Usa <strong>"Paso Siguiente >"</strong> hasta que el Call Stack esté vacío y el Listener esté "Esperando..." en Web APIs.</li>
+                 <li>Pulsa <strong>"Simular Click en Botón"</strong>.</li>
+                 <li>Continúa con <strong>"Paso Siguiente >"</strong> para ver el resto del flujo (cola -> stack -> ejecución).</li>
+             </ol>
+        </div>
+        <!-- FIN SECCIÓN ACTUALIZADA -->
+
         <p>
             ¡Experimenta con los diferentes escenarios para entender mejor estos conceptos fundamentales!
         </p>
@@ -123,3 +211,4 @@
 
 </body>
 </html>
+--- END OF FILE index.html ---

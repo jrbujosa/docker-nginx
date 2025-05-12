@@ -1,0 +1,308 @@
+--- START OF FILE index.html ---
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulador del Cocinero y la Pila de Comandas</title>
+    <link rel="stylesheet" href="cocinero_style.css">
+    <style>
+        /* Estilos adicionales para secciones de explicación y código */
+        .explanation-section, .code-example-section {
+            background-color: #fdfdfd;
+            padding: 20px;
+            margin-top: 30px;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .explanation-section h2, .explanation-section h3,
+        .code-example-section h3 {
+            color: #3d405b;
+            border-bottom: 2px solid #e07a5f;
+            padding-bottom: 8px;
+            margin-top: 0;
+            margin-bottom: 15px;
+        }
+        .explanation-section table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+        .explanation-section th, .explanation-section td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: left;
+        }
+        .explanation-section th {
+            background-color: #f2cc8f; /* Amarillo suave */
+            color: #3a3a3a;
+        }
+        .explanation-section tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        /* --- CORRECTED STYLES for CODE --- */
+
+        /* Style for INLINE code snippets (e.g., in paragraphs) */
+        .explanation-section p code, .code-example-section p code {
+            background-color: #e0e0e0; /* Light grey background */
+            padding: 2px 5px;
+            border-radius: 3px;
+            font-family: 'Courier New', Courier, monospace;
+            color: #3a3a3a; /* Dark text for contrast on light background */
+            font-size: 0.95em;
+        }
+
+        /* Style for the PRE block (container for code listing) */
+        .code-example-section pre {
+            background-color: #2a2a2a; /* Dark background */
+            color: #e0e0e0; /* Light text color for the code */
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto; /* Allow horizontal scrolling */
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.9em; /* Slightly smaller font for code block */
+        }
+
+        /* Reset conflicting styles for the CODE tag specifically INSIDE the PRE block */
+        .code-example-section pre code {
+            background: none; /* Remove background */
+            padding: 0;       /* Remove padding */
+            border-radius: 0; /* Reset radius */
+            color: inherit;   /* Inherit light text color from PRE */
+            font-family: inherit; /* Inherit font */
+            font-size: inherit;   /* Inherit font size */
+        }
+         /* --- END OF CORRECTED STYLES --- */
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>El Cocinero Mágico y su Pila de Comandas</h1>
+        <p>Observa cómo el cocinero procesa las órdenes (funciones) usando su Pila de Comandas (Call Stack).</p>
+    </header>
+
+    <main>
+        <div class="cocina-area">
+            <div class="cocinero-estado">
+                <h2>Cocinero</h2>
+                <img src="https://cdn-icons-png.flaticon.com/512/3081/3081754.png" alt="Cocinero" id="cocinero-img">
+                <p id="accion-cocinero">Esperando órdenes...</p>
+            </div>
+
+            <div class="panel-visualizacion">
+                <h2>Pila de Comandas (Call Stack)</h2>
+                <ul id="call-stack-list">
+                    <!-- Las comandas (frames) aparecerán aquí -->
+                    <li class="placeholder">Pila Vacía</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="recetario-y-control">
+            <div class="recetario">
+                <h3>Receta Actual: <span id="receta-actual-nombre">Ninguna</span></h3>
+                <ul id="pasos-receta-actual">
+                    <!-- Los pasos de la receta actual se mostrarán aquí -->
+                    <li class="placeholder">Selecciona una orden para comenzar.</li>
+                </ul>
+            </div>
+
+            <div class="controles">
+                <h2>Controles</h2>
+                <button id="iniciar-menu-dia">Preparar Menú del Día (Síncrono)</button>
+                <button id="siguiente-paso" disabled>Siguiente Paso del Cocinero</button>
+                <button id="reset-simulacion">Resetear Cocina</button>
+            </div>
+        </div>
+
+        <div class="log-eventos">
+            <h3>Bitácora de la Cocina (Log)</h3>
+            <pre id="log-cocina"></pre>
+        </div>
+
+        <!-- SECCIÓN DE EXPLICACIÓN -->
+        <section class="explanation-section">
+            <h2>Entendiendo la Simulación: La Analogía</h2>
+
+            <h3>¿Cómo Funciona la Simulación?</h3>
+            <p>
+                Esta página simula cómo un cocinero procesa una orden compleja (el "Menú del Día") que requiere preparar varias recetas (Sopa, Plato Fuerte, Postre). Cada receta tiene pasos específicos.
+            </p>
+            <ul>
+                <li>Haz clic en <strong>"Preparar Menú del Día"</strong> para que el cocinero reciba la orden principal. Verás que "Menú del Día Completo" se añade a la Pila de Comandas.</li>
+                <li>Usa el botón <strong>"Siguiente Paso del Cocinero"</strong> para avanzar. El cocinero seguirá los pasos de la receta actual (la que está arriba en la Pila).</li>
+                <li>Si un paso implica llamar a otra receta (ej: "Llamar a 'Preparar Sopa'"), esa nueva receta se añade <strong>encima</strong> de la Pila. El cocinero empieza a trabajar en esta nueva receta.</li>
+                <li>Cuando una receta termina, se quita de la Pila (¡pop!) y el cocinero retoma la receta que estaba debajo, justo donde la dejó.</li>
+                <li>La <strong>"Bitácora de la Cocina"</strong> muestra un registro de todas las acciones.</li>
+                <li>La sección <strong>"Receta Actual"</strong> muestra los pasos de la receta que el cocinero está ejecutando en este momento (la cima de la Pila).</li>
+                <li>El botón <strong>"Resetear Cocina"</strong> limpia todo para empezar de nuevo.</li>
+            </ul>
+            <p>
+                Este proceso de apilar y desapilar tareas es exactamente cómo JavaScript maneja las llamadas a funciones usando el <strong>Call Stack</strong>.
+            </p>
+
+            <h3>La Analogía: Cocina vs. Ejecución de JavaScript</h3>
+            <p>
+                La forma en que el cocinero maneja las comandas y recetas es un símil de cómo un navegador (o cualquier entorno JavaScript) ejecuta código:
+            </p>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Elemento en la Simulación (Cocina)</th>
+                        <th>Concepto en Programación (JavaScript)</th>
+                        <th>Descripción</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>La Cocina (Entorno General)</strong></td>
+                        <td><strong>Navegador / Entorno de Ejecución (Runtime)</strong></td>
+                        <td>El contexto general donde todo ocurre. Proporciona las herramientas y el espacio (como el DOM, APIs).</td>
+                    </tr>
+                    <tr>
+                        <td><strong>El Cocinero</strong></td>
+                        <td><strong>Motor JavaScript (Ej: V8, SpiderMonkey)</strong></td>
+                        <td>La parte que realmente lee y ejecuta las instrucciones una por una. Solo puede hacer una cosa a la vez.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Menú del Día (Orden Inicial)</strong></td>
+                        <td><strong>Script Principal / Llamada Inicial</strong></td>
+                        <td>El programa o función principal que inicia la ejecución. En la simulación, es la función <code>"MENU DEL DIA"</code>.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Una Receta (Ej: "Preparar Sopa")</strong></td>
+                        <td><strong>Una Función (<code>function prepararSopa() { ... }</code>)</strong></td>
+                        <td>Un bloque de código diseñado para realizar una tarea específica. Contiene una secuencia de instrucciones.</td>
+                    </tr>
+                     <tr>
+                        <td><strong>Un Paso de la Receta (Ej: "Picar verduras")</strong></td>
+                        <td><strong>Una Instrucción / Línea de Código</strong></td>
+                        <td>Una acción específica dentro de una función (<code>let verduras = picar(...);</code>, <code>console.log("listo");</code>).</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Pila de Comandas</strong></td>
+                        <td><strong>Call Stack (Pila de Llamadas)</strong></td>
+                        <td>Una estructura de datos (LIFO: Last-In, First-Out) que rastrea qué funciones se están ejecutando. Cada elemento en la pila es un "marco de ejecución".</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Añadir una comanda a la Pila (Ej: Al llamar a "Preparar Sopa" desde "Menú del Día")</strong></td>
+                        <td><strong>Llamada a Función (Function Call) / Apilar (Push)</strong></td>
+                        <td>Cuando una función llama a otra, se crea un nuevo marco para la función llamada y se coloca <strong>encima</strong> de la pila. La ejecución pasa a esta nueva función.</td>
+                    </tr>
+                     <tr>
+                        <td><strong>La Receta en la Cima de la Pila</strong></td>
+                        <td><strong>Función Actualmente en Ejecución</strong></td>
+                        <td>La función cuyo marco está en la cima del Call Stack. Es la que el Motor JavaScript está ejecutando en este momento.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>El Paso Actual que ejecuta el cocinero</strong></td>
+                        <td><strong>La Instrucción Actual (Program Counter)</strong></td>
+                        <td>La línea específica de código dentro de la función actual que el Motor está a punto de ejecutar o está ejecutando.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Terminar una Receta y quitarla de la Pila</strong></td>
+                        <td><strong>Retorno de Función (Return) / Desapilar (Pop)</strong></td>
+                        <td>Cuando una función termina (llega al final o a un <code>return</code>), su marco se quita de la cima de la pila. La ejecución vuelve a la función que la llamó (la que ahora está en la cima), continuando desde donde se quedó.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Pila Vacía</strong></td>
+                        <td><strong>Call Stack Vacío</strong></td>
+                        <td>Indica que el script principal ha terminado y no hay más funciones ejecutándose. El Motor JavaScript espera nuevas tareas (como eventos del usuario).</td>
+                    </tr>
+                </tbody>
+            </table>
+            <p>
+                Observar cómo la "Pila de Comandas" crece y decrece, y cómo el "Cocinero" siempre trabaja en la "Receta Actual" (la de arriba), te ayuda a visualizar cómo JavaScript gestiona la ejecución síncrona de funciones.
+            </p>
+        </section>
+        <!-- FIN DE LA SECCIÓN DE EXPLICACIÓN -->
+
+        <!-- SECCIÓN: CÓDIGO JAVASCRIPT EQUIVALENTE -->
+        <section class="code-example-section">
+            <h3>Ejemplo de Código JavaScript Equivalente</h3>
+            <p>
+                Así se vería la estructura de llamadas a funciones en JavaScript para el "Menú del Día", reflejando cómo se apilan y desapilan las tareas en el Call Stack como en la simulación del cocinero. Cada <code>console.log</code> representa una acción o paso del cocinero.
+            </p>
+            <pre><code class="language-javascript">// === Funciones que representan las Recetas ===
+
+function prepararSopaDeVerduras() {
+    console.log("==> Entrando a prepararSopaDeVerduras()"); // PUSH al Call Stack
+    console.log("    [SOPA] Acción: Picar verduras (cebolla, zanahoria, apio)");
+    console.log("    [SOPA] Acción: Sofreír verduras");
+    console.log("    [SOPA] Acción: Añadir caldo y cocinar");
+    console.log("    [SOPA] Acción: Sazonar al gusto");
+    console.log("<== Saliendo de prepararSopaDeVerduras()"); // POP del Call Stack
+    // Al terminar, la ejecución vuelve a donde se llamó (prepararMenuDelDia)
+}
+
+function prepararPolloAlHorno() {
+    console.log("==> Entrando a prepararPolloAlHorno()"); // PUSH
+    console.log("    [POLLO] Acción: Marinar el pollo");
+    console.log("    [POLLO] Acción: Precalentar horno");
+    console.log("    [POLLO] Acción: Hornear el pollo");
+    console.log("    [POLLO] Acción: Dejar reposar el pollo");
+    console.log("<== Saliendo de prepararPolloAlHorno()"); // POP
+}
+
+function prepararFlanDeVainilla() {
+    console.log("==> Entrando a prepararFlanDeVainilla()"); // PUSH
+    console.log("    [FLAN] Acción: Hacer caramelo");
+    console.log("    [FLAN] Acción: Preparar mezcla del flan");
+    console.log("    [FLAN] Acción: Cocinar a baño María");
+    console.log("    [FLAN] Acción: Enfriar y desmoldar");
+    console.log("<== Saliendo de prepararFlanDeVainilla()"); // POP
+}
+
+// === Función Principal (Orden del Menú del Día) ===
+
+function prepararMenuDelDia() {
+    console.log("==> Entrando a prepararMenuDelDia()"); // PUSH inicial (o el script global)
+    console.log("--- Iniciando preparación del Menú Completo ---");
+
+    // Llamada a la primera sub-receta (función)
+    prepararSopaDeVerduras();
+    // La ejecución se detiene aquí hasta que prepararSopaDeVerduras() termine y retorne.
+
+    // Llamada a la segunda sub-receta
+    prepararPolloAlHorno();
+    // La ejecución se detiene aquí hasta que prepararPolloAlHorno() termine y retorne.
+
+    // Llamada a la tercera sub-receta
+    prepararFlanDeVainilla();
+    // La ejecución se detiene aquí hasta que prepararFlanDeVainilla() termine y retorne.
+
+    // Último paso de la receta principal
+    console.log("    [MENU] Acción: Servir Menú Completo");
+    console.log("--- Menú Completo Listo ---");
+    console.log("<== Saliendo de prepararMenuDelDia()"); // POP final
+}
+
+// === Iniciar la Ejecución (como hacer clic en el botón) ===
+console.log("--- INICIO DEL SCRIPT (Entorno Global) ---");
+prepararMenuDelDia(); // Llamada a la función principal
+console.log("--- FIN DEL SCRIPT (Entorno Global) ---");
+
+/*
+Si ejecutas este código en la consola del navegador, verás cómo los mensajes
+aparecen en el orden exacto en que se ejecutan las líneas y las funciones.
+Cada vez que se llama a una función ("==> Entrando..."), es como añadir una
+comanda a la Pila. Cuando una función termina ("<== Saliendo..."), se quita
+de la Pila, y la ejecución continúa en la función anterior.
+*/
+</code></pre>
+        </section>
+        <!-- FIN DE LA SECCIÓN DE CÓDIGO -->
+
+    </main>
+
+    <footer>
+        <p>Este es un símil para entender el Call Stack en programación JavaScript.</p>
+    </footer>
+
+    <script src="cocinero_simulator.js"></script>
+</body>
+</html>
+--- END OF FILE index.html ---
