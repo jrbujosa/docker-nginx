@@ -1,8 +1,8 @@
 document.addEventListener('DOMContentLoaded', () => {
     // --- DOM Elements ---
     const scenarioSelect = document.getElementById('scenario-select');
-    const prevStepButton = document.getElementById('prev-step-button'); // Nuevo
-    const nextStepButton = document.getElementById('next-step-button'); // Renombrado
+    const prevStepButton = document.getElementById('prev-step-button');
+    const nextStepButton = document.getElementById('next-step-button');
     const resetButton = document.getElementById('reset-button');
     const interactionButton = document.getElementById('interaction-button');
     const htmlCodeEl = document.getElementById('html-code');
@@ -14,13 +14,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const eventLoopArrow = document.getElementById('event-loop-arrow');
 
     // --- Simulation State ---
-    // state ahora se manejará como un historial
-    let history = []; // Array de estados
-    let historyIndex = -1; // Índice del estado actual en el historial
+    let history = [];
+    let historyIndex = -1;
 
-    // --- Scenarios Data (Sin cambios respecto a la versión anterior) ---
+    // --- Scenarios Data ---
     const scenarios = {
-        sync: { /*...*/
+        sync: {
              html: `(No relevante)`,
             js: [
                 `function funcionB() {`, // 0
@@ -48,7 +47,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 { line: -1, action: 'end', stackPop: true } // End global
             ]
          },
-        timeout: { /*...*/
+        timeout: {
             html: `(No relevante)`,
             js: [
                 `function tareaTimer() {`, // 0
@@ -66,14 +65,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 { line: 6, action: 'wait_api', apiName: 'setTimeout' }, // Pausa esperando API
                 { line: -1, action: 'check_queue' }, // Fin script sync, global sale, verificar cola
              ],
-             callbackCode: { // Código a ejecutar cuando el callback es llamado
+             callbackCode: {
                  'tareaTimer': [
                      { line: 1, action: 'log', value: '¡Timer finalizado!' },
                      { line: 2, action: 'return', stackPop: true }
                  ]
              }
          },
-        event: { /*...*/
+        event: {
             html: `<button id="miBotonSimulado">Haz Click Aquí</button>`,
             js: [
                 `// Simulación: Obteniendo el botón`, // 0
@@ -88,12 +87,12 @@ document.addEventListener('DOMContentLoaded', () => {
             ],
             steps: [
                 { line: 0, action: 'comment', stackPush: '(global)'},
-                { line: 1, action: 'assignment' }, // Simula asignación
+                { line: 1, action: 'assignment' },
                 { line: 5, action: 'log', value: 'Añadiendo listener' },
                 { line: 6, action: 'api', apiName: 'addEventListener', eventType: 'click', callbackName: 'manejadorClick' },
                 { line: 7, action: 'log', value: 'Listener añadido y esperando...' },
-                { line: 8, action: 'wait_api', apiName: 'addEventListener' }, // Pausa esperando API (evento)
-                { line: -1, action: 'check_queue' }, // Fin script sync, global sale, verificar cola
+                { line: 8, action: 'wait_api', apiName: 'addEventListener' },
+                { line: -1, action: 'check_queue' },
             ],
             callbackCode: {
                  'manejadorClick': [
@@ -106,12 +105,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Helper: Deep Copy State ---
     function deepCopy(obj) {
-        // Simple deep copy for JSON-serializable data
         try {
              return JSON.parse(JSON.stringify(obj));
         } catch (e) {
             console.error("Error during deep copy:", e);
-            return null; // O manejar el error de otra forma
+            return null;
         }
     }
 
@@ -125,30 +123,29 @@ document.addEventListener('DOMContentLoaded', () => {
             jsLines: scenario.js,
             steps: scenario.steps,
             callbackCode: scenario.callbackCode || {},
-            currentStepIndex: 0, // Índice del *próximo* paso del script principal a ejecutar
+            currentStepIndex: 0,
             callStack: [],
-            webApis: [], // { id, name, type, callbackName, endTime?, triggered?, eventType? }
-            callbackQueue: [], // { callbackName, apiId }
+            webApis: [], // { id, name, type, callbackName, endTime?, triggered?, eventType?, processedToQueue? }
+            callbackQueue: [],
             consoleOutput: [],
-            currentJsLine: -1, // Línea resaltada en JS
+            currentJsLine: -1,
             waitingForApi: null,
             simulationTime: 0,
             nextApiId: 0,
-            executingCallback: false, // Estado actual: ¿está ejecutando un callback?
-            callbackStepIndex: 0, // Índice del *próximo* paso del callback a ejecutar
-            statusMessage: "Listo para iniciar.", // Mensaje sobre el estado actual
-            isFinished: false // Indica si la simulación ha terminado
+            executingCallback: false,
+            callbackStepIndex: 0,
+            statusMessage: "Listo para iniciar.",
+            isFinished: false
         };
 
-        history = [initialState]; // Reiniciar historial con el estado inicial
-        historyIndex = 0; // Apuntar al estado inicial
+        history = [initialState];
+        historyIndex = 0;
 
-        // Mostrar código inicial (solo una vez)
         htmlCodeEl.textContent = initialState.html;
         jsCodeEl.innerHTML = initialState.jsLines.map((line, index) => `<span data-line="${index}">${line}</span>`).join('\n');
         interactionButton.style.display = scenarioName === 'event' ? 'inline-block' : 'none';
 
-        render(); // Renderizar el estado inicial
+        render();
     }
 
     function render() {
@@ -156,9 +153,8 @@ document.addEventListener('DOMContentLoaded', () => {
             console.error("Índice de historial inválido:", historyIndex);
             return;
         }
-        const state = history[historyIndex]; // Obtener el estado actual del historial
+        const state = history[historyIndex];
 
-        // 1. Highlight JS Line
         document.querySelectorAll('#js-code span').forEach(span => {
             span.classList.remove('highlight');
             if (parseInt(span.dataset.line) === state.currentJsLine) {
@@ -166,309 +162,302 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
 
-        // 2. Update Call Stack
         callStackList.innerHTML = state.callStack.map(frame =>
              `<li class="${frame === '(global)' ? 'global' : ''}">${frame}</li>`
         ).join('');
-        if (state.callStack.length === 0 && !state.isFinished) {
-             // Opcional: Mostrar "(idle)" si está vacío pero no terminado
-             // callStackList.innerHTML = `<li class="global">(idle)</li>`;
-        }
 
-        // 3. Update Web APIs
         webApisList.innerHTML = state.webApis.map(api => {
             let text = '';
             if (api.type === 'timer') {
                 const remaining = Math.max(0, api.endTime - state.simulationTime);
-                text = `Timer: ${api.callbackName}() - ${remaining > 0 ? `(${remaining}ms restantes)` : '(Completado)'}`;
-                if (remaining <= 0 && !api.triggered && !state.callbackQueue.some(cb => cb.apiId === api.id) && !state.callStack.includes(api.callbackName)) {
-                   text += ' -> Listo para cola';
+                let statusText = '';
+                if (remaining > 0) {
+                    statusText = `(${remaining}ms restantes)`;
+                } else { // Tiempo cumplido
+                    const isInCallStack = state.callStack.includes(api.callbackName) && state.executingCallback && state.callStack[state.callStack.length -1] === api.callbackName;
+                    const isInQueue = state.callbackQueue.some(cb => cb.apiId === api.id);
+
+                    if (isInCallStack) {
+                        statusText = '(Callback Ejecutando)';
+                    } else if (isInQueue) {
+                        statusText = '(Callback en Cola)';
+                    } else if (api.processedToQueue) { // Ya fue a la cola y salió (ejecutado/terminado)
+                        statusText = '(Callback Procesado/Ejecutado)';
+                    } else { // Tiempo cumplido, pero aún no movido a la cola
+                        statusText = '(Completado, listo para mover a Cola)';
+                    }
                 }
-                 if(state.callbackQueue.some(cb => cb.apiId === api.id)){
-                     text += ' (En cola)';
-                 } else if (state.callStack.includes(api.callbackName)) {
-                     text += ' (Ejecutando)';
-                 }
+                text = `Timer: ${api.callbackName}() - ${statusText}`;
+
             } else if (api.type === 'listener') {
-                text = `Listener: ${api.eventType} -> ${api.callbackName}() - ${api.triggered ? '(Evento ocurrió!)' : '(Esperando...)'}`;
-                 if(api.triggered && state.callbackQueue.some(cb => cb.apiId === api.id)){
-                      text += ' (En cola)';
-                 } else if (state.callStack.includes(api.callbackName)) {
-                      text += ' (Ejecutando)';
-                 }
+                let statusText = '';
+                 const isInCallStack = state.callStack.includes(api.callbackName) && state.executingCallback && state.callStack[state.callStack.length -1] === api.callbackName;
+                 const isInQueue = state.callbackQueue.some(cb => cb.apiId === api.id);
+
+                if (isInCallStack) {
+                    statusText = '(Callback Ejecutando)';
+                } else if (isInQueue) {
+                    statusText = '(Callback en Cola)';
+                } else if (api.triggered) { // Evento ocurrió y fue procesado (a la cola y quizás ya ejecutado)
+                    statusText = '(Evento Ocurrido, Callback Procesado)';
+                } else {
+                    statusText = '(Esperando Evento...)';
+                }
+                text = `Listener: ${api.eventType} -> ${api.callbackName}() - ${statusText}`;
             }
             return `<div data-api-id="${api.id}">${text}</div>`;
         }).join('');
 
-        // 4. Update Callback Queue
         callbackQueueList.innerHTML = state.callbackQueue.map(cb =>
             `<li>${cb.callbackName}</li>`
         ).join('');
 
-        // 5. Update Console
         consoleOutputEl.textContent = state.consoleOutput.join('\n');
-        consoleOutputEl.scrollTop = consoleOutputEl.scrollHeight; // Auto-scroll
+        consoleOutputEl.scrollTop = consoleOutputEl.scrollHeight;
 
-        // 6. Event Loop Arrow (se activa momentáneamente al mover)
-        // (La activación se manejará al *calcular* el siguiente estado)
-        eventLoopArrow.classList.remove('active'); // Reset por defecto
-        if (state.eventLoopActive) { // Si el estado indica que el loop estuvo activo
+        eventLoopArrow.classList.remove('active');
+        if (state.eventLoopActive) {
              eventLoopArrow.classList.add('active');
-            // Nota: La animación CSS es corta, así que esto funciona visualmente
         }
 
-        // 7. Update Button States
         prevStepButton.disabled = historyIndex <= 0;
-        nextStepButton.disabled = state.isFinished; // Deshabilitar 'Siguiente' si terminó
-
-        // 8. Opcional: Mostrar mensaje de estado
-        // console.log("Estado actual:", state.statusMessage);
+        nextStepButton.disabled = state.isFinished;
     }
 
     function calculateNextState() {
-        if (historyIndex < 0) return null; // No hay estado base
+        if (historyIndex < 0) return null;
         const currentState = history[historyIndex];
 
         if (currentState.isFinished) {
             console.log("La simulación ya ha terminado.");
-            return null; // No hay más estados que calcular
+            return null;
         }
 
-        // Crear una copia profunda del estado actual para modificarla
         let nextState = deepCopy(currentState);
-        nextState.statusMessage = ""; // Resetear mensaje
-        nextState.eventLoopActive = false; // Resetear activación del loop
+        nextState.statusMessage = "";
+        nextState.eventLoopActive = false;
+        nextState.currentJsLine = currentState.executingCallback ? currentState.currentJsLine : -1; // Mantener línea si es callback, sino limpiar
 
-        let actionTaken = false;
-
-        // --- Parte 1: Lógica del Event Loop (si Call Stack está vacío) ---
-        if (nextState.callStack.length === 0 && !nextState.executingCallback) {
-            // 1a. Simular paso del tiempo para timers (simplificado)
-            // En lugar de tiempo real, consideramos que un timer está listo si su 'wait_api' pasó
-            nextState.webApis.forEach(api => {
-                if (api.type === 'timer' && api.endTime <= nextState.simulationTime && !api.triggered && !nextState.callbackQueue.some(cb => cb.apiId === api.id)) {
-                    api.triggered = true; // Marcar como listo
+        // --- Fase 1: Mover Timers Completados a la Callback Queue (Acción del "Sistema") ---
+        // Esto tiene prioridad si las condiciones se cumplen.
+        if (!nextState.executingCallback) { // No interrumpir callbacks en ejecución con esta lógica
+            for (const api of nextState.webApis) {
+                if (api.type === 'timer' &&
+                    api.endTime <= nextState.simulationTime &&
+                    !api.processedToQueue && // Aún no ha sido movido a la cola
+                    !nextState.callbackQueue.some(cb => cb.apiId === api.id) // Doble check por si acaso
+                ) {
+                    api.processedToQueue = true;
                     nextState.callbackQueue.push({ callbackName: api.callbackName, apiId: api.id });
-                    nextState.statusMessage += ` Timer ${api.callbackName} completado. Añadido a Callback Queue.`;
-                    console.log(`Timer ${api.callbackName} completado, callback añadido a la cola.`);
+                    nextState.statusMessage = `Sistema: Timer '${api.callbackName}' completado. Callback añadido a la Callback Queue.`;
+                    nextState.currentJsLine = -1; // Acción del sistema, no de una línea JS
+                    // Limpiar waitingForApi si este timer era el esperado
+                     if (nextState.waitingForApi === 'setTimeout' && currentState.steps[currentState.currentStepIndex-1]?.action === 'wait_api') {
+                         nextState.waitingForApi = null;
+                     }
+                    console.log(`Sistema: Timer ${api.callbackName} callback añadido a la cola.`);
+                    return nextState; // Este es el único cambio para este paso.
                 }
-            });
+            }
+        }
 
-            // 1b. Revisar si hay callbacks en la cola
+        // --- Fase 2: Lógica del Event Loop (Mover de Cola a Pila si Pila vacía) ---
+        // Solo si no se movió nada a la cola en Fase 1 Y la pila está vacía Y no se está ejecutando un callback.
+        if (nextState.callStack.length === 0 && !nextState.executingCallback) {
             if (nextState.callbackQueue.length > 0) {
-                const callbackInfo = nextState.callbackQueue.shift(); // Tomar el primero
+                const callbackInfo = nextState.callbackQueue.shift();
                 nextState.callStack.push(callbackInfo.callbackName);
                 nextState.executingCallback = true;
-                nextState.callbackStepIndex = 0; // Iniciar ejecución del callback
+                nextState.callbackStepIndex = 0;
                 const firstCallbackStep = nextState.callbackCode[callbackInfo.callbackName]?.[0];
-                nextState.currentJsLine = firstCallbackStep ? firstCallbackStep.line : -1; // Resaltar primera línea
-                nextState.statusMessage += ` Event Loop: Moviendo ${callbackInfo.callbackName} de Cola a Pila.`;
-                nextState.eventLoopActive = true; // Indicar que el loop actuó
+                nextState.currentJsLine = firstCallbackStep ? firstCallbackStep.line : -1;
+                nextState.statusMessage = `Event Loop: Moviendo ${callbackInfo.callbackName} de Cola a Pila.`;
+                nextState.eventLoopActive = true;
                 console.log(`Event Loop: Moviendo ${callbackInfo.callbackName} de la Cola a la Pila.`);
-                actionTaken = true;
+                // Limpiar waitingForApi si el event loop actuó.
+                nextState.waitingForApi = null;
+                return nextState; // El Event Loop actuó, este es el paso.
             }
         }
 
-        // --- Parte 2: Ejecución del Siguiente Paso (Script principal o Callback) si no actuó el Event Loop ---
-        if (!actionTaken) {
-            let currentStepConfig; // La configuración del paso a ejecutar
-            let isCallbackStep = nextState.executingCallback;
+        // --- Fase 3: Ejecución del Siguiente Paso del Script o Callback ---
+        // Solo si Fase 1 (timer a cola) y Fase 2 (cola a pila) no hicieron nada.
+        let currentStepConfig;
+        let isCallbackStep = nextState.executingCallback;
 
-            if (isCallbackStep) {
-                // Ejecutando un callback
-                const callbackName = nextState.callStack[nextState.callStack.length - 1];
-                const callbackSteps = nextState.callbackCode[callbackName];
-                if (!callbackSteps || nextState.callbackStepIndex >= callbackSteps.length) {
-                     // Callback terminó implícitamente o hubo un error
-                    if (nextState.callStack[nextState.callStack.length - 1] === callbackName) {
-                       nextState.callStack.pop(); // Asegurarse de quitarlo
-                    }
-                     nextState.executingCallback = false;
-                     nextState.currentJsLine = -1;
-                     nextState.statusMessage += ` Callback ${callbackName} finalizado.`;
-                     console.log(`Callback ${callbackName} finalizado.`);
-                    // Verificamos si aún queda script principal o si todo acabó
-                     if (nextState.currentStepIndex >= nextState.steps.length && nextState.callStack.length === 0 && nextState.callbackQueue.length === 0){
-                        nextState.isFinished = true;
-                        nextState.statusMessage += " Simulación completada.";
-                     }
-                     actionTaken = true; // Se realizó una acción (finalizar callback)
-                } else {
-                    currentStepConfig = callbackSteps[nextState.callbackStepIndex];
-                    nextState.callbackStepIndex++; // Apuntar al siguiente paso del callback para la próxima vez
+        if (isCallbackStep) {
+            const callbackName = nextState.callStack[nextState.callStack.length - 1];
+            const callbackSteps = nextState.callbackCode[callbackName];
+            if (!callbackSteps || nextState.callbackStepIndex >= callbackSteps.length) {
+                if (nextState.callStack[nextState.callStack.length - 1] === callbackName) {
+                   nextState.callStack.pop();
                 }
+                nextState.executingCallback = false;
+                nextState.currentJsLine = -1;
+                nextState.statusMessage += ` Callback ${callbackName} finalizado.`;
+                console.log(`Callback ${callbackName} finalizado.`);
+                // Verificamos si todo acabó después de finalizar un callback
+                if (nextState.currentStepIndex >= nextState.steps.length && nextState.callStack.length === 0 && nextState.callbackQueue.length === 0 && nextState.webApis.every(api => api.processedToQueue || api.triggered || api.type === 'listener' && api.triggered )) { // Ajuste aquí para 'listener'
+                    nextState.isFinished = true;
+                    nextState.statusMessage += " Simulación completada.";
+                }
+                return nextState; // Acción de finalizar callback.
             } else {
-                // Ejecutando el script principal
-                if (nextState.currentStepIndex >= nextState.steps.length) {
-                    // Fin del script principal
-                    if (nextState.callStack.length > 0 && nextState.callStack[0] === '(global)') {
-                         nextState.callStack.pop(); // Quitar global si queda
-                         nextState.statusMessage += " Fin del script global.";
-                         actionTaken = true;
-                    }
+                currentStepConfig = callbackSteps[nextState.callbackStepIndex];
+                nextState.callbackStepIndex++;
+            }
+        } else { // Ejecutando el script principal
+            if (nextState.currentStepIndex >= nextState.steps.length) {
+                if (nextState.callStack.length > 0 && nextState.callStack[0] === '(global)') {
+                     nextState.callStack.pop();
+                     nextState.statusMessage += " Fin del script global.";
                      nextState.currentJsLine = -1;
-                     // Si no hay más APIs esperando o callbacks, terminamos
-                     if (nextState.callStack.length === 0 && nextState.callbackQueue.length === 0 && nextState.webApis.every(api => api.triggered || api.type === 'listener')) {
-                         nextState.isFinished = true;
-                         nextState.statusMessage += " Simulación completada.";
-                     } else if (!actionTaken) {
-                         // Si aún hay trabajo asíncrono pendiente pero el script síncrono acabó
-                         nextState.statusMessage += " Script síncrono finalizado. Esperando tareas asíncronas...";
-                         actionTaken = true; // Indica que hicimos algo (transición a espera)
-                     }
-
-                } else {
-                    currentStepConfig = nextState.steps[nextState.currentStepIndex];
-                    nextState.currentStepIndex++; // Apuntar al siguiente paso del script para la próxima vez
                 }
+                // Si no hay más APIs esperando o callbacks, terminamos
+                if (nextState.callStack.length === 0 && nextState.callbackQueue.length === 0 && nextState.webApis.every(api => (api.type === 'timer' && api.processedToQueue) || (api.type === 'listener' && api.triggered) )) {
+                     nextState.isFinished = true;
+                     nextState.statusMessage += " Simulación completada.";
+                } else if (nextState.callStack.length === 0 && !nextState.isFinished){
+                     // Script síncrono terminado, pero hay trabajo asíncrono.
+                     nextState.statusMessage += " Script síncrono finalizado. Esperando tareas asíncronas...";
+                     nextState.currentJsLine = -1;
+                }
+                return nextState; // Acción de finalizar script o esperar.
+            } else {
+                currentStepConfig = nextState.steps[nextState.currentStepIndex];
+                nextState.currentStepIndex++;
+            }
+        }
+
+        // --- Procesar la acción del paso actual (si se determinó uno en Fase 3) ---
+        if (currentStepConfig) {
+            nextState.currentJsLine = currentStepConfig.line;
+            nextState.statusMessage += ` Ejecutando línea ${currentStepConfig.line}: ${currentStepConfig.action}.`;
+            console.log(`Ejecutando paso: ${currentStepConfig.action}`, currentStepConfig);
+
+            if (currentStepConfig.stackPush) {
+                 if (nextState.callStack.length === 0 && currentStepConfig.stackPush !== '(global)' && !isCallbackStep) {
+                      nextState.callStack.push('(global)');
+                 }
+                 if (nextState.callStack.length === 0 || nextState.callStack[nextState.callStack.length - 1] !== currentStepConfig.stackPush) {
+                     nextState.callStack.push(currentStepConfig.stackPush);
+                 }
             }
 
-            // --- Procesar la acción del paso actual (si se determinó uno) ---
-            if (currentStepConfig && !actionTaken) {
-                nextState.currentJsLine = currentStepConfig.line;
-                nextState.statusMessage += ` Ejecutando línea ${currentStepConfig.line}: ${currentStepConfig.action}.`;
-                console.log(`Ejecutando paso: ${currentStepConfig.action}`, currentStepConfig);
-
-                // Aplicar stackPush ANTES de la acción si es el inicio de una función/global
-                 if (currentStepConfig.stackPush) {
-                     if (nextState.callStack.length === 0 && currentStepConfig.stackPush !== '(global)' && !isCallbackStep) {
-                          nextState.callStack.push('(global)'); // Asegurar base global
-                     }
-                     // Solo añadir si no está ya en la cima (evita duplicados visuales si una acción no lo quita)
-                     if (nextState.callStack.length === 0 || nextState.callStack[nextState.callStack.length - 1] !== currentStepConfig.stackPush) {
-                         nextState.callStack.push(currentStepConfig.stackPush);
-                     }
-                 }
-
-
-                switch (currentStepConfig.action) {
-                    case 'log':
-                        nextState.consoleOutput.push(currentStepConfig.value);
-                        break;
-                    case 'call':
-                        // El stackPush ya se hizo arriba. La lógica de pasos secuenciales maneja la "llamada".
-                        nextState.statusMessage += ` Llamando a ${currentStepConfig.functionName}.`;
-                        break;
-                    case 'return':
-                        if (currentStepConfig.stackPop && nextState.callStack.length > 0) {
-                            const popped = nextState.callStack.pop();
-                            nextState.statusMessage += ` Retornando de ${popped}.`;
-                            console.log(`Retornando de ${popped}`);
-                            // Si era la última instrucción de un callback, marcamos para salir del modo callback
-                            if (isCallbackStep) {
-                                const callbackName = popped; // El que acabamos de sacar
-                                const callbackSteps = nextState.callbackCode[callbackName];
-                                if (nextState.callbackStepIndex >= callbackSteps?.length) {
-                                    nextState.executingCallback = false; // Terminó el callback
-                                     nextState.currentJsLine = -1; // Limpiar resaltado
-                                    console.log(`Callback ${callbackName} finalizado.`);
-                                    // Aquí NO marcamos isFinished, esperamos al próximo ciclo por si hay más callbacks
+            switch (currentStepConfig.action) {
+                case 'log':
+                    nextState.consoleOutput.push(currentStepConfig.value);
+                    break;
+                case 'call':
+                    nextState.statusMessage += ` Llamando a ${currentStepConfig.functionName}.`;
+                    break;
+                case 'return':
+                    if (currentStepConfig.stackPop && nextState.callStack.length > 0) {
+                        const popped = nextState.callStack.pop();
+                        nextState.statusMessage += ` Retornando de ${popped}.`;
+                        console.log(`Retornando de ${popped}`);
+                        if (isCallbackStep) {
+                            const callbackName = popped;
+                            const callbackSteps = nextState.callbackCode[callbackName];
+                            if (nextState.callbackStepIndex >= callbackSteps?.length) {
+                                nextState.executingCallback = false;
+                                nextState.currentJsLine = -1;
+                                console.log(`Callback ${callbackName} finalizado.`);
+                                // Re-check for finish condition after callback return
+                                if (nextState.currentStepIndex >= nextState.steps.length && nextState.callStack.length === 0 && nextState.callbackQueue.length === 0 && nextState.webApis.every(api => (api.type === 'timer' && api.processedToQueue) || (api.type === 'listener' && api.triggered))) {
+                                    nextState.isFinished = true;
+                                    nextState.statusMessage += " Simulación completada.";
                                 }
                             }
                         }
-                        break;
-                    case 'api':
-                        const apiId = nextState.nextApiId++;
-                        const newApi = {
-                            id: apiId,
-                            name: currentStepConfig.apiName,
-                            callbackName: currentStepConfig.callbackName,
-                            triggered: false,
-                            type: currentStepConfig.apiName === 'setTimeout' ? 'timer' : 'listener'
-                        };
-                        if (newApi.type === 'timer') {
-                            newApi.endTime = nextState.simulationTime + currentStepConfig.duration; // Guardar cuándo debe terminar
-                             nextState.statusMessage += ` API: Iniciando ${currentStepConfig.apiName} (${currentStepConfig.duration}ms).`;
-                        } else {
-                            newApi.eventType = currentStepConfig.eventType;
-                             nextState.statusMessage += ` API: Registrando ${currentStepConfig.apiName} (${currentStepConfig.eventType}).`;
-                        }
-                        nextState.webApis.push(newApi);
-                        break;
-                    case 'wait_api':
-                        nextState.waitingForApi = currentStepConfig.apiName;
-                        nextState.statusMessage += ` Script en pausa, esperando ${currentStepConfig.apiName}...`;
-                        // Simular que el tiempo pasa hasta el final del timer si es setTimeout
-                         if (currentStepConfig.apiName === 'setTimeout') {
-                             const timerApi = nextState.webApis.find(api => api.type === 'timer' && !api.triggered);
-                             if (timerApi) {
-                                 nextState.simulationTime = timerApi.endTime; // Avanzar tiempo simulado
-                                 nextState.statusMessage += ` (Tiempo simulado avanzado a ${nextState.simulationTime}ms).`;
-                             }
+                    }
+                    break;
+                case 'api':
+                    const apiId = nextState.nextApiId++;
+                    const newApi = {
+                        id: apiId,
+                        name: currentStepConfig.apiName,
+                        callbackName: currentStepConfig.callbackName,
+                        type: currentStepConfig.apiName === 'setTimeout' ? 'timer' : 'listener'
+                    };
+                    if (newApi.type === 'timer') {
+                        newApi.endTime = nextState.simulationTime + currentStepConfig.duration;
+                        newApi.processedToQueue = false; // Nueva propiedad
+                        nextState.statusMessage += ` API: Iniciando ${currentStepConfig.apiName} (${currentStepConfig.duration}ms).`;
+                    } else { // listener
+                        newApi.eventType = currentStepConfig.eventType;
+                        newApi.triggered = false; // Para listeners, triggered significa que el evento ocurrió
+                        nextState.statusMessage += ` API: Registrando ${currentStepConfig.apiName} (${currentStepConfig.eventType}).`;
+                    }
+                    nextState.webApis.push(newApi);
+                    break;
+                case 'wait_api':
+                    nextState.waitingForApi = currentStepConfig.apiName;
+                    nextState.statusMessage += ` Script en pausa, esperando ${currentStepConfig.apiName}...`;
+                     if (currentStepConfig.apiName === 'setTimeout') {
+                         const timerApi = nextState.webApis.find(api => api.type === 'timer' && !api.processedToQueue);
+                         if (timerApi) {
+                             nextState.simulationTime = timerApi.endTime;
+                             nextState.statusMessage += ` (Tiempo simulado avanzado a ${nextState.simulationTime}ms).`;
                          }
-                        // Quitar (global) si el script síncrono ha terminado
-                        if (nextState.currentStepIndex >= nextState.steps.length && nextState.callStack.length === 1 && nextState.callStack[0] === '(global)') {
-                            nextState.callStack.pop();
-                        }
-                        break;
-                     case 'check_queue':
-                         nextState.statusMessage += " Fin script síncrono. Revisando cola...";
-                         if (nextState.callStack.length === 1 && nextState.callStack[0] === '(global)') {
-                             nextState.callStack.pop(); // Quitar global
-                         }
-                         nextState.currentJsLine = -1;
-                         // El siguiente ciclo de calculateNextState se encargará de la cola si aplica
-                         break;
-                    case 'assignment':
-                    case 'comment':
-                        // No hacer nada extra, solo avanzar
-                        break;
-                    case 'end':
-                         if (currentStepConfig.stackPop && nextState.callStack.length > 0 && nextState.callStack[nextState.callStack.length - 1] === '(global)') {
-                             nextState.callStack.pop();
-                         }
-                         nextState.statusMessage += " Fin de ejecución global.";
-                         nextState.currentJsLine = -1;
-                         // Comprobar si todo ha terminado
-                         if (nextState.callStack.length === 0 && nextState.callbackQueue.length === 0 && nextState.webApis.every(api => api.triggered || api.type === 'listener')) {
-                             nextState.isFinished = true;
-                             nextState.statusMessage += " Simulación completada.";
-                         }
-                        break;
-                    default:
-                        console.warn(`Acción desconocida: ${currentStepConfig.action}`);
-                        nextState.statusMessage += ` Acción desconocida: ${currentStepConfig.action}.`;
-                }
-                 actionTaken = true; // Se procesó un paso
+                     }
+                    if (nextState.currentStepIndex >= nextState.steps.length && nextState.callStack.length === 1 && nextState.callStack[0] === '(global)') {
+                        nextState.callStack.pop();
+                    }
+                    break;
+                 case 'check_queue':
+                     nextState.statusMessage += " Fin script síncrono. Revisando cola y APIs...";
+                     if (nextState.callStack.length === 1 && nextState.callStack[0] === '(global)') {
+                         nextState.callStack.pop();
+                     }
+                     nextState.currentJsLine = -1;
+                     // La siguiente llamada a calculateNextState manejará colas/APIs.
+                     break;
+                case 'assignment':
+                case 'comment':
+                    break;
+                case 'end':
+                     if (currentStepConfig.stackPop && nextState.callStack.length > 0 && nextState.callStack[nextState.callStack.length - 1] === '(global)') {
+                         nextState.callStack.pop();
+                     }
+                     nextState.statusMessage += " Fin de ejecución global.";
+                     nextState.currentJsLine = -1;
+                     if (nextState.callStack.length === 0 && nextState.callbackQueue.length === 0 && nextState.webApis.every(api => (api.type === 'timer' && api.processedToQueue) || (api.type === 'listener' && api.triggered))) {
+                         nextState.isFinished = true;
+                         nextState.statusMessage += " Simulación completada.";
+                     }
+                    break;
+                default:
+                    console.warn(`Acción desconocida: ${currentStepConfig.action}`);
+                    nextState.statusMessage += ` Acción desconocida: ${currentStepConfig.action}.`;
             }
-        } // Fin de la ejecución del paso
-
-        // Si no se realizó ninguna acción significativa (ni event loop, ni paso de script/callback, ni fin)
-        // y la simulación no ha terminado, probablemente estemos esperando.
-         if (!actionTaken && !nextState.isFinished) {
-            if(nextState.waitingForApi && nextState.webApis.some(api => api.name === nextState.waitingForApi && !api.triggered)){
+        } else if (!nextState.isFinished) {
+            // Si no hubo currentStepConfig (porque script/callback terminó) y no se hizo nada en Fase 1 o 2.
+            // Y la simulación no ha terminado.
+            if(nextState.waitingForApi && nextState.webApis.some(api => (api.name === nextState.waitingForApi && ((api.type === 'timer' && !api.processedToQueue) || (api.type === 'listener' && !api.triggered))))){
                  nextState.statusMessage = `Esperando evento/API: ${nextState.waitingForApi}...`;
-                 // Si el script principal terminó y solo esperamos
-                 if (nextState.currentStepIndex >= nextState.steps.length && nextState.callStack.length === 0){
-                     nextState.currentJsLine = -1; // Sin linea activa
-                 }
-            } else if (nextState.callStack.length === 0 && nextState.callbackQueue.length === 0 && !nextState.webApis.every(api => api.triggered || api.type === 'listener')) {
-                 // Caso: Script terminó, no hay nada en cola, pero algún timer/evento aún no ocurrió
+            } else if (nextState.callStack.length === 0 && nextState.callbackQueue.length === 0 && !nextState.webApis.every(api => (api.type === 'timer' && api.processedToQueue) || (api.type === 'listener' && api.triggered))) {
                  nextState.statusMessage = `Esperando tareas asíncronas pendientes...`;
                  nextState.currentJsLine = -1;
-            } else {
-                 // Podría ser un estado final si no detectamos isFinished correctamente antes
+            } else if (nextState.callStack.length === 0 && nextState.callbackQueue.length === 0 && nextState.webApis.every(api => (api.type === 'timer' && api.processedToQueue) || (api.type === 'listener' && api.triggered))) {
+                 // Esto es una doble comprobación para isFinished
                  nextState.isFinished = true;
                  nextState.statusMessage = "Simulación completada.";
                  nextState.currentJsLine = -1;
             }
-         }
-
+        }
         return nextState;
     }
 
     function stepForward() {
         if (historyIndex < history.length - 1) {
-            // Simplemente avanzar en el historial existente
             historyIndex++;
         } else {
-            // Calcular el siguiente estado si no estamos al final
             const nextState = calculateNextState();
             if (nextState) {
-                history.push(nextState); // Añadir el nuevo estado al historial
-                historyIndex++; // Mover el índice al nuevo estado
+                history.push(nextState);
+                historyIndex++;
             }
-            // Si calculateNextState devuelve null, es porque ya terminó o hubo error
         }
         render();
     }
@@ -480,50 +469,45 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-     function handleInteraction() {
+    function handleInteraction() {
         if (history[historyIndex].scenarioName !== 'event' || history[historyIndex].isFinished) return;
 
         const currentState = history[historyIndex];
         const listenerApi = currentState.webApis.find(api => api.type === 'listener' && !api.triggered);
 
         if (listenerApi) {
-             // Crear un NUEVO estado basado en el actual, pero con el evento disparado
             let nextState = deepCopy(currentState);
+            const apiInNextState = nextState.webApis.find(api => api.id === listenerApi.id);
 
-            // Encontrar la misma API en el nuevo estado y modificarla
-             const apiInNextState = nextState.webApis.find(api => api.id === listenerApi.id);
-             if(apiInNextState){
-                apiInNextState.triggered = true;
-                 // Añadir a la cola SOLO si no estaba ya por alguna razón
+            if(apiInNextState){
+                apiInNextState.triggered = true; // Marcar que el evento ocurrió
                 if (!nextState.callbackQueue.some(cb => cb.apiId === listenerApi.id)) {
                      nextState.callbackQueue.push({ callbackName: listenerApi.callbackName, apiId: listenerApi.id });
                      nextState.statusMessage = `INTERACCIÓN: Evento '${listenerApi.eventType}' simulado! Callback ${listenerApi.callbackName} añadido a la cola.`;
                      console.log(`INTERACCIÓN: Callback ${listenerApi.callbackName} añadido a la Callback Queue.`);
-                 } else {
+                } else {
                      nextState.statusMessage = `INTERACCIÓN: Evento '${listenerApi.eventType}' simulado! (Callback ya estaba en cola).`;
-                 }
+                }
+                nextState.waitingForApi = null; // Ya no estamos esperando este evento específico
+                nextState.currentJsLine = -1; // Interacción es acción del sistema/usuario
 
-                 // Reemplazar el resto del historial si habíamos retrocedido
-                 history = history.slice(0, historyIndex + 1);
-                 history.push(nextState);
-                 historyIndex++;
-                 render();
+                history = history.slice(0, historyIndex + 1);
+                history.push(nextState);
+                historyIndex++;
+                render();
             } else {
-                 console.error("No se encontró la API correspondiente en el estado copiado.");
+                 console.error("No se encontró la API correspondiente en el estado copiado para la interacción.");
             }
-
         } else {
             console.log("INTERACCIÓN: No hay listener activo esperando este evento en el estado actual.");
-            // Opcional: Mostrar mensaje al usuario
         }
     }
 
-
     // --- Event Listeners ---
     scenarioSelect.addEventListener('change', (e) => setupScenario(e.target.value));
-    nextStepButton.addEventListener('click', stepForward); // Usar stepForward
-    prevStepButton.addEventListener('click', stepBackward); // Nuevo listener
-    resetButton.addEventListener('click', () => setupScenario(scenarioSelect.value)); // Usar el valor actual del select
+    nextStepButton.addEventListener('click', stepForward);
+    prevStepButton.addEventListener('click', stepBackward);
+    resetButton.addEventListener('click', () => setupScenario(scenarioSelect.value));
     interactionButton.addEventListener('click', handleInteraction);
 
     // --- Initial Load ---
